@@ -1,0 +1,13 @@
+format: jpeg
+kind: jpeg
+description: Baseline grayscale 8x8 JPEG with a JFIF header
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: JPEG File Interchange Format
+extensions:
+- jpg
+- jpeg
+mime: image/jpeg
+reference: https://www.w3.org/Graphics/JPEG/itu-t81.pdf

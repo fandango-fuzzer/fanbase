@@ -1,0 +1,12 @@
+format: webp
+kind: webp-bitstream
+description: WebP with the VP8 and VP8L internals spelled out; files do not decode
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: WebP
+extensions:
+- webp
+mime: image/webp
+reference: https://developers.google.com/speed/webp/docs/riff_container

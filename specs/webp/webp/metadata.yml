@@ -1,0 +1,13 @@
+format: webp
+kind: webp
+description: 'WebP with real 2x2 image data: lossy, lossless, alpha, animation and
+  metadata'
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: WebP
+extensions:
+- webp
+mime: image/webp
+reference: https://developers.google.com/speed/webp/docs/riff_container

@@ -1,0 +1,13 @@
+format: png
+kind: png-container
+description: PNG chunk structure only; image data is arbitrary bytes, so most files
+  do not decode
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: Portable Network Graphics
+extensions:
+- png
+mime: image/png
+reference: https://www.w3.org/TR/png-3/

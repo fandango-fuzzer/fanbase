@@ -1,0 +1,13 @@
+format: webp
+kind: webp-container
+description: WebP RIFF container in all five file shapes; image data is filler, so
+  files do not decode
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: WebP
+extensions:
+- webp
+mime: image/webp
+reference: https://developers.google.com/speed/webp/docs/riff_container

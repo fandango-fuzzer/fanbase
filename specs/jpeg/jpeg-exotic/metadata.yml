@@ -1,0 +1,14 @@
+format: jpeg
+kind: jpeg-exotic
+description: JPEG with unusual features (12-bit samples, 16-bit tables, arithmetic,
+  lossless, DNL); files do not decode
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: JPEG File Interchange Format
+extensions:
+- jpg
+- jpeg
+mime: image/jpeg
+reference: https://www.w3.org/Graphics/JPEG/itu-t81.pdf

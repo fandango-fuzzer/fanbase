@@ -1,0 +1,12 @@
+format: png
+kind: png-32x32
+description: 32x32 RGB PNG with lengths and CRCs written as constraints
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: Portable Network Graphics
+extensions:
+- png
+mime: image/png
+reference: https://www.w3.org/TR/png-3/

@@ -1,0 +1,14 @@
+format: tiff
+kind: tiff
+description: 'TIFF in eight fixed layouts: both byte orders, tiled, palette, multi-page,
+  SubIFD, BigTIFF'
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: Tagged Image File Format
+extensions:
+- tif
+- tiff
+mime: image/tiff
+reference: https://download.osgeo.org/libtiff/doc/TIFF6.pdf

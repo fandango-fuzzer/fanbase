@@ -1,0 +1,14 @@
+format: jpeg
+kind: jpeg-markers
+description: JPEG at the marker level (APPn, COM, DQT, DHT, DRI, SOF0-2, SOS); tables
+  and scan data are random, so files rarely decode
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: JPEG File Interchange Format
+extensions:
+- jpg
+- jpeg
+mime: image/jpeg
+reference: https://www.w3.org/Graphics/JPEG/itu-t81.pdf

@@ -1,0 +1,12 @@
+format: png
+kind: png
+description: Valid PNGs of every colour type with all the standard chunks
+fanbase: 0.4.2
+fandango: '>=1.3'
+requires: []
+version: '1.0'
+title: Portable Network Graphics
+extensions:
+- png
+mime: image/png
+reference: https://www.w3.org/TR/png-3/
