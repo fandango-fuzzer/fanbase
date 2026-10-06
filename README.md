@@ -35,6 +35,7 @@ $ fandango fuzz -F png-apng -n 10 -d apngs
 
 Use `fanbase list` to see the available formats, and `fanbase list png` to see the specs of a format. All other options of `fandango fuzz` work as usual. `fanbase install png` installs a spec without using it. `fanbase install --all` installs all available formats at once.
 
+Check the full CLI and all commands [here](https://github.com/fandango-fuzzer/fanbase-cli) 
 
 ### Customizing Fanbase files
 
