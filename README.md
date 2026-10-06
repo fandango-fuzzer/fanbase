@@ -84,9 +84,9 @@ Yes.
 * Update Fandango and Fanbase on a regular basis to benefit from the latest algorithms and specifications.
 
 
-### Can I test systems other than my own?
+### Can I test infrastructures other than my own?
 
-Yes, but you should not - you would likely break the law and face intrusion claims. When testing third-party systems, always be sure to maintain professional conduct and have proper authorization. For best practices, read this article on [ethical hacking](https://www.sprocketsecurity.com/blog/ethical-hacking).
+Technically yes, but you should not, as you would likely break the law and face intrusion claims. When testing third-party systems, always be sure to maintain professional conduct and have proper authorization. For best practices, read this article on [ethical hacking](https://www.sprocketsecurity.com/blog/ethical-hacking).
 
 
 ### How many test inputs do I need?
