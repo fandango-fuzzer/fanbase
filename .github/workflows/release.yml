@@ -1,0 +1,66 @@
+name: release
+
+# Once a week, and on request: if the registry has changed since its last release, tag it and
+# publish a release whose notes say what changed. Releases give users something fixed to point at
+# (`fanbase --registry https://github.com/fandango-fuzzer/fanbase/tree/<tag> ...`), and the Zenodo
+# integration of this repository, if it is switched on, archives each published release under a DOI.
+#
+# This needs fanbase 0.5 or later.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the tags are how the last release is found
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "fanbase>=0.5"
+
+      - name: The registry is in order
+        run: fanbase check --no-generate
+
+      - name: What changed since the last release
+        id: notes
+        run: |
+          last="$(git tag --list 'v*' --sort=-v:refname | head -n 1)"
+          if [ -n "$last" ]; then
+            fanbase changes --base "https://github.com/${GITHUB_REPOSITORY}/tree/${last}" --markdown > notes.md
+            if grep -q '^No changes\.' notes.md; then
+              echo "release=no" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          else
+            echo "The first release of the registry." > notes.md
+          fi
+          tag="v$(date -u +%Y.%m.%d)"
+          n=1
+          while git rev-parse -q --verify "refs/tags/${tag}" > /dev/null; do
+            tag="v$(date -u +%Y.%m.%d).${n}"
+            n=$((n + 1))
+          done
+          echo "release=yes" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish the release
+        if: steps.notes.outputs.release == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.notes.outputs.tag }}
+        run: gh release create "$TAG" --title "Fanbase $TAG" --notes-file notes.md --target "$GITHUB_SHA"

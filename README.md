@@ -151,6 +151,8 @@ In this project, our first priority was to get _valid_ specifications that do we
 
 We [happily accept pull requests](#contact-us) for any of the Fanbase files! If you want to write and share a spec for a new file format, [coordinate with us](#contact-us) beforehand, as we may already have this format in our queue.
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to write, check and submit a spec.
+
 
 ### Who are you?
 

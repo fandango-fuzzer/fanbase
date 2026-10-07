@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use Fanbase, please cite it as below."
+title: "Fanbase: a registry of Fandango input specifications"
+type: software
+authors:
+  - family-names: Becker
+    given-names: Norman
+  - family-names: Huber
+    given-names: Valentin
+  - family-names: Bauckholt
+    given-names: Florian
+  - family-names: Crump
+    given-names: Addison
+  - family-names: Dutra
+    given-names: Rafael
+  - family-names: Hassler
+    given-names: Keno
+  - family-names: Liggesmeyer
+    given-names: Alexander
+  - family-names: Liu
+    given-names: Kuangxiangzi
+  - family-names: Scheckenbach
+    given-names: Tim
+  - family-names: Zamudio Amaya
+    given-names: José Antonio
+  - family-names: Zeller
+    given-names: Andreas
+license: Apache-2.0
+repository-code: "https://github.com/fandango-fuzzer/fanbase"
+url: "https://github.com/fandango-fuzzer/fanbase"
+abstract: >-
+  Fanbase is a collection of Fandango input specifications (grammars) for image, video, audio and
+  other file formats, from which thousands of random test inputs can be produced. This repository is
+  the registry; the fanbase command that browses and installs from it is fanbase-cli.
+keywords:
+  - fuzzing
+  - test generation
+  - grammars
+  - file formats
+  - Fandango

@@ -1,0 +1,23 @@
+{
+  "title": "Fanbase: a registry of Fandango input specifications",
+  "upload_type": "software",
+  "description": "Fanbase is a collection of Fandango input specifications (grammars) for image, video, audio and other file formats, from which thousands of random test inputs can be produced. This is the registry; the fanbase command that browses and installs from it is fanbase-cli.",
+  "license": "Apache-2.0",
+  "creators": [
+    {"name": "Becker, Norman"},
+    {"name": "Huber, Valentin"},
+    {"name": "Bauckholt, Florian"},
+    {"name": "Crump, Addison"},
+    {"name": "Dutra, Rafael"},
+    {"name": "Hassler, Keno"},
+    {"name": "Liggesmeyer, Alexander"},
+    {"name": "Liu, Kuangxiangzi"},
+    {"name": "Scheckenbach, Tim"},
+    {"name": "Zamudio Amaya, José Antonio"},
+    {"name": "Zeller, Andreas"}
+  ],
+  "keywords": ["fuzzing", "test generation", "grammars", "file formats", "Fandango"],
+  "related_identifiers": [
+    {"identifier": "https://github.com/fandango-fuzzer/fanbase-cli", "relation": "isSupplementedBy", "scheme": "url"}
+  ]
+}
