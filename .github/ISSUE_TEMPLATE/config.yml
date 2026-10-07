@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: How to contribute a spec
+    url: https://github.com/fandango-fuzzer/fanbase/blob/main/CONTRIBUTING.md
+    about: How to write a spec, check it, and open a pull request.

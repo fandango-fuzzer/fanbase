@@ -1,0 +1,32 @@
+name: Propose a new format
+description: You would like to write, or to see, a spec for a file format that Fanbase does not have yet.
+labels: ["new format"]
+body:
+  - type: input
+    id: format
+    attributes:
+      label: Format
+      description: Its name, and where it is specified.
+      placeholder: "WebP, https://developers.google.com/speed/webp/docs/riff_container"
+    validations:
+      required: true
+  - type: dropdown
+    id: who
+    attributes:
+      label: Who would write it?
+      options:
+        - I would like to write it
+        - I would like to write it with help
+        - I would like someone else to
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What would you test with it?
+      description: The software that reads this format, if you can say.
+  - type: textarea
+    id: sources
+    attributes:
+      label: Existing material
+      description: Parsers, grammars, templates or documentation you would start from, and their licenses.
