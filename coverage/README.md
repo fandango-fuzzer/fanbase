@@ -33,7 +33,7 @@ docker run --rm -v "$PWD":/registry -w /registry fanbase-coverage \
 ```
 
 `.github/workflows/coverage-image.yml` builds the image and publishes it as `ghcr.io/fandango-fuzzer/fanbase-coverage`
-(on a change to this folder on `main`, or by hand); `.github/workflows/coverage.yml` uses it, once a week. The package
+(on a change to this folder on `main`, or by hand); `.github/workflows/quality.yml` uses it, once a week. The package
 has to be made public, and linked to this repository, once, in its settings on GitHub, for the pull to need no login.
 
 ## Adding a library

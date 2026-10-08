@@ -1,12 +1,14 @@
-name: coverage
+name: quality
 
-# How much of the libraries that read the registry's formats do the files of each spec run, and how does that grow
-# with the number of files? Against a few real files of each format. Once a week, and by hand, on main only: it
-# runs in the image of coverage-image.yml, where the libraries are built to be measured.
+# How well does each spec do? Once a week, and by hand, on main only: in the image of coverage-image.yml (the parsers of
+# every format, and the libraries built to be measured), every spec's files are asked of the parsers, and counted for how
+# much of a library they reach, against real files. What is kept is quality.json, attached to the latest release of this
+# repository, where `fanbase list --quality` finds it; and the run says what changed since the one before.
 #
-# What the libraries do on the files is kept as evaluate-main.yml keeps it (see there): nothing about a crash or a
-# hang is public, the details go in one encrypted file that is the same size whatever it holds, kept as an
-# artifact and mailed by a second job that has the secrets and runs none of the registry's code.
+# What the parsers do on a file is kept as evaluate-main.yml keeps it (see there): nothing about a crash or a hang is
+# public, the details go in one encrypted file that is the same size whatever it holds, kept as an artifact and mailed
+# by a job that has the secrets and runs none of the registry's code. The job that attaches quality.json has a token that
+# can write to the release and also runs none of it: it takes the file the measuring made and uploads it.
 #
 # This needs fanbase 0.5 or later.
 
@@ -19,14 +21,14 @@ permissions:
   contents: read
 
 concurrency:
-  group: coverage
+  group: quality
   cancel-in-progress: false
 
 jobs:
-  coverage:
+  measure:
     if: github.repository_owner == 'fandango-fuzzer'
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 300
     container:
       image: ghcr.io/fandango-fuzzer/fanbase-coverage:latest
     outputs:
@@ -55,14 +57,17 @@ jobs:
         env:
           COLLECT: ${{ steps.key.outputs.collect }}
         run: |
-          # One seed for a whole week, as in evaluate-main.yml.
+          # One seed for a whole week, as in evaluate-main.yml. The earlier results are the latest release's.
           seed="$(date -u +%G%V)"
           private=""
           if [ "$COLLECT" = "yes" ]; then
             private="--incidents private --incident-recipients .github/incident-recipients.txt"
           fi
-          fanbase evaluate --all --coverage-only -n 1000 --curve 1,10,100,1000 --seed "$seed" --budget 100 \
-            --hide-crashes $private --markdown --json-file coverage.json >> "$GITHUB_STEP_SUMMARY"
+          fanbase evaluate --all --coverage -n 1000 --curve 1,10,100,1000 --seed "$seed" --budget 100 \
+            --hide-crashes $private \
+            --compare-with "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/quality.json" \
+            --markdown --json-file evaluation.json >> "$GITHUB_STEP_SUMMARY"
+          fanbase quality build evaluation.json -o quality.json
 
       - name: Is there a private record
         id: record
@@ -77,28 +82,55 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coverage
-          path: coverage.json
+          name: quality
+          path: |
+            quality.json
+            evaluation.json
           if-no-files-found: ignore
 
       # Encrypted, and the same size whatever it holds: it is for whoever has the private key.
       - uses: actions/upload-artifact@v4
         if: always() && steps.record.outputs.found == 'yes'
         with:
-          name: coverage-private
+          name: quality-private
           path: private/evaluation-private.age
           retention-days: 30
           if-no-files-found: error
 
+  publish:
+    needs: measure
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: quality
+          path: results
+
+      - name: Attach quality.json to the latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>/dev/null || true)"
+          if [ -z "$tag" ]; then
+            echo "There is no release yet to attach the results to."
+            exit 0
+          fi
+          gh release upload "$tag" results/quality.json --repo "$GITHUB_REPOSITORY" --clobber
+          echo "quality.json is attached to $tag"
+
   mail:
-    needs: coverage
-    if: always() && needs.coverage.outputs.record == 'yes' && github.ref == 'refs/heads/main'
+    needs: measure
+    if: always() && needs.measure.outputs.record == 'yes' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: coverage-private
+          name: quality-private
           path: private
 
       - uses: actions/setup-python@v5
@@ -117,7 +149,7 @@ jobs:
           FANBASE_SMTP_FROM: ${{ secrets.FANBASE_SMTP_FROM }}
         run: |
           if [ -z "$INCIDENT_EMAIL" ] || [ -z "$FANBASE_SMTP_HOST" ]; then
-            echo "Mail is not set up here: the private record is in the artifact of this run (coverage-private)."
+            echo "Mail is not set up here: the private record is in the artifact of this run (quality-private)."
             exit 0
           fi
           fanbase incidents send private/evaluation-private.age --to "$INCIDENT_EMAIL"

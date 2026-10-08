@@ -85,7 +85,9 @@ public summary; if you see it yourself, treat it as the responsible disclosure a
 `fanbase evaluate --coverage` goes further for the formats whose parsers are built to be measured (`coverage/`, run in
 its image): it says how much of the library's code your spec's files run, how that grows from the first file to the
 thousandth, and what they run that real files of the format do not, and the reverse. Once a week the same is measured
-for every spec (`coverage.yml`). A curve that is flat from the first file says the spec makes files that are all alike.
+for every spec (`quality.yml`), together with how often each parser accepts its files and how fast they are made, and kept
+as `quality.json` with the latest release: `fanbase list png --quality` shows it, and it is what to look at when choosing
+between two grammars of one format. A curve that is flat from the first file says the spec makes files that are all alike.
 
 The same evaluation runs on `main` for every spec, after each merge and once a week. There, the details of a crash
 or a hang (the input, what the parser said, how to make the file again) are kept in one file that is encrypted to a
@@ -100,6 +102,12 @@ anything for this; if you add a target, it runs in a job that has no secrets (se
 to change what it builds on too, add `--with-deps`: the whole family is copied (each under its own name, with its
 own `derived_from`), and the copies build on each other instead. In a registry of your own this is also how you move
 a spec of someone else's registry that builds on its neighbours.
+
+## A DOI for a spec
+
+A stable spec can have a [DOI](https://zenodo.org), so that it can be cited exactly as it was: `fanbase doi png-apng` says what
+would be published, `--sandbox` tries it, and `--production` publishes it (Zenodo records are permanent, so it asks) and writes
+`doi:` into the spec's `metadata.yml` for you to commit. It is up to the spec's authors; nothing here needs it.
 
 ## Keeping a fork up to date
 

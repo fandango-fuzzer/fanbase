@@ -1,7 +1,7 @@
 name: coverage-image
 
 # Builds the image of the libraries that are built to be measured (coverage/) and publishes it as
-# ghcr.io/<owner>/fanbase-coverage, which coverage.yml runs in, so that nothing is compiled on every run.
+# ghcr.io/<owner>/fanbase-coverage, which quality.yml runs in, so that nothing is compiled on every run.
 # It builds when coverage/ changes on main, and by hand. It never runs for a pull request: building it runs
 # the recipe in coverage/, which is code, and publishing needs the token.
 #
