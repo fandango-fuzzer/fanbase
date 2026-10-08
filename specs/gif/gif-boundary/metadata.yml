@@ -2,7 +2,7 @@ format: gif
 kind: gif-boundary
 description: GIF built from fixed edge-case values (huge screens, flag combinations,
   unknown extensions)
-fanbase: 0.4.2
+fanbase: 0.5.0
 fandango: '>=1.3'
 requires: []
 authors:
