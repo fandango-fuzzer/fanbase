@@ -4,6 +4,9 @@ description: 32x32 RGB PNG with lengths and CRCs written as constraints
 fanbase: 0.4.2
 fandango: '>=1.3'
 requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
 version: '1.0'
 title: Portable Network Graphics
 extensions:

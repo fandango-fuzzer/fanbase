@@ -4,6 +4,9 @@ description: 1x1 GIF87a/GIF89a with valid LZW data, covering every extension blo
 fanbase: 0.4.2
 fandango: '>=1.3'
 requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
 version: '1.0'
 title: Graphics Interchange Format
 extensions:

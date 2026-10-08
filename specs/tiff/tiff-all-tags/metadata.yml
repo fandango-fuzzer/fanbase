@@ -5,6 +5,9 @@ description: 'One grayscale TIFF with a 55 entry IFD: every field type, Exif, GP
 fanbase: 0.4.2
 fandango: '>=1.3'
 requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
 version: '1.0'
 title: Tagged Image File Format
 extensions:
