@@ -11,7 +11,7 @@ name: evaluate-main
 # `age` to the public key in .github/incident-recipients.txt, that only the holder of the private key can
 # read. That file is the same size whether or not anything broke, it is written on every run, and it is
 # kept as an artifact (30 days), so it is safe where anyone can see it. If the secrets below are set, a
-# second job mails it too.
+# second job mails it too, on the weekly run and by hand (not for every push: a push only makes the artifact).
 #
 # Setting it up (once, by whoever reports vulnerabilities; see .github/incident-recipients.txt):
 #   1. age-keygen -o fanbase-incidents.key; put the public key (age1...) in .github/incident-recipients.txt.
@@ -123,7 +123,8 @@ jobs:
 
   mail:
     needs: evaluate
-    if: always() && needs.evaluate.outputs.record == 'yes' && github.ref == 'refs/heads/main'
+    # Mailed on the weekly run and by hand, not for every push (a push still makes the artifact): the week's runs use one seed.
+    if: always() && needs.evaluate.outputs.record == 'yes' && github.ref == 'refs/heads/main' && github.event_name != 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
