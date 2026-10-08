@@ -1,15 +1,17 @@
 name: release
 
-# Once a week, and on request: if the registry has changed since its last release, tag it and
-# publish a release whose notes say what changed. Releases give users something fixed to point at
+# On the first of each month, and on request (for a milestone): if the registry has changed since its last release,
+# tag it and publish a release whose notes say what changed. Releases give users something fixed to point at
 # (`fanbase --registry https://github.com/fandango-fuzzer/fanbase/tree/<tag> ...`), and the Zenodo
-# integration of this repository, if it is switched on, archives each published release under a DOI.
+# integration of this repository, if it is switched on, archives each published release under a DOI that is
+# permanent: that is why it is monthly and not weekly. quality.yml still refreshes the quality.json of the latest
+# release every week.
 #
 # This needs fanbase 0.5 or later.
 
 on:
   schedule:
-    - cron: "0 6 * * 1" # Mondays, 06:00 UTC
+    - cron: "0 6 1 * *" # the 1st of each month, 06:00 UTC
   workflow_dispatch:
 
 permissions:
