@@ -69,6 +69,9 @@ or do the same with `git` and `gh` by hand. Either way, before you open the pull
    should be accepted by a parser.
 4. If it is based on someone else's work, `source` says whose, and its license allows this.
 
+By opening a pull request you license your contribution under the [Apache License 2.0](LICENSE), the license of this
+registry. There is nothing else to sign.
+
 We review the pull request; expect questions about structure and coverage. We would rather have a spec
 that is valid and well documented than one that covers everything.
 

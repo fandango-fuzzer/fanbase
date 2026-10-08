@@ -9,6 +9,11 @@
 # What is in it is pinned (see build-libs.sh); the base image is not.
 FROM python:3.12-slim
 
+# These say which repository the package belongs to, so that GitHub links it there (and it can be made public from it).
+LABEL org.opencontainers.image.source="https://github.com/fandango-fuzzer/fanbase" \
+      org.opencontainers.image.description="The libraries that read the Fanbase registry's formats, built so that what a run reaches is counted" \
+      org.opencontainers.image.licenses="Apache-2.0"
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential cmake ninja-build pkg-config git ca-certificates curl \
         zlib1g-dev libjpeg-dev liblzma-dev libzstd-dev imagemagick webp age ffmpeg libjpeg-turbo-progs libtiff-tools giflib-tools pngcheck \

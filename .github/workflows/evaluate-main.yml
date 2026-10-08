@@ -15,7 +15,7 @@ name: evaluate-main
 #
 # Setting it up (once, by whoever reports vulnerabilities; see .github/incident-recipients.txt):
 #   1. age-keygen -o fanbase-incidents.key; put the public key (age1...) in .github/incident-recipients.txt.
-#   2. Repository secrets (Settings > Secrets and variables > Actions), only to mail the record:
+#   2. Secrets of the Environment `incidents` (Settings > Environments; only main can use it), only to mail the record:
 #        INCIDENT_EMAIL            where to send it
 #        FANBASE_SMTP_HOST         the mail server
 #        FANBASE_SMTP_PORT         465 (TLS from the start; the default) or 587 (STARTTLS)
@@ -127,6 +127,8 @@ jobs:
     if: always() && needs.evaluate.outputs.record == 'yes' && github.ref == 'refs/heads/main' && github.event_name != 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # the secrets are those of the Environment `incidents`, which only `main` can use (see MAINTAINING.md)
+    environment: incidents
     steps:
       - uses: actions/download-artifact@v4
         with:
