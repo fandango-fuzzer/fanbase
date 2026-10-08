@@ -119,6 +119,18 @@ new `version`. `--dry-run` says whether it would merge cleanly.
 If the original also changed what it `extends`, or its Fandango range, pip packages or file types, `rebase` offers to
 adopt those too (your own additions stay); `--metadata adopt` says yes in advance, `--metadata keep` says no.
 
+## Signing the index (maintainers)
+
+Specs are code, so a user can ask that the registry's index be signed by a key they trust (`fanbase registry add URL --signer
+KEY`); the index holds the hash of every spec, so the signature covers them all. To sign: keep the signing key off the
+repository and off CI (ideally a hardware key, `ssh-keygen -t ed25519-sk`), and, at a release, `fanbase reindex && fanbase
+sign --key KEY`, then commit `index.yml.sig` with the index before tagging (`release.yml` tags every Monday if the registry
+changed: sign before then, since a release whose signature does not match its index cannot be read verified). A signature does not move with the registry:
+between a merge and the next signing, `main` is not signed, so users who want it verified read a release
+(`fanbase --registry https://github.com/fandango-fuzzer/fanbase/tree/<tag>`). For the public registry to be checked by every
+client, the public key goes into `DEFAULT_SIGNERS` in fanbase-cli's `signing.py`: that is how it reaches users from somewhere
+other than the registry it signs. Never put the private key in a secret of this repository.
+
 ## What not to put in a spec or a pull request
 
 Fanbase comes with [considerations about ethics](ETHICS.md), and they apply to contributions:
