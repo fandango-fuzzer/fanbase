@@ -60,6 +60,19 @@ jobs:
           echo "release=yes" >> "$GITHUB_OUTPUT"
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
 
+      # Clients that have the maintainer's key built in refuse a release whose index.yml is not signed by it (a
+      # pinned tag is where that key is required), and a Zenodo record of such a release cannot be taken back. So an
+      # unsigned release is not made: the run fails, which is the reminder to sign (MAINTAINING.md, step 6). The key
+      # is the one in the installed fanbase, not one this repository says.
+      - name: The index is signed by the maintainer
+        if: steps.notes.outputs.release == 'yes'
+        run: |
+          key="$(python -c 'from fanbase.signing import DEFAULT_SIGNERS; print(DEFAULT_SIGNERS[0])')"
+          if ! fanbase verify --signer "$key"; then
+            echo "::error::index.yml is not signed by the maintainer's key, or was changed after it was signed. Run 'fanbase reindex && fanbase sign --key KEY', commit index.yml.sig, and run this again (MAINTAINING.md, step 6)."
+            exit 1
+          fi
+
       - name: Publish the release
         if: steps.notes.outputs.release == 'yes'
         env:

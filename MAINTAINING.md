@@ -68,4 +68,6 @@ on the sandbox first (sandbox.zenodo.org: the same, with records and DOIs that m
 
 `release.yml` publishes one on the 1st of each month if the registry changed, and on request (Actions, release, Run workflow).
 The index is signed first, by hand (see CONTRIBUTING.md): `fanbase reindex && fanbase sign --key ~/.fanbase-secrets/fanbase-signing`,
-commit `index.yml.sig`, then the release is made. A release whose signature does not match is refused by clients.
+commit `index.yml.sig`, then the release is made. A release whose signature does not match is refused by clients, so
+`release.yml` checks it against the maintainer's key (the one built into fanbase) and fails, without releasing, if the
+index is not signed or was changed after it was signed. A failed run on the 1st of a month means: sign, then run it again.
