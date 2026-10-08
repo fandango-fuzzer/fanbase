@@ -1,0 +1,26 @@
+title: ImageMagick (warnings are errors)
+formats:
+- bmp
+- gif
+- jpeg
+- png
+- tiff
+- webp
+run:
+- identify
+- -limit
+- time
+- '10'
+- -regard-warnings
+- -verbose
+- '{file}'
+needs:
+  commands:
+  - identify
+version:
+- identify
+- -version
+classify:
+- match: (?i)cache resources exhausted|width or height exceeds limit|memory allocation
+    failed|time limit exceeded
+  as: resource-limit

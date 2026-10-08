@@ -1,0 +1,12 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Tagged Image File Format
+mime: image/tiff
+extensions:
+- tif
+- tiff
+reference: https://download.osgeo.org/libtiff/doc/TIFF6.pdf
+targets:
+- pillow
+- imagemagick
+- ffmpeg
+- tiffinfo

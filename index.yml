@@ -16,6 +16,10 @@ specs:
   - bmp
   mime: image/bmp
   reference: https://learn.microsoft.com/en-us/windows/win32/gdi/bitmap-storage
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: bmp
   kind: bmp-constraints
   path: specs/bmp/bmp-constraints/bmp-constraints.fan
@@ -31,6 +35,10 @@ specs:
   - bmp
   mime: image/bmp
   reference: https://learn.microsoft.com/en-us/windows/win32/gdi/bitmap-storage
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: bmp
   kind: bmp-edge
   path: specs/bmp/bmp-edge/bmp-edge.fan
@@ -46,6 +54,10 @@ specs:
   - bmp
   mime: image/bmp
   reference: https://learn.microsoft.com/en-us/windows/win32/gdi/bitmap-storage
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: gif
   kind: gif
   path: specs/gif/gif/gif.fan
@@ -61,6 +73,11 @@ specs:
   - gif
   mime: image/gif
   reference: https://www.w3.org/Graphics/GIF/spec-gif89a.txt
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - giftext
 - format: gif
   kind: gif-boundary
   path: specs/gif/gif-boundary/gif-boundary.fan
@@ -76,6 +93,11 @@ specs:
   - gif
   mime: image/gif
   reference: https://www.w3.org/Graphics/GIF/spec-gif89a.txt
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - giftext
 - format: gif
   kind: gif-minimal
   path: specs/gif/gif-minimal/gif-minimal.fan
@@ -90,6 +112,11 @@ specs:
   - gif
   mime: image/gif
   reference: https://www.w3.org/Graphics/GIF/spec-gif89a.txt
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - giftext
 - format: jpeg
   kind: jpeg
   path: specs/jpeg/jpeg/jpeg.fan
@@ -105,6 +132,11 @@ specs:
   - jpeg
   mime: image/jpeg
   reference: https://www.w3.org/Graphics/JPEG/itu-t81.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - djpeg
 - format: jpeg
   kind: jpeg-exotic
   path: specs/jpeg/jpeg-exotic/jpeg-exotic.fan
@@ -121,6 +153,11 @@ specs:
   - jpeg
   mime: image/jpeg
   reference: https://www.w3.org/Graphics/JPEG/itu-t81.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - djpeg
 - format: jpeg
   kind: jpeg-markers
   path: specs/jpeg/jpeg-markers/jpeg-markers.fan
@@ -137,6 +174,11 @@ specs:
   - jpeg
   mime: image/jpeg
   reference: https://www.w3.org/Graphics/JPEG/itu-t81.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - djpeg
 - format: png
   kind: png
   path: specs/png/png/png.fan
@@ -151,6 +193,10 @@ specs:
   - png
   mime: image/png
   reference: https://www.w3.org/TR/png-3/
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: png
   kind: png-32x32
   path: specs/png/png-32x32/png-32x32.fan
@@ -165,6 +211,10 @@ specs:
   - png
   mime: image/png
   reference: https://www.w3.org/TR/png-3/
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: png
   kind: png-apng
   path: specs/png/png-apng/png-apng.fan
@@ -179,6 +229,10 @@ specs:
   - png
   mime: image/png
   reference: https://www.w3.org/TR/png-3/
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: png
   kind: png-boundary
   path: specs/png/png-boundary/png-boundary.fan
@@ -193,6 +247,10 @@ specs:
   - png
   mime: image/png
   reference: https://www.w3.org/TR/png-3/
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: png
   kind: png-container
   path: specs/png/png-container/png-container.fan
@@ -208,6 +266,10 @@ specs:
   - png
   mime: image/png
   reference: https://www.w3.org/TR/png-3/
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: png
   kind: png-extensions
   path: specs/png/png-extensions/png-extensions.fan
@@ -222,6 +284,10 @@ specs:
   - png
   mime: image/png
   reference: https://www.w3.org/TR/png-3/
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: tiff
   kind: tiff
   path: specs/tiff/tiff/tiff.fan
@@ -238,6 +304,11 @@ specs:
   - tiff
   mime: image/tiff
   reference: https://download.osgeo.org/libtiff/doc/TIFF6.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - tiffinfo
 - format: tiff
   kind: tiff-all-tags
   path: specs/tiff/tiff-all-tags/tiff-all-tags.fan
@@ -254,6 +325,11 @@ specs:
   - tiff
   mime: image/tiff
   reference: https://download.osgeo.org/libtiff/doc/TIFF6.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - tiffinfo
 - format: tiff
   kind: tiff-baseline
   path: specs/tiff/tiff-baseline/tiff-baseline.fan
@@ -269,6 +345,11 @@ specs:
   - tiff
   mime: image/tiff
   reference: https://download.osgeo.org/libtiff/doc/TIFF6.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - tiffinfo
 - format: tiff
   kind: tiff-edge
   path: specs/tiff/tiff-edge/tiff-edge.fan
@@ -285,6 +366,11 @@ specs:
   - tiff
   mime: image/tiff
   reference: https://download.osgeo.org/libtiff/doc/TIFF6.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - tiffinfo
 - format: webp
   kind: webp
   path: specs/webp/webp/webp.fan
@@ -300,6 +386,11 @@ specs:
   - webp
   mime: image/webp
   reference: https://developers.google.com/speed/webp/docs/riff_container
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - webpinfo
 - format: webp
   kind: webp-bitstream
   path: specs/webp/webp-bitstream/webp-bitstream.fan
@@ -314,6 +405,11 @@ specs:
   - webp
   mime: image/webp
   reference: https://developers.google.com/speed/webp/docs/riff_container
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - webpinfo
 - format: webp
   kind: webp-container
   path: specs/webp/webp-container/webp-container.fan
@@ -329,3 +425,8 @@ specs:
   - webp
   mime: image/webp
   reference: https://developers.google.com/speed/webp/docs/riff_container
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+  - webpinfo

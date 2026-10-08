@@ -1,0 +1,26 @@
+title: Pillow
+formats:
+- bmp
+- gif
+- jpeg
+- png
+- tiff
+- webp
+run:
+- '{python}'
+- '{dir}/harness.py'
+- '{file}'
+needs:
+  python:
+  - PIL
+  pip:
+  - Pillow
+version:
+- '{python}'
+- -c
+- import PIL; print(PIL.__version__)
+classify:
+- match: DecompressionBomb
+  as: resource-limit
+- match: (?i)unsupported|not supported|unknown raw mode
+  as: unsupported

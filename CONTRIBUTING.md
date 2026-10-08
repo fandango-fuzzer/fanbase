@@ -34,6 +34,8 @@ instead.
 | `extends` | Specs it builds on, see below. |
 | `derived_from`, `derived_sha256` | The spec it was forked from, and the hash of its file at the time. `fanbase fork` writes these and `fanbase rebase` updates them. |
 | `status` | `draft`, `stable` or `deprecated`. |
+| `decodes` | How often its files should be accepted by a parser: `always`, `mostly`, `rarely` or `never`. Many specs exist to make files that do not decode (say so); `fanbase evaluate` reports against it. |
+| `targets` | The parsers to evaluate it against, if not those of its format (`specs/<format>/format.yml`). |
 | `extensions`, `mime`, `reference`, `title` | The format's file name extensions, media type, specification, and name. |
 
 The full list is in the [fanbase-cli README](https://github.com/fandango-fuzzer/fanbase-cli#metadatayml).
@@ -63,11 +65,22 @@ or do the same with `git` and `gh` by hand. Either way, before you open the pull
    `metadata.yml` is out of date, if a spec extends something that does not exist or a version that is not
    there, or if a spec makes Fandango produce no input.
 2. A spec you **changed** has a **new `version`**.
-3. A spec you **added** has a `description`, `authors` and `license`.
+3. A spec you **added** has a `description`, `authors` and `license`, and says in `decodes` how often its files
+   should be accepted by a parser.
 4. If it is based on someone else's work, `source` says whose, and its license allows this.
 
 We review the pull request; expect questions about structure and coverage. We would rather have a spec
 that is valid and well documented than one that covers everything.
+
+## How your spec does against real parsers
+
+`fanbase evaluate png-fancy` produces inputs from your spec and asks the parsers of its format (the targets in
+`targets/`, named in `specs/<format>/format.yml`) about each: how many it accepts, why it rejects the others, and how
+fast the inputs come. Every pull request that changes a spec runs it for that spec and for what builds on it, and
+shows the result in the job summary of the run; nothing in it fails the pull request. It reads best with a few
+parsers in mind: a parser that rejects a file may lack a feature, and a file that none accepts may be what the spec
+is for, so tell us in `decodes`. A parser that crashes or hangs on your inputs is counted, and is not named in the
+public summary; if you see it yourself, treat it as the responsible disclosure above says.
 
 ## Keeping a fork up to date
 

@@ -1,0 +1,17 @@
+title: libjpeg (djpeg)
+formats:
+- jpeg
+run:
+- djpeg
+- -outfile
+- /dev/null
+- '{file}'
+needs:
+  commands:
+  - djpeg
+version:
+- djpeg
+- -version
+classify:
+- match: (?i)insufficient memory|maximum supported image dimension
+  as: resource-limit

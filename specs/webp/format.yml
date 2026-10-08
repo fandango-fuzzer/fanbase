@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: WebP
+mime: image/webp
+extensions:
+- webp
+reference: https://developers.google.com/speed/webp/docs/riff_container
+targets:
+- pillow
+- imagemagick
+- ffmpeg
+- webpinfo

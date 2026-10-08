@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Portable Network Graphics
+mime: image/png
+extensions:
+- png
+reference: https://www.w3.org/TR/png-3/
+targets:
+- pillow
+- imagemagick
+- ffmpeg

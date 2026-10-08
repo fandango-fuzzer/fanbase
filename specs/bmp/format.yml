@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Windows Bitmap
+mime: image/bmp
+extensions:
+- bmp
+reference: https://learn.microsoft.com/en-us/windows/win32/gdi/bitmap-storage
+targets:
+- pillow
+- imagemagick
+- ffmpeg
