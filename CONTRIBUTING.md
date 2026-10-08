@@ -132,6 +132,12 @@ client without being asked, the public key goes into `DEFAULT_SIGNERS` in fanbas
 somewhere other than the registry it signs. It applies to a release or a commit (`.../tree/<tag>`), never to `main`, which is
 not signed between merges. Never put the private key in a secret of this repository.
 
+The key that signs the releases is `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJlNdLap2I550dZDJB6NT3Db9gijDDRk+F2BczsrloXH`, fingerprint
+`SHA256:mBALMSMJxkD+RjdVZWwFnHBSc+9FIEnM4xwrgTBb/rQ`. It is in fanbase-cli, so that `fanbase --registry
+https://github.com/fandango-fuzzer/fanbase/tree/<tag> verify` needs no key from the user, and anyone can check a fingerprint
+against this one. (A fingerprint is only worth the places it is published in: it should be on the project's site and in its
+paper too, not only here.)
+
 ## What not to put in a spec or a pull request
 
 Fanbase comes with [considerations about ethics](ETHICS.md), and they apply to contributions:
