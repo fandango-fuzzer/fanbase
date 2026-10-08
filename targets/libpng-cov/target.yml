@@ -1,0 +1,13 @@
+title: libpng, built to be measured
+formats: [png]
+run: ["/opt/cov/bin/png-harness", "{file}"]
+needs:
+  commands: [png-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libpng"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libpng"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libpng"]
+  seeds: ["/opt/cov/seeds/png/*"]

@@ -1,0 +1,5 @@
+#!/bin/sh
+# Forget what has been covered of one of the libraries: usage: cov-reset LIB   (a name of libs.json)
+set -eu
+build=$(python3 -c "import json,sys; print(json.load(open('/opt/cov/libs.json'))[sys.argv[1]]['build'])" "$1")
+find "$build" -name '*.gcda' -delete

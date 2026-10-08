@@ -1,0 +1,13 @@
+title: libjpeg-turbo, built to be measured
+formats: [jpeg]
+run: ["/opt/cov/bin/jpeg-harness", "{file}"]
+needs:
+  commands: [jpeg-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libjpeg-turbo"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libjpeg-turbo"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libjpeg-turbo"]
+  seeds: ["/opt/cov/seeds/jpeg/*"]

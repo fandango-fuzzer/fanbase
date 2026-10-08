@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""What has been covered of one of the libraries since the counters were last cleared (cov-reset), as JSON, the way
+`fanbase evaluate --coverage` reads it. usage: cov-snapshot LIB   (a name of libs.json)
+
+    {"schema": 1,
+     "lines":    {"total": N, "covered": ["png.c:101", ...]},         every line of the library's own code that can run,
+     "branches": {"total": N, "covered": ["png.c:101:0", ...]}}      and every branch, and which of them did
+
+It asks gcov about every object that was built with counting, so that code that never ran is in the total as well,
+and keeps only the files that libs.json says are the library's own for reading (the include/exclude patterns, on the
+path from the library's source folder).
+"""
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+
+def main(name: str) -> int:
+    try:
+        conf = json.loads(Path("/opt/cov/libs.json").read_text())[name]
+    except (OSError, KeyError, ValueError):
+        print(f"cov-snapshot: no library called {name!r} in /opt/cov/libs.json", file=sys.stderr)
+        return 2
+    src, build = Path(conf["src"]).resolve(), Path(conf["build"])
+    include, exclude = re.compile(conf["include"]), re.compile(conf["exclude"])
+
+    lines: dict[str, int] = {}
+    branches: dict[str, int] = {}
+    for gcno in sorted(build.rglob("*.gcno")):
+        done = subprocess.run(["gcov", "--json-format", "--stdout", "--branch-probabilities", str(gcno)],
+                              capture_output=True, text=True, cwd=build)
+        if done.returncode != 0:
+            print(f"cov-snapshot: gcov failed on {gcno}: {done.stderr.strip()[-200:]}", file=sys.stderr)
+            return 1
+        for document in done.stdout.splitlines():
+            if not document.startswith("{"):
+                continue
+            data = json.loads(document)
+            where = Path(data.get("current_working_directory", build))
+            for entry in data["files"]:
+                path = Path(entry["file"])
+                path = (path if path.is_absolute() else where / path).resolve()
+                try:
+                    relative = path.relative_to(src).as_posix()
+                except ValueError:
+                    continue  # not the library's: a system header, the harness
+                if not include.search(relative) or exclude.search(relative):
+                    continue
+                for line in entry["lines"]:
+                    key = f"{relative}:{line['line_number']}"
+                    lines[key] = lines.get(key, 0) + line["count"]
+                    for n, branch in enumerate(line.get("branches", [])):
+                        branches[f"{key}:{n}"] = branches.get(f"{key}:{n}", 0) + branch["count"]
+
+    document = {
+        "schema": 1,
+        "lines": {"total": len(lines), "covered": sorted(k for k, c in lines.items() if c > 0)},
+        "branches": {"total": len(branches), "covered": sorted(k for k, c in branches.items() if c > 0)},
+    }
+    json.dump(document, sys.stdout)
+    print()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1]) if len(sys.argv) == 2 else 2)

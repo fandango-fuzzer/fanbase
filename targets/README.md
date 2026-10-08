@@ -18,6 +18,19 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `webpinfo` | webp | `webpinfo` (libwebp) |
 | `giftext` | gif | `giftext` (giflib) |
 
+The `*-cov` targets are the libraries built to be measured, from [`coverage/`](../coverage/README.md), and run only in
+its image, with `fanbase evaluate --coverage`: they are not named by any format, and `fanbase targets` shows them as
+not ready anywhere else.
+
+| target | judges | built from |
+|---|---|---|
+| `libpng-cov` | png | libpng 1.6.59 |
+| `libjpeg-turbo-cov` | jpeg | libjpeg-turbo 3.2.0 |
+| `giflib-cov` | gif | giflib 5.2.2 |
+| `libtiff-cov` | tiff | libtiff 4.7.2 |
+| `libwebp-cov` | webp | libwebp 1.6.0 |
+| `stb-bmp-cov` | bmp | stb_image, BMP only |
+
 On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools`,
 and `pip install Pillow`. `fanbase targets` says which of them can run on your machine.
 

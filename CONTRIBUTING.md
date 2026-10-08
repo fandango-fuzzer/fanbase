@@ -82,6 +82,11 @@ parsers in mind: a parser that rejects a file may lack a feature, and a file tha
 is for, so tell us in `decodes`. A parser that crashes or hangs on your inputs is counted, and is not named in the
 public summary; if you see it yourself, treat it as the responsible disclosure above says.
 
+`fanbase evaluate --coverage` goes further for the formats whose parsers are built to be measured (`coverage/`, run in
+its image): it says how much of the library's code your spec's files run, how that grows from the first file to the
+thousandth, and what they run that real files of the format do not, and the reverse. Once a week the same is measured
+for every spec (`coverage.yml`). A curve that is flat from the first file says the spec makes files that are all alike.
+
 The same evaluation runs on `main` for every spec, after each merge and once a week. There, the details of a crash
 or a hang (the input, what the parser said, how to make the file again) are kept in one file that is encrypted to a
 public key in [`.github/incident-recipients.txt`](.github/incident-recipients.txt), so that only the maintainer who

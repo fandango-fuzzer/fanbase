@@ -1,0 +1,13 @@
+title: libwebp, built to be measured
+formats: [webp]
+run: ["/opt/cov/bin/webp-harness", "{file}"]
+needs:
+  commands: [webp-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libwebp"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libwebp"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libwebp"]
+  seeds: ["/opt/cov/seeds/webp/*"]

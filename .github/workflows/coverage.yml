@@ -1,0 +1,123 @@
+name: coverage
+
+# How much of the libraries that read the registry's formats do the files of each spec run, and how does that grow
+# with the number of files? Against a few real files of each format. Once a week, and by hand, on main only: it
+# runs in the image of coverage-image.yml, where the libraries are built to be measured.
+#
+# What the libraries do on the files is kept as evaluate-main.yml keeps it (see there): nothing about a crash or a
+# hang is public, the details go in one encrypted file that is the same size whatever it holds, kept as an
+# artifact and mailed by a second job that has the secrets and runs none of the registry's code.
+#
+# This needs fanbase 0.5 or later.
+
+on:
+  schedule:
+    - cron: "0 4 * * 0" # Sundays, 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coverage
+  cancel-in-progress: false
+
+jobs:
+  coverage:
+    if: github.repository_owner == 'fandango-fuzzer'
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    container:
+      image: ghcr.io/fandango-fuzzer/fanbase-coverage:latest
+    outputs:
+      record: ${{ steps.record.outputs.found }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - run: pip install --no-cache-dir --upgrade "fanbase>=0.5"
+
+      - name: Which targets can run here
+        run: fanbase targets
+
+      - name: Is there a key to keep the private record with
+        id: key
+        run: |
+          if grep -Eqs '^(age1|ssh-)' .github/incident-recipients.txt; then
+            echo "collect=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "collect=no" >> "$GITHUB_OUTPUT"
+            echo "The private record is not collected in this run: .github/incident-recipients.txt holds no key."
+          fi
+
+      - name: Measure
+        env:
+          COLLECT: ${{ steps.key.outputs.collect }}
+        run: |
+          # One seed for a whole week, as in evaluate-main.yml.
+          seed="$(date -u +%G%V)"
+          private=""
+          if [ "$COLLECT" = "yes" ]; then
+            private="--incidents private --incident-recipients .github/incident-recipients.txt"
+          fi
+          fanbase evaluate --all --coverage-only -n 1000 --curve 1,10,100,1000 --seed "$seed" --budget 100 \
+            --hide-crashes $private --markdown --json-file coverage.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Is there a private record
+        id: record
+        if: always()
+        run: |
+          if [ -f private/evaluation-private.age ]; then
+            echo "found=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage.json
+          if-no-files-found: ignore
+
+      # Encrypted, and the same size whatever it holds: it is for whoever has the private key.
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.record.outputs.found == 'yes'
+        with:
+          name: coverage-private
+          path: private/evaluation-private.age
+          retention-days: 30
+          if-no-files-found: error
+
+  mail:
+    needs: coverage
+    if: always() && needs.coverage.outputs.record == 'yes' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-private
+          path: private
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "fanbase>=0.5"
+
+      - name: Mail the private record
+        env:
+          INCIDENT_EMAIL: ${{ secrets.INCIDENT_EMAIL }}
+          FANBASE_SMTP_HOST: ${{ secrets.FANBASE_SMTP_HOST }}
+          FANBASE_SMTP_PORT: ${{ secrets.FANBASE_SMTP_PORT }}
+          FANBASE_SMTP_USER: ${{ secrets.FANBASE_SMTP_USER }}
+          FANBASE_SMTP_PASSWORD: ${{ secrets.FANBASE_SMTP_PASSWORD }}
+          FANBASE_SMTP_FROM: ${{ secrets.FANBASE_SMTP_FROM }}
+        run: |
+          if [ -z "$INCIDENT_EMAIL" ] || [ -z "$FANBASE_SMTP_HOST" ]; then
+            echo "Mail is not set up here: the private record is in the artifact of this run (coverage-private)."
+            exit 0
+          fi
+          fanbase incidents send private/evaluation-private.age --to "$INCIDENT_EMAIL"
