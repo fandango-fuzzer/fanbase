@@ -1,0 +1,157 @@
+name: quality
+
+# How well does each spec do? Once a week, and by hand, on main only: in the image of coverage-image.yml (the parsers of
+# every format, and the libraries built to be measured), every spec's files are asked of the parsers, and counted for how
+# much of a library they reach, against real files. What is kept is quality.json, attached to the latest release of this
+# repository, where `fanbase list --quality` finds it; and the run says what changed since the one before.
+#
+# What the parsers do on a file is kept as evaluate-main.yml keeps it (see there): nothing about a crash or a hang is
+# public, the details go in one encrypted file that is the same size whatever it holds, kept as an artifact and mailed
+# by a job that has the secrets and runs none of the registry's code. The job that attaches quality.json has a token that
+# can write to the release and also runs none of it: it takes the file the measuring made and uploads it.
+#
+# This needs fanbase 0.5 or later.
+
+on:
+  schedule:
+    - cron: "0 4 * * 0" # Sundays, 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality
+  cancel-in-progress: false
+
+jobs:
+  measure:
+    if: github.repository_owner == 'fandango-fuzzer'
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    container:
+      image: ghcr.io/fandango-fuzzer/fanbase-coverage:latest
+    outputs:
+      record: ${{ steps.record.outputs.found }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - run: pip install --no-cache-dir --upgrade "fanbase>=0.5"
+
+      - name: Which targets can run here
+        run: fanbase targets
+
+      - name: Is there a key to keep the private record with
+        id: key
+        run: |
+          if grep -Eqs '^(age1|ssh-)' .github/incident-recipients.txt; then
+            echo "collect=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "collect=no" >> "$GITHUB_OUTPUT"
+            echo "The private record is not collected in this run: .github/incident-recipients.txt holds no key."
+          fi
+
+      - name: Measure
+        env:
+          COLLECT: ${{ steps.key.outputs.collect }}
+        run: |
+          # One seed for a whole week, as in evaluate-main.yml. The earlier results are the latest release's.
+          seed="$(date -u +%G%V)"
+          private=""
+          if [ "$COLLECT" = "yes" ]; then
+            private="--incidents private --incident-recipients .github/incident-recipients.txt"
+          fi
+          fanbase evaluate --all --coverage -n 1000 --curve 1,10,100,1000 --seed "$seed" --budget 100 \
+            --hide-crashes $private \
+            --compare-with "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/quality.json" \
+            --markdown --json-file evaluation.json >> "$GITHUB_STEP_SUMMARY"
+          fanbase quality build evaluation.json -o quality.json
+
+      - name: Is there a private record
+        id: record
+        if: always()
+        run: |
+          if [ -f private/evaluation-private.age ]; then
+            echo "found=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality
+          path: |
+            quality.json
+            evaluation.json
+          if-no-files-found: ignore
+
+      # Encrypted, and the same size whatever it holds: it is for whoever has the private key.
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.record.outputs.found == 'yes'
+        with:
+          name: quality-private
+          path: private/evaluation-private.age
+          retention-days: 30
+          if-no-files-found: error
+
+  publish:
+    needs: measure
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: quality
+          path: results
+
+      - name: Attach quality.json to the latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>/dev/null || true)"
+          if [ -z "$tag" ]; then
+            echo "There is no release yet to attach the results to."
+            exit 0
+          fi
+          gh release upload "$tag" results/quality.json --repo "$GITHUB_REPOSITORY" --clobber
+          echo "quality.json is attached to $tag"
+
+  mail:
+    needs: measure
+    if: always() && needs.measure.outputs.record == 'yes' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # the secrets are those of the Environment `incidents`, which only `main` can use (see MAINTAINING.md)
+    environment: incidents
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: quality-private
+          path: private
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "fanbase>=0.5"
+
+      - name: Mail the private record
+        env:
+          INCIDENT_EMAIL: ${{ secrets.INCIDENT_EMAIL }}
+          FANBASE_SMTP_HOST: ${{ secrets.FANBASE_SMTP_HOST }}
+          FANBASE_SMTP_PORT: ${{ secrets.FANBASE_SMTP_PORT }}
+          FANBASE_SMTP_USER: ${{ secrets.FANBASE_SMTP_USER }}
+          FANBASE_SMTP_PASSWORD: ${{ secrets.FANBASE_SMTP_PASSWORD }}
+          FANBASE_SMTP_FROM: ${{ secrets.FANBASE_SMTP_FROM }}
+        run: |
+          if [ -z "$INCIDENT_EMAIL" ] || [ -z "$FANBASE_SMTP_HOST" ]; then
+            echo "Mail is not set up here: the private record is in the artifact of this run (quality-private)."
+            exit 0
+          fi
+          fanbase incidents send private/evaluation-private.age --to "$INCIDENT_EMAIL"

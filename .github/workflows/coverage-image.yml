@@ -1,0 +1,60 @@
+name: coverage-image
+
+# Builds the image of the libraries that are built to be measured (coverage/) and publishes it as
+# ghcr.io/<owner>/fanbase-coverage, which quality.yml runs in, so that nothing is compiled on every run.
+# It builds when coverage/ changes on main, and by hand. It never runs for a pull request: building it runs
+# the recipe in coverage/, which is code, and publishing needs the token.
+#
+# Once, after the first publication: on GitHub, the package's settings (Packages > fanbase-coverage >
+# Package settings) link it to this repository and make it public, so that pulling it needs no login.
+#
+# Safety: the recipe is built by a step that has no token; the step that has it (the push) runs no code
+# of this repository and gives it to no action.
+#
+# This needs fanbase 0.5 or later (the image installs it).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "coverage/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coverage-image
+  cancel-in-progress: false
+
+jobs:
+  image:
+    if: github.repository_owner == 'fandango-fuzzer'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build
+        run: docker build --build-arg 'FANBASE=fanbase>=0.5' -t fanbase-coverage coverage/
+
+      - name: A harness runs, and the counters are written
+        run: |
+          docker run --rm fanbase-coverage sh -c 'cd /tmp && png-harness /opt/cov/seeds/png/plain.png && cov-snapshot libpng | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")"'
+
+      - name: Publish
+        if: github.ref == 'refs/heads/main'
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/fanbase-coverage"
+          echo "$TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker tag fanbase-coverage "$image:latest"
+          docker tag fanbase-coverage "$image:${GITHUB_SHA::12}"
+          docker push "$image:latest"
+          docker push "$image:${GITHUB_SHA::12}"

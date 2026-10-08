@@ -1,0 +1,12 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: JPEG File Interchange Format
+mime: image/jpeg
+extensions:
+- jpg
+- jpeg
+reference: https://www.w3.org/Graphics/JPEG/itu-t81.pdf
+targets:
+- pillow
+- imagemagick
+- ffmpeg
+- djpeg

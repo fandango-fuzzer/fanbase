@@ -2,9 +2,13 @@ format: gif
 kind: gif-boundary
 description: GIF built from fixed edge-case values (huge screens, flag combinations,
   unknown extensions)
-fanbase: 0.4.2
+fanbase: 0.5.0
 fandango: '>=1.3'
 requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: rarely
 version: '1.0'
 title: Graphics Interchange Format
 extensions:

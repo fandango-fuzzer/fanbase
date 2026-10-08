@@ -1,0 +1,12 @@
+title: libwebp (webpinfo)
+formats:
+- webp
+run:
+- webpinfo
+- '{file}'
+needs:
+  commands:
+  - webpinfo
+version:
+- webpinfo
+- -version

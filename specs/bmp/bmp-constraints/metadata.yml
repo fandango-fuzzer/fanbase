@@ -2,9 +2,13 @@ format: bmp
 kind: bmp-constraints
 description: BMP with core, info, V4 and V5 headers and RLE8, sizes tied together
   with constraints
-fanbase: 0.4.2
+fanbase: 0.5.0
 fandango: '>=1.3'
 requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
 version: '1.0'
 title: Windows Bitmap
 extensions:

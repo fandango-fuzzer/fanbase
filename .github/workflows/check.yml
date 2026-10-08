@@ -1,8 +1,12 @@
 name: check
 
-# Every change to the registry has to keep two things true:
-# - index.yml and the metadata.yml files are in step with the specs, and
-# - every spec still loads in Fandango and produces output.
+# Every change to the registry has to keep these true:
+# - index.yml and the metadata.yml files are in step with the specs, and what specs extend exists;
+# - a spec that changed has a new version (pull requests);
+# - every spec still loads in Fandango and produces output: the specs that a pull request changes and the
+#   specs that build on them, and on main all of them.
+#
+# This needs fanbase 0.5 or later.
 
 on:
   push:
@@ -11,7 +15,7 @@ on:
 
 jobs:
   index:
-    name: index is up to date
+    name: registry is in order
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,10 +24,28 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install fanbase
+      - run: pip install "fanbase>=0.5"
 
-      - name: fanbase reindex --check
-        run: fanbase reindex --check
+      - name: fanbase check
+        run: fanbase check --no-generate
+
+  versions:
+    name: changed specs have a new version
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "fanbase>=0.5"
+
+      - name: fanbase changes
+        env:
+          BASE: https://github.com/${{ github.event.pull_request.base.repo.full_name }}/tree/${{ github.base_ref }}
+        run: fanbase changes --base "$BASE" --check
 
   specs:
     name: specs produce output
@@ -35,22 +57,17 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install fandango-fuzzer
+      - run: pip install fandango-fuzzer "fanbase>=0.5"
 
-      - name: Produce three inputs from every spec
+      # A pull request is asked about what it changes and what builds on that; main, about every spec.
+      - name: Produce three inputs from the specs
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: https://github.com/${{ github.event.pull_request.base.repo.full_name }}/tree/${{ github.base_ref }}
         run: |
-          failed=0
-          for spec in specs/*/*/*.fan; do
-            out="$(mktemp -d)/inputs"
-            echo "::group::$spec"
-            if timeout 300 fandango fuzz -f "$spec" -n 3 -d "$out" \
-                && [ "$(ls "$out" | wc -l)" -ge 1 ] \
-                && [ -n "$(find "$out" -type f -size +0c | head -n 1)" ]; then
-              echo "ok: $(ls "$out" | wc -l) files"
-            else
-              echo "::error file=$spec::no inputs could be produced from this spec"
-              failed=1
-            fi
-            echo "::endgroup::"
-          done
-          exit $failed
+          if [ "$EVENT" = "pull_request" ]; then
+            which="--changed --base $BASE"
+          else
+            which=""
+          fi
+          fanbase check --count 3 --timeout 300 -j 4 $which

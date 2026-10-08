@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Graphics Interchange Format
+mime: image/gif
+extensions:
+- gif
+reference: https://www.w3.org/Graphics/GIF/spec-gif89a.txt
+targets:
+- pillow
+- imagemagick
+- ffmpeg
+- giftext

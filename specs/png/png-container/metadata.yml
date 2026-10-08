@@ -2,9 +2,13 @@ format: png
 kind: png-container
 description: PNG chunk structure only; image data is arbitrary bytes, so most files
   do not decode
-fanbase: 0.4.2
+fanbase: 0.5.0
 fandango: '>=1.3'
 requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: never
 version: '1.0'
 title: Portable Network Graphics
 extensions:

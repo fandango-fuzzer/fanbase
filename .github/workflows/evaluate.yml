@@ -1,0 +1,61 @@
+name: evaluate
+
+# How do the specs that a pull request changes, and the specs that build on them, do against the
+# parsers of their formats? Validity and throughput, in the job summary of the run.
+#
+# This needs fanbase 0.5 or later.
+#
+# Safety: it runs on `pull_request`, with a read-only token and no secrets, because a pull request from
+# a fork brings its own specs and targets, and those are code. Crashes and hangs of a parser are counted
+# but not named (--hide-crashes), and no input is kept: a parser that crashes on a generated file may have
+# a bug that is not fixed yet, and ETHICS.md says what we publish about those.
+#
+# What the parsers did on the specs that are already in the registry is evaluate-main.yml: on main, once
+# a week and by hand, where the details of a crash or a hang can be kept for those who report it, privately.
+# There is nothing to run by hand here: a run that hides crashes would only lose them.
+
+on:
+  pull_request:
+    paths:
+      - "specs/**"
+      - "targets/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evaluate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: The parsers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck
+
+      - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow
+
+      - name: Which targets can run here
+        run: fanbase targets
+
+      - name: Evaluate
+        env:
+          BASE: https://github.com/${{ github.event.pull_request.base.repo.full_name }}/tree/${{ github.base_ref }}
+        run: |
+          fanbase evaluate --changed --base "$BASE" -n 100 --budget 40 --hide-crashes --require-targets \
+            --markdown --json-file evaluation.json >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evaluation
+          path: evaluation.json

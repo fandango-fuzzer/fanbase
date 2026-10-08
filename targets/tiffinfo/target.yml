@@ -1,0 +1,9 @@
+title: libtiff (tiffinfo)
+formats:
+- tiff
+run:
+- tiffinfo
+- '{file}'
+needs:
+  commands:
+  - tiffinfo

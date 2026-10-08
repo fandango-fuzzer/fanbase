@@ -1,0 +1,81 @@
+name: release
+
+# On the first of each month, and on request (for a milestone): if the registry has changed since its last release,
+# tag it and publish a release whose notes say what changed. Releases give users something fixed to point at
+# (`fanbase --registry https://github.com/fandango-fuzzer/fanbase/tree/<tag> ...`), and the Zenodo
+# integration of this repository, if it is switched on, archives each published release under a DOI that is
+# permanent: that is why it is monthly and not weekly. quality.yml still refreshes the quality.json of the latest
+# release every week.
+#
+# This needs fanbase 0.5 or later.
+
+on:
+  schedule:
+    - cron: "0 6 1 * *" # the 1st of each month, 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the tags are how the last release is found
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "fanbase>=0.5"
+
+      - name: The registry is in order
+        run: fanbase check --no-generate
+
+      - name: What changed since the last release
+        id: notes
+        run: |
+          last="$(git tag --list 'v*' --sort=-v:refname | head -n 1)"
+          if [ -n "$last" ]; then
+            fanbase changes --base "https://github.com/${GITHUB_REPOSITORY}/tree/${last}" --markdown > notes.md
+            if grep -q '^No changes\.' notes.md; then
+              echo "release=no" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          else
+            echo "The first release of the registry." > notes.md
+          fi
+          tag="v$(date -u +%Y.%m.%d)"
+          n=1
+          while git rev-parse -q --verify "refs/tags/${tag}" > /dev/null; do
+            tag="v$(date -u +%Y.%m.%d).${n}"
+            n=$((n + 1))
+          done
+          echo "release=yes" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+      # Clients that have the maintainer's key built in refuse a release whose index.yml is not signed by it (a
+      # pinned tag is where that key is required), and a Zenodo record of such a release cannot be taken back. So an
+      # unsigned release is not made: the run fails, which is the reminder to sign (MAINTAINING.md, step 6). The key
+      # is the one in the installed fanbase, not one this repository says.
+      - name: The index is signed by the maintainer
+        if: steps.notes.outputs.release == 'yes'
+        run: |
+          key="$(python -c 'from fanbase.signing import DEFAULT_SIGNERS; print(DEFAULT_SIGNERS[0])')"
+          if ! fanbase verify --signer "$key"; then
+            echo "::error::index.yml is not signed by the maintainer's key, or was changed after it was signed. Run 'fanbase reindex && fanbase sign --key KEY', commit index.yml.sig, and run this again (MAINTAINING.md, step 6)."
+            exit 1
+          fi
+
+      - name: Publish the release
+        if: steps.notes.outputs.release == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.notes.outputs.tag }}
+        run: gh release create "$TAG" --title "Fanbase $TAG" --notes-file notes.md --target "$GITHUB_SHA"

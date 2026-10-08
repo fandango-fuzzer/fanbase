@@ -2,9 +2,13 @@ format: jpeg
 kind: jpeg-exotic
 description: JPEG with unusual features (12-bit samples, 16-bit tables, arithmetic,
   lossless, DNL); files do not decode
-fanbase: 0.4.2
+fanbase: 0.5.0
 fandango: '>=1.3'
 requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: never
 version: '1.0'
 title: JPEG File Interchange Format
 extensions:

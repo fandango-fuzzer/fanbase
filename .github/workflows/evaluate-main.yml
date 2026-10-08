@@ -1,0 +1,157 @@
+name: evaluate-main
+
+# The evaluation of evaluate.yml, for everything that is in the registry, on the events that are trusted:
+# a push to main, once a week, and by hand. It is the only place where the private record of what the
+# parsers did on the generated files is collected, because it is the only one that never runs what a
+# stranger sent: a pull request from a fork brings its own specs and targets, and those are code.
+#
+# What a parser that crashes or hangs on a generated file may have is a bug that is not fixed yet, and
+# ETHICS.md says what we publish about those. So nothing is public: the report in the job summary counts a
+# crash or a hang as a plain error (--hide-crashes), and the details go into one file, encrypted with
+# `age` to the public key in .github/incident-recipients.txt, that only the holder of the private key can
+# read. That file is the same size whether or not anything broke, it is written on every run, and it is
+# kept as an artifact (30 days), so it is safe where anyone can see it. If the secrets below are set, a
+# second job mails it too, on the weekly run and by hand (not for every push: a push only makes the artifact).
+#
+# Setting it up (once, by whoever reports vulnerabilities; see .github/incident-recipients.txt):
+#   1. age-keygen -o fanbase-incidents.key; put the public key (age1...) in .github/incident-recipients.txt.
+#   2. Secrets of the Environment `incidents` (Settings > Environments; only main can use it), only to mail the record:
+#        INCIDENT_EMAIL            where to send it
+#        FANBASE_SMTP_HOST         the mail server
+#        FANBASE_SMTP_PORT         465 (TLS from the start; the default) or 587 (STARTTLS)
+#        FANBASE_SMTP_USER, FANBASE_SMTP_PASSWORD, FANBASE_SMTP_FROM
+#   3. Read a record: fanbase incidents open evaluation-private.age --identity fanbase-incidents.key
+# Without the key, nothing is collected; without the secrets, the artifact is all there is.
+#
+# Safety: the job that runs the registry's code (evaluate) has no secrets at all, not even in its
+# environment. The job that has them (mail) runs none of the registry's code: it installs fanbase from
+# PyPI and sends one file. No action here is given a secret.
+#
+# This needs fanbase 0.5 or later.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "specs/**"
+      - "targets/**"
+  schedule:
+    - cron: "0 3 * * 0" # Sundays, 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evaluate-main
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: github.repository_owner == 'fandango-fuzzer'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      record: ${{ steps.record.outputs.found }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: The parsers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends age imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck
+
+      - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow
+
+      - name: Which targets can run here
+        run: fanbase targets
+
+      - name: Is there a key to keep the private record with
+        id: key
+        run: |
+          if grep -Eqs '^(age1|ssh-)' .github/incident-recipients.txt; then
+            echo "collect=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "collect=no" >> "$GITHUB_OUTPUT"
+            echo "The private record is not collected in this run: .github/incident-recipients.txt holds no key."
+          fi
+
+      - name: Evaluate
+        env:
+          COLLECT: ${{ steps.key.outputs.collect }}
+        run: |
+          # One seed for a whole week: the runs of a week agree, and each week looks at other inputs.
+          seed="$(date -u +%G%V)"
+          private=""
+          if [ "$COLLECT" = "yes" ]; then
+            private="--incidents private --incident-recipients .github/incident-recipients.txt"
+          fi
+          fanbase evaluate --all -n 100 --seed "$seed" --budget 40 --hide-crashes --require-targets \
+            $private --markdown --json-file evaluation.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Is there a private record
+        id: record
+        if: always()
+        run: |
+          if [ -f private/evaluation-private.age ]; then
+            echo "found=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evaluation
+          path: evaluation.json
+          if-no-files-found: ignore
+
+      # Encrypted, and the same size whatever it holds: it is for whoever has the private key.
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.record.outputs.found == 'yes'
+        with:
+          name: evaluation-private
+          path: private/evaluation-private.age
+          retention-days: 30
+          if-no-files-found: error
+
+  mail:
+    needs: evaluate
+    # Mailed on the weekly run and by hand, not for every push (a push still makes the artifact): the week's runs use one seed.
+    if: always() && needs.evaluate.outputs.record == 'yes' && github.ref == 'refs/heads/main' && github.event_name != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # the secrets are those of the Environment `incidents`, which only `main` can use (see MAINTAINING.md)
+    environment: incidents
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: evaluation-private
+          path: private
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "fanbase>=0.5"
+
+      - name: Mail the private record
+        env:
+          INCIDENT_EMAIL: ${{ secrets.INCIDENT_EMAIL }}
+          FANBASE_SMTP_HOST: ${{ secrets.FANBASE_SMTP_HOST }}
+          FANBASE_SMTP_PORT: ${{ secrets.FANBASE_SMTP_PORT }}
+          FANBASE_SMTP_USER: ${{ secrets.FANBASE_SMTP_USER }}
+          FANBASE_SMTP_PASSWORD: ${{ secrets.FANBASE_SMTP_PASSWORD }}
+          FANBASE_SMTP_FROM: ${{ secrets.FANBASE_SMTP_FROM }}
+        run: |
+          if [ -z "$INCIDENT_EMAIL" ] || [ -z "$FANBASE_SMTP_HOST" ]; then
+            echo "Mail is not set up here: the private record is in the artifact of this run (evaluation-private)."
+            exit 0
+          fi
+          fanbase incidents send private/evaluation-private.age --to "$INCIDENT_EMAIL"

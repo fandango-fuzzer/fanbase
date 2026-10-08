@@ -1,0 +1,25 @@
+title: FFmpeg
+formats:
+- bmp
+- gif
+- jpeg
+- png
+- tiff
+- webp
+run:
+- ffmpeg
+- -v
+- error
+- -xerror
+- -nostdin
+- -i
+- '{file}'
+- -f
+- 'null'
+- '-'
+needs:
+  commands:
+  - ffmpeg
+version:
+- ffmpeg
+- -version

@@ -1,0 +1,13 @@
+title: giflib, built to be measured
+formats: [gif]
+run: ["/opt/cov/bin/gif-harness", "{file}"]
+needs:
+  commands: [gif-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "giflib"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "giflib"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "giflib"]
+  seeds: ["/opt/cov/seeds/gif/*"]

@@ -1,0 +1,50 @@
+{
+  "libpng": {
+    "title": "libpng",
+    "version": "1.6.59",
+    "src": "/opt/cov/src/libpng",
+    "build": "/opt/cov/build/libpng",
+    "include": "^png[a-z]*\\.c$",
+    "exclude": "^(pngtest|pngwrite|pngwio|pngwtran|pngwutil|pngpread)\\.c$"
+  },
+  "libjpeg-turbo": {
+    "title": "libjpeg-turbo",
+    "version": "3.2.0",
+    "src": "/opt/cov/src/libjpeg-turbo",
+    "build": "/opt/cov/build/libjpeg-turbo",
+    "include": "^src/(jd[a-z0-9]*|jerror|jmemmgr|jmemnobs|jutils|jcomapi)\\.c$",
+    "exclude": "^src/(jdtrans|jdcol565|jdmrg565)\\.c$"
+  },
+  "giflib": {
+    "title": "giflib",
+    "version": "5.2.2",
+    "src": "/opt/cov/src/giflib",
+    "build": "/opt/cov/src/giflib",
+    "include": "^(dgif_lib|gifalloc|gif_err|gif_hash|openbsd-reallocarray)\\.c$",
+    "exclude": "^$"
+  },
+  "libtiff": {
+    "title": "libtiff",
+    "version": "4.7.2",
+    "src": "/opt/cov/src/libtiff",
+    "build": "/opt/cov/build/libtiff",
+    "include": "^libtiff/tif_[a-z0-9_]*\\.c$",
+    "exclude": "^libtiff/tif_(write|win32|unix|vms|acorn|apple|atari|msdos|stream|tile_write)\\.c$|^libtiff/tif_(jbig|lerc|webp|luv|next|thunder|ojpeg|pixarlog|dirwrite)\\.c$"
+  },
+  "libwebp": {
+    "title": "libwebp",
+    "version": "1.6.0",
+    "src": "/opt/cov/src/libwebp",
+    "build": "/opt/cov/build/libwebp",
+    "include": "^src/(dec|dsp|utils|demux)/[a-z0-9_]*\\.c$",
+    "exclude": "^src/dsp/(enc|cost|ssim|lossless_enc)[a-z0-9_]*\\.c$|^src/dsp/(neon|sse|msa|mips)[a-z0-9_]*\\.c$|^src/utils/(bit_writer|huffman_encode)_utils\\.c$"
+  },
+  "stb-bmp": {
+    "title": "stb_image (BMP)",
+    "version": "2c980bb",
+    "src": "/opt/cov/src/stb",
+    "build": "/opt/cov/build/stb-bmp",
+    "include": "^stb_image\\.h$",
+    "exclude": "^$"
+  }
+}

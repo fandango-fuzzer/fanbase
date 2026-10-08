@@ -1,0 +1,24 @@
+name: A spec has a problem
+description: A spec produces files that are wrong, or does not cover something it should.
+labels: ["spec"]
+body:
+  - type: input
+    id: spec
+    attributes:
+      label: Spec
+      description: As `fanbase list` shows it.
+      placeholder: "png/png-apng"
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: "`fanbase --version`, `fandango --version`, and the spec's `version`."
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+      description: What the spec produces, and what you expected. Please do not attach inputs that trigger an unfixed bug in other software; see ETHICS.md.
+    validations:
+      required: true

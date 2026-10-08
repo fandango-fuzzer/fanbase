@@ -1,0 +1,13 @@
+title: stb_image (BMP), built to be measured
+formats: [bmp]
+run: ["/opt/cov/bin/bmp-harness", "{file}"]
+needs:
+  commands: [bmp-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "stb-bmp"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "stb-bmp"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "stb-bmp"]
+  seeds: ["/opt/cov/seeds/bmp/*"]

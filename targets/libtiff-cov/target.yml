@@ -1,0 +1,13 @@
+title: libtiff, built to be measured
+formats: [tiff]
+run: ["/opt/cov/bin/tiff-harness", "{file}"]
+needs:
+  commands: [tiff-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libtiff"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libtiff"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libtiff"]
+  seeds: ["/opt/cov/seeds/tiff/*"]

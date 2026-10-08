@@ -1,0 +1,9 @@
+title: giflib (giftext)
+formats:
+- gif
+run:
+- giftext
+- '{file}'
+needs:
+  commands:
+  - giftext
