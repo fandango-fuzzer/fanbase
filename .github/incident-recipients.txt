@@ -1,13 +1,2 @@
-# PLACEHOLDER: there is no key here yet, so no private record is collected.
-#
-# This file holds the PUBLIC age key(s) that the private record of the evaluation of main (what a parser
-# did on a generated file: see .github/workflows/evaluate-main.yml) is encrypted to. Only the one with the
-# private key can read the record; the public key is safe to commit. Add one key per line.
-#
-# To set it up, once, on your own machine (the private key never leaves it, and never goes in this repository):
-#
-#     age-keygen -o fanbase-incidents.key       # writes the private key; prints "Public key: age1..."
-#     age-keygen -y fanbase-incidents.key       # prints the public key again
-#
-# Then replace everything in this file with that one line (it begins with age1). Lines that start with
-# # and empty lines are ignored.
+# The PUBLIC age key that the private evaluation record is encrypted to (see .github/workflows/evaluate-main.yml).
+age1ykwm9dxquww508tvsszevx734u065cpenyh3kfuhyhl7puf4r44q7s93vw
