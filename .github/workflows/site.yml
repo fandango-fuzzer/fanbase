@@ -1,0 +1,67 @@
+name: site
+
+# The site to browse the registry (`fanbase site`): its formats and specs, how well they do (the quality.json of the
+# latest release), how to cite them. Published with GitHub Pages: once, an admin of the repository switches that on
+# (Settings > Pages > Source: GitHub Actions). It is rebuilt when the specs change on main, once a week after
+# quality.yml has measured, and by hand. It never runs for a pull request.
+#
+# Safety: building reads the specs and never runs them, and what the specs say is escaped on the pages (see
+# fanbase-cli). The step that builds has no token for anything but reading; the deployment is a step of its own
+# that runs none of the repository's code.
+#
+# This needs fanbase 0.5 or later.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "specs/**"
+      - ".github/workflows/site.yml"
+  schedule:
+    - cron: "0 7 * * 0" # Sundays, 07:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository_owner == 'fandango-fuzzer'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install "fanbase>=0.5"
+
+      - name: Build the site
+        run: |
+          fanbase site _site --title "Fanbase" \
+            --quality "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/quality.json"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
