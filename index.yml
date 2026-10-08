@@ -13,6 +13,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: mostly
   version: '1.0'
   title: Windows Bitmap
   extensions:
@@ -35,6 +36,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Windows Bitmap
   extensions:
@@ -57,6 +59,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Windows Bitmap
   extensions:
@@ -79,6 +82,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Graphics Interchange Format
   extensions:
@@ -102,6 +106,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: rarely
   version: '1.0'
   title: Graphics Interchange Format
   extensions:
@@ -124,6 +129,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Graphics Interchange Format
   extensions:
@@ -146,6 +152,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: JPEG File Interchange Format
   extensions:
@@ -170,6 +177,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: never
   version: '1.0'
   title: JPEG File Interchange Format
   extensions:
@@ -194,6 +202,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: rarely
   version: '1.0'
   title: JPEG File Interchange Format
   extensions:
@@ -217,6 +226,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Portable Network Graphics
   extensions:
@@ -239,6 +249,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Portable Network Graphics
   extensions:
@@ -261,6 +272,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Portable Network Graphics
   extensions:
@@ -283,6 +295,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Portable Network Graphics
   extensions:
@@ -306,6 +319,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: never
   version: '1.0'
   title: Portable Network Graphics
   extensions:
@@ -328,6 +342,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Portable Network Graphics
   extensions:
@@ -351,6 +366,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Tagged Image File Format
   extensions:
@@ -375,6 +391,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Tagged Image File Format
   extensions:
@@ -398,6 +415,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Tagged Image File Format
   extensions:
@@ -422,6 +440,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: Tagged Image File Format
   extensions:
@@ -446,6 +465,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: WebP
   extensions:
@@ -468,6 +488,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: rarely
   version: '1.0'
   title: WebP
   extensions:
@@ -491,6 +512,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
+  decodes: always
   version: '1.0'
   title: WebP
   extensions:
