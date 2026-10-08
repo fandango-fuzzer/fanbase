@@ -11,7 +11,7 @@ FROM python:3.12-slim
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential cmake ninja-build pkg-config git ca-certificates curl \
-        zlib1g-dev libjpeg-dev liblzma-dev libzstd-dev imagemagick webp age ffmpeg libjpeg-turbo-progs libtiff-tools giflib-tools \
+        zlib1g-dev libjpeg-dev liblzma-dev libzstd-dev imagemagick webp age ffmpeg libjpeg-turbo-progs libtiff-tools giflib-tools pngcheck \
     && rm -rf /var/lib/apt/lists/*
 
 # `fanbase` is the one to evaluate with; pass FANBASE=/path/to/a.whl to build with a version that is not released.

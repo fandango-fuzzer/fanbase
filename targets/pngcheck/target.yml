@@ -1,0 +1,9 @@
+title: pngcheck
+formats: [png]
+run: ["pngcheck", "-q", "{file}"]          # exit 0: all is well; 1: a warning; 2 and more: an error
+needs:
+  commands: [pngcheck]
+version: ["sh", "-c", "pngcheck -h 2>&1 | head -n 1 | tr -d ','"]
+classify:
+  - match: "unknown, public chunk"          # a chunk newer than the tool's list: its limit, not the file's fault
+    as: unsupported

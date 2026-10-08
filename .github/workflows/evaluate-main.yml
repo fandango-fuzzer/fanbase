@@ -65,7 +65,7 @@ jobs:
       - name: The parsers
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends age imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools
+          sudo apt-get install -y --no-install-recommends age imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck
 
       - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow
 

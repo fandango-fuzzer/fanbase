@@ -8,3 +8,4 @@ targets:
 - pillow
 - imagemagick
 - ffmpeg
+- pngcheck

@@ -197,6 +197,7 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+  - pngcheck
 - format: png
   kind: png-32x32
   path: specs/png/png-32x32/png-32x32.fan
@@ -215,6 +216,7 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+  - pngcheck
 - format: png
   kind: png-apng
   path: specs/png/png-apng/png-apng.fan
@@ -233,6 +235,7 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+  - pngcheck
 - format: png
   kind: png-boundary
   path: specs/png/png-boundary/png-boundary.fan
@@ -251,6 +254,7 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+  - pngcheck
 - format: png
   kind: png-container
   path: specs/png/png-container/png-container.fan
@@ -270,6 +274,7 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+  - pngcheck
 - format: png
   kind: png-extensions
   path: specs/png/png-extensions/png-extensions.fan
@@ -288,6 +293,7 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+  - pngcheck
 - format: tiff
   kind: tiff
   path: specs/tiff/tiff/tiff.fan

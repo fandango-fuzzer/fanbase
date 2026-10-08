@@ -17,6 +17,7 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `tiffinfo` | tiff | `tiffinfo` (libtiff) |
 | `webpinfo` | webp | `webpinfo` (libwebp) |
 | `giftext` | gif | `giftext` (giflib) |
+| `pngcheck` | png | `pngcheck` (a strict conformance checker: it says what in a file breaks the specification; a warning rejects it) |
 
 The `*-cov` targets are the libraries built to be measured, from [`coverage/`](../coverage/README.md), and run only in
 its image, with `fanbase evaluate --coverage`: they are not named by any format, and `fanbase targets` shows them as
@@ -31,7 +32,7 @@ not ready anywhere else.
 | `libwebp-cov` | webp | libwebp 1.6.0 |
 | `stb-bmp-cov` | bmp | stb_image, BMP only |
 
-On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools`,
+On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck`,
 and `pip install Pillow`. `fanbase targets` says which of them can run on your machine.
 
 **Where a target runs.** On a pull request (`evaluate.yml`), with a read-only token and no secrets, because a pull
