@@ -62,7 +62,7 @@ on the sandbox first (sandbox.zenodo.org: the same, with records and DOIs that m
    description. Only when it is right, switch the repository on at zenodo.org, before the next release: a release made before is
    not archived there.
 
-`.zenodo.json` says what the record says; `CITATION.cff` is what GitHub's "Cite this repository" shows.
+`.zenodo.json` says what the record says. There is no `CITATION.cff` (what GitHub's "Cite this repository" shows) until the paper is accepted.
 
 ## 6. A release
 
