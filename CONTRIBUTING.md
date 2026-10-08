@@ -32,7 +32,7 @@ instead.
 | `license` | The license of the spec, as an SPDX identifier. Contributions to this repository are under the Apache License 2.0 (see `LICENSE`); a spec made from someone else's work needs a license that allows that, and `source` saying what it was made from. |
 | `source` | What it was made from: a URL, or a few words. |
 | `extends` | Specs it builds on, see below. |
-| `derived_from` | The spec it was forked from. `fanbase fork` writes this. |
+| `derived_from`, `derived_sha256` | The spec it was forked from, and the hash of its file at the time. `fanbase fork` writes these and `fanbase rebase` updates them. |
 | `status` | `draft`, `stable` or `deprecated`. |
 | `extensions`, `mime`, `reference`, `title` | The format's file name extensions, media type, specification, and name. |
 
@@ -68,6 +68,13 @@ or do the same with `git` and `gh` by hand. Either way, before you open the pull
 
 We review the pull request; expect questions about structure and coverage. We would rather have a spec
 that is valid and well documented than one that covers everything.
+
+## Keeping a fork up to date
+
+`fanbase fork` remembers which spec yours was made from, and its hash at the time. When the original has
+changed since, `fanbase rebase png-fancy` merges its changes into yours. It uses `git merge-file`, so a conflict
+looks like git's: fix it, and run `fanbase check`, which refuses a spec that still has one. Then give the fork a
+new `version`. `--dry-run` says whether it would merge cleanly.
 
 ## What not to put in a spec or a pull request
 
