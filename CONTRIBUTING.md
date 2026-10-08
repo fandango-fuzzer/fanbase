@@ -103,6 +103,9 @@ changed since, `fanbase rebase png-fancy` merges its changes into yours. It uses
 looks like git's: fix it, and run `fanbase check`, which refuses a spec that still has one. Then give the fork a
 new `version`. `--dry-run` says whether it would merge cleanly.
 
+If the original also changed what it `extends`, or its Fandango range, pip packages or file types, `rebase` offers to
+adopt those too (your own additions stay); `--metadata adopt` says yes in advance, `--metadata keep` says no.
+
 ## What not to put in a spec or a pull request
 
 Fanbase comes with [considerations about ethics](ETHICS.md), and they apply to contributions:
