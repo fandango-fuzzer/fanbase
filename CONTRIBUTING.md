@@ -82,6 +82,20 @@ parsers in mind: a parser that rejects a file may lack a feature, and a file tha
 is for, so tell us in `decodes`. A parser that crashes or hangs on your inputs is counted, and is not named in the
 public summary; if you see it yourself, treat it as the responsible disclosure above says.
 
+The same evaluation runs on `main` for every spec, after each merge and once a week. There, the details of a crash
+or a hang (the input, what the parser said, how to make the file again) are kept in one file that is encrypted to a
+public key in [`.github/incident-recipients.txt`](.github/incident-recipients.txt), so that only the maintainer who
+reports vulnerabilities can read it, and it is the same size whether or not anything broke. A pull request never
+produces one, and nothing about a crash or a hang is ever in a public log, summary or comment. You do not have to do
+anything for this; if you add a target, it runs in a job that has no secrets (see [`targets/`](targets/README.md)).
+
+## Forking a spec that builds on others
+
+`fanbase fork png-apng --as png-apng-mine` copies the one spec, and it keeps building on the originals. If you want
+to change what it builds on too, add `--with-deps`: the whole family is copied (each under its own name, with its
+own `derived_from`), and the copies build on each other instead. In a registry of your own this is also how you move
+a spec of someone else's registry that builds on its neighbours.
+
 ## Keeping a fork up to date
 
 `fanbase fork` remembers which spec yours was made from, and its hash at the time. When the original has

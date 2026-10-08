@@ -9,13 +9,16 @@ name: evaluate
 # a fork brings its own specs and targets, and those are code. Crashes and hangs of a parser are counted
 # but not named (--hide-crashes), and no input is kept: a parser that crashes on a generated file may have
 # a bug that is not fixed yet, and ETHICS.md says what we publish about those.
+#
+# What the parsers did on the specs that are already in the registry is evaluate-main.yml: on main, once
+# a week and by hand, where the details of a crash or a hang can be kept for those who report it, privately.
+# There is nothing to run by hand here: a run that hides crashes would only lose them.
 
 on:
   pull_request:
     paths:
       - "specs/**"
       - "targets/**"
-  workflow_dispatch: # by hand: every spec
 
 permissions:
   contents: read
@@ -47,15 +50,9 @@ jobs:
 
       - name: Evaluate
         env:
-          EVENT: ${{ github.event_name }}
           BASE: https://github.com/${{ github.event.pull_request.base.repo.full_name }}/tree/${{ github.base_ref }}
         run: |
-          if [ "$EVENT" = "workflow_dispatch" ]; then
-            which="--all"
-          else
-            which="--changed --base $BASE"
-          fi
-          fanbase evaluate $which -n 100 --budget 40 --hide-crashes --require-targets \
+          fanbase evaluate --changed --base "$BASE" -n 100 --budget 40 --hide-crashes --require-targets \
             --markdown --json-file evaluation.json >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4

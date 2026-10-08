@@ -20,3 +20,16 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 
 On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools`,
 and `pip install Pillow`. `fanbase targets` says which of them can run on your machine.
+
+**Where a target runs.** On a pull request (`evaluate.yml`), with a read-only token and no secrets, because a pull
+request from a fork brings its own targets. On `main`, once a week and by hand (`evaluate-main.yml`), in a job that
+also has no secrets: the only job that has them (the one that mails the private record) runs none of the registry's
+code.
+
+**When a target crashes or hangs on a file.** That may be a bug in the parser that is not fixed yet, so it is never
+public. A public report counts it as an error and says no more (`--hide-crashes`); on `main` the details go into an
+encrypted file for the one who reports it (see [CONTRIBUTING.md](../CONTRIBUTING.md)). Do not describe such a file, or
+paste it, in a pull request or an issue. Run the parser itself as the target (`run: [djpeg, ..., "{file}"]`), not
+through a shell wrapper that turns a signal into an exit status: a crash is only seen as one if the process is killed
+by the signal. A limit that the library sets on itself (Pillow's "decompression bomb" error) is a `resource-limit`,
+and is not a crash.
