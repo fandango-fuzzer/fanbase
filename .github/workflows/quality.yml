@@ -10,10 +10,16 @@ name: quality
 # by a job that has the secrets and runs none of the registry's code. The job that attaches quality.json has a token that
 # can write to the release and also runs none of it: it takes the file the measuring made and uploads it.
 #
+# It measures with one fixed seed, and a spec that nothing it depends on has changed for since the results of the latest
+# release is not measured again (`fanbase evaluate --reuse`): its earlier result is kept. So a week in which nothing changed
+# takes minutes, and a week in which one spec changed measures that spec, and the ones that build on it. (The weekly run of
+# evaluate-main.yml, which hunts for crashes, keeps a seed that changes every week: that is what finds new inputs.)
+# `refresh` measures everything again, and release.yml asks for it, so that every release has a full measurement.
+#
 # release.yml calls this as the quality step of a release (it keeps quality.json for the release it is making, and
 # so does not attach it to the previous one). `count` and `budget` are there to try it small.
 #
-# This needs fanbase 0.5 or later.
+# This needs fanbase 0.6 or later.
 
 on:
   schedule:
@@ -28,6 +34,10 @@ on:
         description: "Seconds for generating the inputs of one spec"
         type: string
         default: "100"
+      refresh:
+        description: "yes: measure every spec again, whatever the earlier results say"
+        type: string
+        default: "no"
   workflow_call:
     inputs:
       count:
@@ -40,6 +50,10 @@ on:
         description: "yes: attach quality.json to the latest release; no: only keep it as an artifact of the run"
         type: string
         default: "yes"
+      refresh:
+        description: "yes: measure every spec again, whatever the earlier results say"
+        type: string
+        default: "no"
 
 permissions:
   contents: read
@@ -62,7 +76,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - run: pip install --no-cache-dir --upgrade "fanbase>=0.5"
+      - run: pip install --no-cache-dir --upgrade "fanbase>=0.6"
 
       - name: Which targets can run here
         run: fanbase targets
@@ -82,16 +96,22 @@ jobs:
           COLLECT: ${{ steps.key.outputs.collect }}
           COUNT: ${{ inputs.count || '1000' }}
           BUDGET: ${{ inputs.budget || '100' }}
+          REFRESH: ${{ inputs.refresh || 'no' }}
         run: |
-          # One seed for a whole week, as in evaluate-main.yml. The earlier results are the latest release's.
-          seed="$(date -u +%G%V)"
+          # One seed, always: the seed is part of what a result depends on, and a seed that changed would make every spec a
+          # change. The earlier results are the latest release's.
+          seed=1
+          earlier="https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/quality.json"
           private=""
           if [ "$COLLECT" = "yes" ]; then
             private="--incidents private --incident-recipients .github/incident-recipients.txt"
           fi
+          reuse="--reuse $earlier"
+          if [ "$REFRESH" = "yes" ]; then
+            reuse=""
+          fi
           fanbase evaluate --all --coverage -n "$COUNT" --curve 1,10,100,1000 --seed "$seed" --budget "$BUDGET" \
-            --hide-crashes $private \
-            --compare-with "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/quality.json" \
+            --hide-crashes $private $reuse --compare-with "$earlier" \
             --markdown --json-file evaluation.json >> "$GITHUB_STEP_SUMMARY"
           fanbase quality build evaluation.json -o quality.json
 
