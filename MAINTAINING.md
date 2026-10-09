@@ -78,3 +78,7 @@ The index is signed first, by hand (see CONTRIBUTING.md): `fanbase reindex && fa
 commit `index.yml.sig`, then the release is made. A release whose signature does not match is refused by clients, so
 `release.yml` checks it against the maintainer's key (the one built into fanbase) and fails, without releasing, if the
 index is not signed or was changed after it was signed. A failed run on the 1st of a month means: sign, then run it again.
+
+A run started by hand (Actions, release, Run workflow) has the option **force**: it releases even if nothing changed since the
+last release, for a milestone such as the version a paper cites. The index must still be signed, and with Zenodo switched on the
+release is archived under a permanent DOI, so look before you tick it.
