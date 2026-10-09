@@ -1,6 +1,6 @@
 title: pngcheck
 formats: [png]
-run: ["pngcheck", "-q", "{file}"]          # exit 0: all is well; 1: a warning; 2 and more: an error
+run: ["{python}", "{dir}/harness.py", "{file}"]   # pngcheck -q; its exit status: 0 all is well; 1 a warning; 2 and more an error
 needs:
   commands: [pngcheck]
 version: ["sh", "-c", "pngcheck -h 2>&1 | head -n 1 | tr -d ','"]
