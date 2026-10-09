@@ -1,7 +1,8 @@
 name: release
 
 # On the first of each month, and on request (for a milestone): if the registry has changed since its last release,
-# tag it and publish a release whose notes say what changed. Releases give users something fixed to point at
+# tag it and publish a release whose notes say what changed. A run started by hand can also ask for `force`, to release
+# when nothing has changed (a milestone, such as the version a paper cites); the index still has to be signed. Releases give users something fixed to point at
 # (`fanbase --registry https://github.com/fandango-fuzzer/fanbase/tree/<tag> ...`), and the Zenodo
 # integration of this repository, if it is switched on, archives each published release under a DOI that is
 # permanent: that is why it is monthly and not weekly. quality.yml still refreshes the quality.json of the latest
@@ -13,6 +14,11 @@ on:
   schedule:
     - cron: "0 6 1 * *" # the 1st of each month, 06:00 UTC
   workflow_dispatch:
+    inputs:
+      force:
+        description: "Release even if nothing changed since the last release (the index still has to be signed). Zenodo archives every release under a permanent DOI."
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -40,13 +46,18 @@ jobs:
 
       - name: What changed since the last release
         id: notes
+        env:
+          FORCE: ${{ inputs.force }}
         run: |
           last="$(git tag --list 'v*' --sort=-v:refname | head -n 1)"
           if [ -n "$last" ]; then
             fanbase changes --base "https://github.com/${GITHUB_REPOSITORY}/tree/${last}" --markdown > notes.md
             if grep -q '^No changes\.' notes.md; then
-              echo "release=no" >> "$GITHUB_OUTPUT"
-              exit 0
+              if [ "$FORCE" != "true" ]; then
+                echo "release=no" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+              echo "A release made on request. The registry has not changed since ${last}." > notes.md
             fi
           else
             echo "The first release of the registry." > notes.md
