@@ -10,12 +10,36 @@ name: quality
 # by a job that has the secrets and runs none of the registry's code. The job that attaches quality.json has a token that
 # can write to the release and also runs none of it: it takes the file the measuring made and uploads it.
 #
+# release.yml calls this as the quality step of a release (it keeps quality.json for the release it is making, and
+# so does not attach it to the previous one). `count` and `budget` are there to try it small.
+#
 # This needs fanbase 0.5 or later.
 
 on:
   schedule:
     - cron: "0 4 * * 0" # Sundays, 04:00 UTC
   workflow_dispatch:
+    inputs:
+      count:
+        description: "Inputs asked for from each spec (a small number to try the workflow)"
+        type: string
+        default: "1000"
+      budget:
+        description: "Seconds for generating the inputs of one spec"
+        type: string
+        default: "100"
+  workflow_call:
+    inputs:
+      count:
+        type: string
+        default: "1000"
+      budget:
+        type: string
+        default: "100"
+      attach:
+        description: "yes: attach quality.json to the latest release; no: only keep it as an artifact of the run"
+        type: string
+        default: "yes"
 
 permissions:
   contents: read
@@ -56,6 +80,8 @@ jobs:
       - name: Measure
         env:
           COLLECT: ${{ steps.key.outputs.collect }}
+          COUNT: ${{ inputs.count || '1000' }}
+          BUDGET: ${{ inputs.budget || '100' }}
         run: |
           # One seed for a whole week, as in evaluate-main.yml. The earlier results are the latest release's.
           seed="$(date -u +%G%V)"
@@ -63,7 +89,7 @@ jobs:
           if [ "$COLLECT" = "yes" ]; then
             private="--incidents private --incident-recipients .github/incident-recipients.txt"
           fi
-          fanbase evaluate --all --coverage -n 1000 --curve 1,10,100,1000 --seed "$seed" --budget 100 \
+          fanbase evaluate --all --coverage -n "$COUNT" --curve 1,10,100,1000 --seed "$seed" --budget "$BUDGET" \
             --hide-crashes $private \
             --compare-with "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/quality.json" \
             --markdown --json-file evaluation.json >> "$GITHUB_STEP_SUMMARY"
@@ -99,7 +125,7 @@ jobs:
 
   publish:
     needs: measure
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && inputs.attach != 'no'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

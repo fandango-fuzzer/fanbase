@@ -82,3 +82,21 @@ index is not signed or was changed after it was signed. A failed run on the 1st 
 A run started by hand (Actions, release, Run workflow) has the option **force**: it releases even if nothing changed since the
 last release, for a milestone such as the version a paper cites. The index must still be signed, and with Zenodo switched on the
 release is archived under a permanent DOI, so look before you tick it.
+
+### The order of a release
+
+A release is made in this order, and each step runs only if the one before passed:
+
+1. **decide**: what changed since the last release, the tag, and that the index is signed (above);
+2. **tests**: `check.yml`, the registry is in order and every spec makes Fandango produce inputs;
+3. **quality**: `quality.yml`, every spec measured against the parsers, about 45 minutes, with the mail of the private record;
+4. **site**: `site.yml`, built with the numbers of step 3 and deployed with GitHub Pages;
+5. **release**: the GitHub release, with `quality.json` attached.
+
+The release is last because Zenodo archives it, permanently, the moment it is published. It is not made as a draft first, since
+Zenodo also reacts to the `created` event that saving a draft sends. The numbers do not hold a release back (a spec whose files a
+parser does not accept as often as its `decodes` says is something to read in the report); a step that fails does.
+
+To try a change to `release.yml` or the workflows it calls, run it by hand with **dry_run** ticked (and, say, `count` 30 and
+`budget` 15): it does steps 1 to 3 and builds the site, and neither deploys the site nor makes a release. On a branch other than
+`main` the mail of the private record is skipped too, since the Environment `incidents` is only for `main`.

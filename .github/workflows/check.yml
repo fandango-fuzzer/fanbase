@@ -6,12 +6,18 @@ name: check
 # - every spec still loads in Fandango and produces output: the specs that a pull request changes and the
 #   specs that build on them, and on main all of them.
 #
+# release.yml calls this as the tests of a release, so every release is made from a registry that passes them.
+#
 # This needs fanbase 0.5 or later.
 
 on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   index:

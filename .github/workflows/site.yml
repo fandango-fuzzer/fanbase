@@ -20,6 +20,16 @@ on:
   schedule:
     - cron: "0 7 * * 0" # Sundays, 07:00 UTC
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      quality:
+        description: "release: the quality.json of the latest release; artifact: the one that quality.yml made in this run"
+        type: string
+        default: "release"
+      deploy:
+        description: "no: build the site and stop (to try a change)"
+        type: string
+        default: "yes"
 
 permissions:
   contents: read
@@ -43,10 +53,22 @@ jobs:
 
       - run: pip install "fanbase>=0.5"
 
+      - uses: actions/download-artifact@v4
+        if: inputs.quality == 'artifact'
+        with:
+          name: quality
+          path: results
+
       - name: Build the site
+        env:
+          QUALITY: ${{ inputs.quality }}
         run: |
-          fanbase site _site --title "Fanbase" \
-            --quality "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/quality.json"
+          if [ "$QUALITY" = "artifact" ]; then
+            results="results/quality.json"
+          else
+            results="https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/quality.json"
+          fi
+          fanbase site _site --title "Fanbase" --quality "$results"
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -54,7 +76,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && inputs.deploy != 'no'
     runs-on: ubuntu-latest
     permissions:
       pages: write

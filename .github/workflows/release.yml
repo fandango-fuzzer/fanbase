@@ -1,12 +1,25 @@
 name: release
 
-# On the first of each month, and on request (for a milestone): if the registry has changed since its last release,
-# tag it and publish a release whose notes say what changed. A run started by hand can also ask for `force`, to release
-# when nothing has changed (a milestone, such as the version a paper cites); the index still has to be signed. Releases give users something fixed to point at
-# (`fanbase --registry https://github.com/fandango-fuzzer/fanbase/tree/<tag> ...`), and the Zenodo
-# integration of this repository, if it is switched on, archives each published release under a DOI that is
-# permanent: that is why it is monthly and not weekly. quality.yml still refreshes the quality.json of the latest
-# release every week.
+# A release of the registry: on the first of each month, and on request (for a milestone) if the registry has changed since
+# its last release. A run started by hand can also ask for `force`, to release when nothing has changed (a milestone, such as
+# the version a paper cites); the index still has to be signed.
+#
+# A release is made in this order, and each step runs only if the one before it passed:
+#
+#   1. decide   what changed since the last release, the tag, and that the index is signed by the maintainer;
+#   2. tests    check.yml: the registry is in order and every spec makes Fandango produce inputs;
+#   3. quality  quality.yml: every spec measured against the parsers (validity, throughput, coverage), about 45 minutes;
+#   4. site     site.yml: the site built with the numbers of step 3, and deployed with GitHub Pages;
+#   5. release  the GitHub release, with quality.json attached.
+#
+# The release is the last step because the Zenodo integration of this repository archives a release under a DOI that is
+# permanent, the moment it is published. (It is not made as a draft first: Zenodo also reacts to the `created` event that
+# saving a draft sends.) A release that does not pass the tests, or whose numbers could not be made, or whose site could not
+# be built, is not made. The numbers themselves do not hold it back: that a spec does not do what its `decodes` says is
+# something to read in the report, not a reason for there to be no release.
+#
+# `dry_run` does steps 1 to 3 and builds the site, and stops there: no deployment, no release. It is for trying a change to this
+# file. `count` and `budget` make the quality step small for that.
 #
 # This needs fanbase 0.5 or later.
 
@@ -19,30 +32,43 @@ on:
         description: "Release even if nothing changed since the last release (the index still has to be signed). Zenodo archives every release under a permanent DOI."
         type: boolean
         default: false
+      dry_run:
+        description: "Do everything but deploy the site and make the release (to try a change to this workflow)"
+        type: boolean
+        default: false
+      count:
+        description: "Inputs asked for from each spec in the quality step (a small number for a dry run)"
+        type: string
+        default: "1000"
+      budget:
+        description: "Seconds for generating the inputs of one spec in the quality step"
+        type: string
+        default: "100"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: release
   cancel-in-progress: false
 
 jobs:
-  release:
+  decide:
     runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.notes.outputs.release }}
+      tag: ${{ steps.notes.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # the tags are how the last release is found
+          persist-credentials: false
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - run: pip install "fanbase>=0.5"
-
-      - name: The registry is in order
-        run: fanbase check --no-generate
 
       - name: What changed since the last release
         id: notes
@@ -55,6 +81,7 @@ jobs:
             if grep -q '^No changes\.' notes.md; then
               if [ "$FORCE" != "true" ]; then
                 echo "release=no" >> "$GITHUB_OUTPUT"
+                echo "Nothing has changed since ${last}: no release."
                 exit 0
               fi
               echo "A release made on request. The registry has not changed since ${last}." > notes.md
@@ -84,9 +111,68 @@ jobs:
             exit 1
           fi
 
-      - name: Publish the release
+      - uses: actions/upload-artifact@v4
         if: steps.notes.outputs.release == 'yes'
+        with:
+          name: release-notes
+          path: notes.md
+
+  tests:
+    needs: decide
+    if: needs.decide.outputs.release == 'yes'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/check.yml
+
+  quality:
+    needs: [decide, tests]
+    if: needs.decide.outputs.release == 'yes'
+    # quality.yml has a job that attaches its result to the latest release, which is asked not to run here (attach: "no"), but
+    # a called workflow may not ask for more than its caller gives, and that job asks for contents: write. The job that runs
+    # the registry's code keeps the read-only token of quality.yml.
+    permissions:
+      contents: write
+    uses: ./.github/workflows/quality.yml
+    with:
+      attach: "no"
+      count: ${{ inputs.count || '1000' }}
+      budget: ${{ inputs.budget || '100' }}
+    secrets: inherit # the Environment `incidents` mails the private record of this run, as it does every week
+
+  site:
+    needs: [decide, quality]
+    if: needs.decide.outputs.release == 'yes'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/site.yml
+    with:
+      quality: artifact
+      deploy: ${{ inputs.dry_run && 'no' || 'yes' }}
+
+  release:
+    needs: [decide, quality, site]
+    if: needs.decide.outputs.release == 'yes' && inputs.dry_run != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+          path: notes
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: quality
+          path: results
+
+      - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.notes.outputs.tag }}
-        run: gh release create "$TAG" --title "Fanbase $TAG" --notes-file notes.md --target "$GITHUB_SHA"
+          TAG: ${{ needs.decide.outputs.tag }}
+        run: |
+          gh release create "$TAG" results/quality.json --repo "$GITHUB_REPOSITORY" --title "Fanbase $TAG" \
+            --notes-file notes/notes.md --target "$GITHUB_SHA"
