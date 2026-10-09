@@ -17,7 +17,7 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `tiffinfo` | tiff | `tiffinfo` (libtiff) |
 | `webpinfo` | webp | `webpinfo` (libwebp) |
 | `giftext` | gif | `giftext` (giflib) |
-| `pngcheck` | png | `pngcheck` (a strict conformance checker: it says what in a file breaks the specification; a warning rejects it) |
+| `pngcheck` | png | `pngcheck` (a strict conformance checker: it says what in a file breaks the specification; a warning rejects it; a small wrapper leaves out its zlib-version warning, which is about the machine) |
 
 The `*-cov` targets are the libraries built to be measured, from [`coverage/`](../coverage/README.md), and run only in
 its image, with `fanbase evaluate --coverage`: they are not named by any format, and `fanbase targets` shows them as
