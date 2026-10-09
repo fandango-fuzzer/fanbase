@@ -154,6 +154,21 @@ We [happily accept pull requests](#contact-us) for any of the Fanbase files! If 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to write, check and submit a spec.
 
 
+### How do I cite Fanbase?
+
+The registry is archived on Zenodo. The DOI [10.5281/zenodo.23261474](https://doi.org/10.5281/zenodo.23261474) stands for Fanbase as a whole and always leads to the latest release; each release has a DOI of its own, on that page. `fanbase cite SPEC` says how to cite one spec.
+
+```bibtex
+@misc{fanbase,
+  author = {{The Fandango Fuzzer Team}},
+  title  = {Fanbase: a registry of Fandango input specifications},
+  doi    = {10.5281/zenodo.23261474},
+  url    = {https://doi.org/10.5281/zenodo.23261474}
+}
+```
+
+The command that installs from the registry, [fanbase-cli](https://github.com/fandango-fuzzer/fanbase-cli), is archived separately: [10.5281/zenodo.23259520](https://doi.org/10.5281/zenodo.23259520).
+
 ### Who are you?
 
 Fanbase is brought to you by Norman Becker, Valentin Huber, Florian Bauckholt, Addison Crump, Rafael Dutra, Keno Hassler, Alexander Liggesmeyer, Kuangxiangzi Liu, Tim Scheckenbach, José Antonio Zamudio Amaya, and Andreas Zeller, researchers at [CISPA Helmholtz Center for Information Security](https://www.cispa.de/), Germany; [Federal University of Ceará](https://www.ufc.br/), Brazil; and [Volkswagen AG](https://www.volkswagen-group.com/en), Germany.
