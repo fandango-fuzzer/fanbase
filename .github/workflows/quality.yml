@@ -14,7 +14,8 @@ name: quality
 # release is not measured again (`fanbase evaluate --reuse`): its earlier result is kept. So a week in which nothing changed
 # takes minutes, and a week in which one spec changed measures that spec, and the ones that build on it. (The weekly run of
 # evaluate-main.yml, which hunts for crashes, keeps a seed that changes every week: that is what finds new inputs.)
-# `refresh` measures everything again, and release.yml asks for it, so that every release has a full measurement.
+# `refresh` measures everything again, for when the results are not to be trusted (see MAINTAINING.md). release.yml uses the same
+# results, and passes `refresh` on when asked to.
 #
 # release.yml calls this as the quality step of a release (it keeps quality.json for the release it is making, and
 # so does not attach it to the previous one). `count` and `budget` are there to try it small.
