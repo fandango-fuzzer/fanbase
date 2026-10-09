@@ -89,7 +89,7 @@ A release is made in this order, and each step runs only if the one before passe
 
 1. **decide**: what changed since the last release, the tag, and that the index is signed (above);
 2. **tests**: `check.yml`, the registry is in order and every spec makes Fandango produce inputs;
-3. **quality**: `quality.yml`, every spec measured against the parsers (all of them again: `refresh`), about 45 minutes, with the mail of the private record;
+3. **quality**: `quality.yml`, every spec measured against the parsers, but those that nothing has changed for since the latest release (a release in which nothing changed takes minutes; about 45 minutes if everything is measured again), with the mail of the private record;
 4. **site**: `site.yml`, built with the numbers of step 3 and deployed with GitHub Pages;
 5. **release**: the GitHub release, with `quality.json` attached.
 
@@ -109,9 +109,10 @@ kept. What a result depends on is a hash stored with it (`fingerprint`): the spe
 judges it (its files and the version the parser reports), Fandango's and fanbase's versions, and the settings. So a week in which
 nothing changed takes minutes, and a week in which one spec changed measures that spec, and the ones that build on it.
 
-- **A release measures everything again** (`refresh: yes`, set by `release.yml`), since the fingerprint does not know the Python
-  packages a spec imports, nor anything about the machine that no version string says. Run `quality.yml` by hand with **refresh**
-  set to `yes` to do the same without a release.
+- **A release uses the same results.** A release in which nothing changed does not measure anything again. What the fingerprint
+  does not know is the Python packages a spec imports, and anything about the machine that no version string says (the operating
+  system of the image, Python itself). If you do not trust the results, say **refresh** when you run `quality.yml` or `release.yml`
+  by hand, which measures every spec again.
 - **The seed is fixed on purpose.** It is part of the fingerprint: a seed that changed every week would make every spec a change
   every week. Hunting for crashes needs new inputs, and that is `evaluate-main.yml`'s job: its seed changes every week, and it is
   the run that keeps the encrypted private record.
