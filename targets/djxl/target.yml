@@ -1,0 +1,9 @@
+title: djxl (libjxl)
+formats: [jxl]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # djxl FILE OUT.png; its exit status: 0 the picture was decoded
+needs:
+  commands: [djxl]
+version: ["djxl", "--version"]
+classify:
+  - match: "(?i)out of memory|bad_alloc|memory allocation"
+    as: resource-limit
