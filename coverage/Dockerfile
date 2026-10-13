@@ -17,11 +17,12 @@ LABEL org.opencontainers.image.source="https://github.com/fandango-fuzzer/fanbas
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential cmake ninja-build pkg-config git ca-certificates curl \
         zlib1g-dev libjpeg-dev liblzma-dev libzstd-dev imagemagick webp age ffmpeg libjpeg-turbo-progs libtiff-tools giflib-tools pngcheck \
+        libpng-dev libde265-dev libkvazaar-dev libbrotli-dev libjxl-tools librsvg2-bin \
     && rm -rf /var/lib/apt/lists/*
 
 # `fanbase` is the one to evaluate with; pass FANBASE=/path/to/a.whl to build with a version that is not released.
 ARG FANBASE="fanbase>=0.5"
-RUN pip install --no-cache-dir fandango-fuzzer Pillow ${FANBASE:+"$FANBASE"}
+RUN pip install --no-cache-dir fandango-fuzzer Pillow pillow-heif ${FANBASE:+"$FANBASE"}
 
 # the libraries, from pinned sources, built with counting; the slow part, so first
 COPY build-libs.sh /opt/cov/build-libs.sh
@@ -33,6 +34,7 @@ COPY harness /opt/cov/harness
 COPY build-harness.sh /opt/cov/build-harness.sh
 RUN /opt/cov/build-harness.sh
 COPY bin /opt/cov/bin
+COPY seeds /opt/cov/seed-sources
 COPY make-seeds.sh /opt/cov/make-seeds.sh
 RUN chmod +x /opt/cov/bin/* && /opt/cov/make-seeds.sh
 

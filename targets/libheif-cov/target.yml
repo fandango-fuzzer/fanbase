@@ -1,0 +1,13 @@
+title: libheif, built to be measured
+formats: [heic]
+run: ["/opt/cov/bin/heic-harness", "{file}"]
+needs:
+  commands: [heic-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libheif"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libheif"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libheif"]
+  seeds: ["/opt/cov/seeds/heic/*"]

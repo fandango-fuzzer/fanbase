@@ -1,0 +1,13 @@
+title: FFmpeg's XBM decoder, built to be measured
+formats: [xbm]
+run: ["/opt/cov/bin/ffmpeg-harness", "{file}"]
+needs:
+  commands: [ffmpeg-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-xbm"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-xbm"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-xbm"]
+  seeds: ["/opt/cov/seeds/xbm/*"]

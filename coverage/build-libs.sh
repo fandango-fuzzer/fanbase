@@ -53,4 +53,41 @@ mkdir -p "$SRC/stb" "$BUILD/stb-bmp"
 curl -fsSL "https://raw.githubusercontent.com/nothings/stb/2c980bb59875b0d32144a71867fbdebb2f77cd20/stb_image.h" -o "$SRC/stb/stb_image.h"
 echo "594c2fe35d49488b4382dbfaec8f98366defca819d916ac95becf3e75f4200b3  $SRC/stb/stb_image.h" | sha256sum -c -
 
+# --- libheif 1.23.6 (HEVC is decoded by the system's libde265, and the real files are made with kvazaar: codecs the
+# library calls into are not counted; the tools are built to make those files)
+pin_git libheif https://github.com/strukturag/libheif v1.23.6 f81f28ac014b1c28dee483ac45b72c6b05bc421a
+cmake_build libheif -DCMAKE_CXX_FLAGS="$CFLAGS_COV" -DENABLE_PLUGIN_LOADING=OFF -DBUILD_TESTING=OFF -DWITH_EXAMPLES=ON -DWITH_FUZZERS=OFF \
+    -DWITH_GDK_PIXBUF=OFF -DWITH_LIBDE265=ON -DWITH_LIBDE265_PLUGIN=OFF -DWITH_KVAZAAR=ON -DWITH_KVAZAAR_PLUGIN=OFF -DWITH_X265=OFF \
+    -DWITH_AOM_DECODER=OFF -DWITH_AOM_ENCODER=OFF -DWITH_DAV1D=OFF -DWITH_RAV1E=OFF -DWITH_SvtEnc=OFF \
+    -DWITH_OpenJPEG_DECODER=OFF -DWITH_OpenJPEG_ENCODER=OFF -DWITH_JPEG_DECODER=ON -DWITH_JPEG_ENCODER=ON -DWITH_UNCOMPRESSED_CODEC=ON
+
+# --- libjxl 0.12.0 (with the highway, brotli and skcms that its own commit pins, and one instruction set: no SIMD)
+pin_git libjxl https://github.com/libjxl/libjxl v0.12.0 a7a9c787341cf703dede03c2009fa460cae5e5df
+git -C "$SRC/libjxl" submodule update --init --quiet --depth 1 third_party/skcms third_party/highway third_party/brotli
+cmake_build libjxl -DCMAKE_CXX_FLAGS="$CFLAGS_COV -DHWY_COMPILE_ONLY_EMU128" -DBUILD_TESTING=OFF \
+    -DJPEGXL_ENABLE_TOOLS=OFF -DJPEGXL_ENABLE_DOXYGEN=OFF -DJPEGXL_ENABLE_MANPAGES=OFF -DJPEGXL_ENABLE_BENCHMARK=OFF \
+    -DJPEGXL_ENABLE_EXAMPLES=OFF -DJPEGXL_ENABLE_JNI=OFF -DJPEGXL_ENABLE_SJPEG=OFF -DJPEGXL_ENABLE_OPENEXR=OFF \
+    -DJPEGXL_ENABLE_PLUGINS=OFF -DJPEGXL_ENABLE_VIEWERS=OFF -DJPEGXL_ENABLE_JPEGLI=OFF -DJPEGXL_ENABLE_JPEGLI_LIBJPEG=OFF \
+    -DJPEGXL_ENABLE_AVX512=OFF -DJPEGXL_ENABLE_AVX512_ZEN4=OFF -DJPEGXL_ENABLE_AVX512_SPR=OFF \
+    -DJPEGXL_ENABLE_SKCMS=ON -DJPEGXL_BUNDLE_SKCMS=ON
+
+# --- FFmpeg n9.0.2, with the decoders of PPM, XBM and XPM and nothing else (its tag is an annotated one: this is its commit)
+pin_git ffmpeg https://github.com/FFmpeg/FFmpeg n9.0.2 946fcce07b6dcd0331c8cc609192aeff5e1924f8
+mkdir -p "$BUILD/ffmpeg"
+(cd "$BUILD/ffmpeg" && "$SRC/ffmpeg/configure" --prefix="$PREFIX/ffmpeg" --cc=gcc \
+    --disable-everything --disable-autodetect --disable-programs --disable-doc --disable-network \
+    --disable-avdevice --disable-avfilter --disable-swscale --disable-swresample \
+    --disable-asm --disable-stripping --disable-debug --optflags=-O0 --extra-cflags="$CFLAGS_COV" --extra-ldflags=--coverage \
+    --disable-shared --enable-static --enable-pic --enable-protocol=file \
+    --enable-demuxer=image2,image_ppm_pipe,image_pbm_pipe,image_pgm_pipe,image_pam_pipe,image_xbm_pipe,image_xpm_pipe \
+    --enable-parser=pnm --enable-decoder=ppm,pbm,pgm,pam,pgmyuv,xbm,xpm > "$BUILD/ffmpeg.configure.log" 2>&1) \
+    || { tail -30 "$BUILD/ffmpeg.configure.log" >&2; exit 1; }
+make -C "$BUILD/ffmpeg" -j"$(nproc)" > "$BUILD/ffmpeg.build.log" 2>&1 || { tail -30 "$BUILD/ffmpeg.build.log" >&2; exit 1; }
+make -C "$BUILD/ffmpeg" install > /dev/null
+
+# --- NanoSVG (one header, at a pinned commit; the program is the library, as with stb_image)
+mkdir -p "$SRC/nanosvg" "$BUILD/nanosvg"
+curl -fsSL "https://raw.githubusercontent.com/memononen/nanosvg/239e102ec2c691f2902e20ace2ed36ee4a35cfe6/src/nanosvg.h" -o "$SRC/nanosvg/nanosvg.h"
+echo "e34fd5d084be106cea972d19ce5d27fd96d17ba89f8d06bdceee058420c8b2b0  $SRC/nanosvg/nanosvg.h" | sha256sum -c -
+
 echo "built:"; ls "$PREFIX"

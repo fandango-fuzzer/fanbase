@@ -31,6 +31,12 @@ not ready anywhere else.
 | `libtiff-cov` | tiff | libtiff 4.7.2 |
 | `libwebp-cov` | webp | libwebp 1.6.0 |
 | `stb-bmp-cov` | bmp | stb_image, BMP only |
+| `libheif-cov` | heic | libheif 1.23.6 |
+| `libjxl-cov` | jxl | libjxl 0.12.0 |
+| `ffmpeg-pnm-cov` | ppm | FFmpeg n9.0.2, its PNM decoders |
+| `ffmpeg-xbm-cov` | xbm | FFmpeg n9.0.2, its XBM decoder |
+| `ffmpeg-xpm-cov` | xpm | FFmpeg n9.0.2, its XPM decoder |
+| `nanosvg-cov` | svg | NanoSVG |
 
 On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin`,
 and `pip install Pillow pillow-heif`. `fanbase targets` says which of them can run on your machine.

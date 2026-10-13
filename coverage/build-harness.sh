@@ -25,4 +25,17 @@ mkdir -p "$BUILD/stb-bmp"
 gcc --coverage -O0 -g -I"$SRC/stb" -c "$HARNESS/bmp.c" -o "$BUILD/stb-bmp/bmp.o"
 gcc "$BUILD/stb-bmp/bmp.o" -o "$BIN/bmp-harness" -lm --coverage
 
+harness heic heic.c "-I$PREFIX/libheif/include" "$PREFIX/libheif/lib/libheif.a" -lde265 -lkvazaar -ljpeg -lbrotlidec -lbrotlienc \
+    -lbrotlicommon -lz -lstdc++ -lm -lpthread
+harness jxl jxl.c "-I$PREFIX/libjxl/include" "$PREFIX/libjxl/lib/libjxl.a" "$PREFIX/libjxl/lib/libjxl_cms.a" "$PREFIX/libjxl/lib/libhwy.a" \
+    "$PREFIX/libjxl/lib/libbrotlidec.a" "$PREFIX/libjxl/lib/libbrotlienc.a" "$PREFIX/libjxl/lib/libbrotlicommon.a" -lstdc++ -lm -lpthread
+# one program for the three formats FFmpeg's decoders are built for
+harness ffmpeg ffmpeg.c "-I$PREFIX/ffmpeg/include" "$PREFIX/ffmpeg/lib/libavformat.a" "$PREFIX/ffmpeg/lib/libavcodec.a" \
+    "$PREFIX/ffmpeg/lib/libavutil.a" -lm -lpthread
+
+# NanoSVG is one header too: the program is the library, so it is the one that counts
+mkdir -p "$BUILD/nanosvg"
+gcc --coverage -O0 -g -I"$SRC/nanosvg" -c "$HARNESS/svg.c" -o "$BUILD/nanosvg/svg.o"
+gcc "$BUILD/nanosvg/svg.o" -o "$BIN/svg-harness" -lm --coverage
+
 echo "built:"; ls "$BIN"
