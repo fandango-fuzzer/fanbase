@@ -9,10 +9,10 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 
 | target | judges | needs |
 |---|---|---|
-| `pillow` | bmp, gif, jpeg, png, tiff, webp | Python package Pillow |
-| `imagemagick` | the same | `identify` (ImageMagick); a file that it decodes is accepted, warnings or not |
+| `pillow` | bmp, gif, heic, jpeg, png, ppm, tiff, webp, xbm, xpm | Python package Pillow (and `pillow-heif`, which gives it a HEIC reader) |
+| `imagemagick` | the same, and svg | `identify` (ImageMagick); a file that it decodes is accepted, warnings or not. It reads SVG with `rsvg-convert` (`librsvg2-bin`) |
 | `imagemagick-strict` | the same | the same, but a warning rejects the file: "is it clean?" rather than "does it decode?" (not in any format's `targets` by default) |
-| `ffmpeg` | the same | `ffmpeg` |
+| `ffmpeg` | the same as Pillow, and jxl | `ffmpeg` (JPEG XL needs a build with libjxl, as Debian's and Ubuntu's have) |
 | `djpeg` | jpeg | `djpeg` (libjpeg-turbo) |
 | `tiffinfo` | tiff | `tiffinfo` (libtiff) |
 | `webpinfo` | webp | `webpinfo` (libwebp) |
@@ -32,8 +32,8 @@ not ready anywhere else.
 | `libwebp-cov` | webp | libwebp 1.6.0 |
 | `stb-bmp-cov` | bmp | stb_image, BMP only |
 
-On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck`,
-and `pip install Pillow`. `fanbase targets` says which of them can run on your machine.
+On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin`,
+and `pip install Pillow pillow-heif`. `fanbase targets` says which of them can run on your machine.
 
 **Where a target runs.** On a pull request (`evaluate.yml`), with a read-only token and no secrets, because a pull
 request from a fork brings its own targets. On `main`, once a week and by hand (`evaluate-main.yml`), in a job that

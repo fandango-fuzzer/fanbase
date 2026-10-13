@@ -2,10 +2,15 @@ title: ImageMagick (warnings are errors)
 formats:
 - bmp
 - gif
+- heic
 - jpeg
 - png
+- ppm
+- svg
 - tiff
 - webp
+- xbm
+- xpm
 run:
 - identify
 - -limit
