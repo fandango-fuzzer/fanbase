@@ -141,6 +141,102 @@ specs:
   - imagemagick
   - ffmpeg
   - giftext
+- format: heic
+  kind: heic
+  path: specs/heic/heic/heic.fan
+  sha256: 479af94c47454b51ff02cf3f4f3128d0a9669a9139703173ae9a5b1ad406496f
+  description: A single HEVC-coded still image in the real ISOBMFF/HEIF box layout
+    (ftyp, meta/hdlr/pitm/iloc/iinf/infe, iprp/ipco/ispe/hvcC/pixi/colr, idat); the
+    HEVC NAL payloads are container-correct shells, not a decodable bitstream
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: never
+  version: '1.0'
+  title: High Efficiency Image File Format
+  extensions:
+  - heic
+  mime: image/heic
+  reference: https://www.iso.org/standard/89035.html
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: heic
+  kind: heic-boundary
+  path: specs/heic/heic-boundary/heic-boundary.fan
+  sha256: f1723cd4d3377e32c0dff90b3e33c1c1523c8bac46e3df0d52e4944b9f1ed9d4
+  description: Same as heic, with values taken from the edges of what the format allows
+    (degenerate/overflow spatial extents, extreme HEVC profile/level bytes, a hidden-item
+    flag, ICC-embedded colr, and the irot/imir/pasp/clap transformative properties)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: never
+  version: '1.0'
+  title: High Efficiency Image File Format
+  extensions:
+  - heic
+  mime: image/heic
+  reference: https://www.iso.org/standard/89035.html
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: heic
+  kind: heic-box-sizes
+  path: specs/heic/heic-box-sizes/heic-box-sizes.fan
+  sha256: 80250c4719fcd599d124c2ef66c54fac6228ec3101240aaf356c1a61f894ce3f
+  description: Six concrete file layouts (plain, extended item, transform, legacy,
+    sequence, size-extreme) exercising ISOBMFF's zero-size ("extends to EOF") and
+    largesize box-size conventions alongside boundary offset/length values
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: never
+  version: '1.0'
+  title: High Efficiency Image File Format
+  extensions:
+  - heic
+  mime: image/heic
+  reference: https://www.iso.org/standard/89035.html
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: heic
+  kind: heic-sequence
+  path: specs/heic/heic-sequence/heic-sequence.fan
+  sha256: 59ce78dc037bcbf65009e6456722fc90d9a8f3f9672bc47851184dc48860045b
+  description: Same as heic, plus item references/entity grouping/protection boxes
+    and the full timed-image-sequence (moov/trak/mdia/minf/stbl) layout used for HEIC
+    bursts and live photos, not just a single still
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: never
+  version: '1.0'
+  title: High Efficiency Image File Format
+  extensions:
+  - heic
+  mime: image/heic
+  reference: https://www.iso.org/standard/89035.html
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
 - format: jpeg
   kind: jpeg
   path: specs/jpeg/jpeg/jpeg.fan
@@ -215,6 +311,72 @@ specs:
   - imagemagick
   - ffmpeg
   - djpeg
+- format: jxl
+  kind: jxl
+  path: specs/jxl/jxl/jxl.fan
+  sha256: 1ef36a8cf0702c6a3385b5878a82ab74ea7be292244b895d13f8f28194cd9679
+  description: Raw JPEG XL codestreams with a real bit-packed header and metadata;
+    the entropy-coded frame body is a structurally-framed stub, so files do not decode
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: never
+  version: '1.0'
+  title: JPEG XL
+  extensions:
+  - jxl
+  mime: image/jxl
+  reference: https://www.iso.org/standard/85066.html
+  targets:
+  - djxl
+- format: jxl
+  kind: jxl-frames
+  path: specs/jxl/jxl-frames/jxl-frames.fan
+  sha256: 644e18dee6ae7338cadd7e731f4494ec516a83b33ef358a49a5b02eb6592ee60
+  description: Spells out frame internals that jxl stubs out (TOC, LFGlobal, VarDCT/Modular
+    groups, entropy streams); uses placeholder ASCII tag bytes instead of real bit-packed
+    encoding, so files do not decode yet
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: never
+  version: '1.0'
+  title: JPEG XL
+  extensions:
+  - jxl
+  mime: image/jxl
+  reference: https://www.iso.org/standard/85066.html
+  targets:
+  - djxl
+- format: jxl
+  kind: jxl-frames-boundary
+  path: specs/jxl/jxl-frames-boundary/jxl-frames-boundary.fan
+  sha256: 40a1ef5f9786f026515ea485933b0cf499538bedac6115679629205077121dae
+  description: Same as jxl-frames, with values taken from the edges of what the format
+    allows (multiple frame types, colour spaces and extension bundles); fields use
+    fixed byte-aligned approximations rather than true bit-level packing, so files
+    do not decode
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: never
+  version: '1.0'
+  title: JPEG XL
+  extensions:
+  - jxl
+  mime: image/jxl
+  reference: https://www.iso.org/standard/85066.html
+  targets:
+  - djxl
 - format: png
   kind: png
   path: specs/png/png/png.fan
@@ -354,6 +516,250 @@ specs:
   - imagemagick
   - ffmpeg
   - pngcheck
+- format: ppm
+  kind: ppm
+  path: specs/ppm/ppm/ppm.fan
+  sha256: 3a07301be3e7a263a6cd29089b79e475ff6e7bc91cf43cd989f996e42f9d840f
+  description: P3 (ASCII) and P6 (raw) PPMs with 8-bit and 16-bit samples, header
+    comments and whitespace
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Portable Pixmap
+  extensions:
+  - ppm
+  mime: image/x-portable-pixmap
+  reference: http://netpbm.sourceforge.net/doc/ppm.html
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: ppm
+  kind: ppm-boundary
+  path: specs/ppm/ppm-boundary/ppm-boundary.fan
+  sha256: 80c380ffc714a25d712cc5b264f0c70824c5a261c85e587dd5e60b91abf244f1
+  description: Same as ppm, with values taken from the edges of what the format allows
+    (maxval 1, 255, 256 and 65535; leading-zero dimensions; every whitespace flavour)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: mostly
+  version: '1.0'
+  title: Portable Pixmap
+  extensions:
+  - ppm
+  mime: image/x-portable-pixmap
+  reference: http://netpbm.sourceforge.net/doc/ppm.html
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: ppm
+  kind: ppm-stream
+  path: specs/ppm/ppm-stream/ppm-stream.fan
+  sha256: 88669d7814507158045bfb3bf125e87aab3bf77ff09f1891de20bb24faca9468
+  description: A PPM image followed by zero or more further images concatenated in
+    the same file, covering maxval's full normative range
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: mostly
+  version: '1.0'
+  title: Portable Pixmap
+  extensions:
+  - ppm
+  mime: image/x-portable-pixmap
+  reference: http://netpbm.sourceforge.net/doc/ppm.html
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: ppm
+  kind: ppm-stream-boundary
+  path: specs/ppm/ppm-stream-boundary/ppm-stream-boundary.fan
+  sha256: 9bd778d4134d11b6ce2e7f0dae078dd7756e0a6682d1fad63e84a15ad5fc810f
+  description: Same as ppm-stream, with concatenated P3/P6 images and sample bytes
+    taken from the edges of what the format allows
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: mostly
+  version: '1.0'
+  title: Portable Pixmap
+  extensions:
+  - ppm
+  mime: image/x-portable-pixmap
+  reference: http://netpbm.sourceforge.net/doc/ppm.html
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: svg
+  kind: svg
+  path: specs/svg/svg/svg.fan
+  sha256: 1355a18f63a724a63d7975f79f4477c9e72605d5ed19917861ba6bfa565bd09a
+  description: Core SVG 1.1 elements (shapes, paths, text, gradients, filters, clipping/masking,
+    markers, style/script, animation)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: mostly
+  version: '1.0'
+  title: Scalable Vector Graphics
+  extensions:
+  - svg
+  mime: image/svg+xml
+  reference: https://www.w3.org/TR/SVG2/
+  targets:
+  - imagemagick
+- format: svg
+  kind: svg-boundary
+  path: specs/svg/svg-boundary/svg-boundary.fan
+  sha256: 1e217343d73ba8df6cf1fe950dabe2b4abb5ee2a114b3af71e013776d711c2c1
+  description: Same as svg, with values taken from the edges of what the format allows
+    (huge/negative coordinates, deprecated DOCTYPEs and attributes, every legacy colour
+    syntax, foreignObject, SMIL timing edge cases)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: rarely
+  version: '1.0'
+  title: Scalable Vector Graphics
+  extensions:
+  - svg
+  mime: image/svg+xml
+  reference: https://www.w3.org/TR/SVG2/
+  targets:
+  - imagemagick
+- format: svg
+  kind: svg-doctype
+  path: specs/svg/svg-doctype/svg-doctype.fan
+  sha256: 3e38159d23c26bd1613967fead89e62afca7f12c751d48ebe36e1c337cf315a4
+  description: Same as svg, with every element's optional presentation attributes
+    toggled individually and a choice of legacy DOCTYPE/DTD declarations (or none)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: rarely
+  version: '1.0'
+  title: Scalable Vector Graphics
+  extensions:
+  - svg
+  mime: image/svg+xml
+  reference: https://www.w3.org/TR/SVG2/
+  targets:
+  - imagemagick
+- format: svg
+  kind: svg-extensions
+  path: specs/svg/svg-extensions/svg-extensions.fan
+  sha256: 64c6a52c49aa102479f734b366f665bc905805c4bbda5e50ea6462d35fbc848a
+  description: Same as svg, plus legacy SVG 1.1 font/glyph elements, draft SVG 2 paint
+    servers (meshGradient, hatch, solidColor) and a few non-SVG embedded tags (audio/video/canvas/iframe)
+    that real renderers treat as inert unknown elements
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Scalable Vector Graphics
+  extensions:
+  - svg
+  mime: image/svg+xml
+  reference: https://www.w3.org/TR/SVG2/
+  targets:
+  - imagemagick
+- format: svg
+  kind: svg-kitchen-sink
+  path: specs/svg/svg-kitchen-sink/svg-kitchen-sink.fan
+  sha256: 4f33475ac75beff29dda4bc99ab1e6fa2901ac2a0d3dfc2ab7706ff362699b42
+  description: A single, almost entirely fixed document that packs nearly every SVG
+    feature into one file; useful as one maximally-featured compatibility sample,
+    not as a randomized fuzzer (little varies between runs)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Scalable Vector Graphics
+  extensions:
+  - svg
+  mime: image/svg+xml
+  reference: https://www.w3.org/TR/SVG2/
+  targets:
+  - imagemagick
+- format: svg
+  kind: svg-nested-animation
+  path: specs/svg/svg-nested-animation/svg-nested-animation.fan
+  sha256: b64f2b2ce76f6844e07969c3ca157d9876c285a023c61849286e819e39d063a7
+  description: Same as svg, grounded directly in the SVG 2 recommendation, with SMIL
+    <animate> elements nested as children of the shape they animate instead of appearing
+    as unrelated top-level siblings
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: rarely
+  version: '1.0'
+  title: Scalable Vector Graphics
+  extensions:
+  - svg
+  mime: image/svg+xml
+  reference: https://www.w3.org/TR/SVG2/
+  targets:
+  - imagemagick
+- format: svg
+  kind: svg-rare-features
+  path: specs/svg/svg-rare-features/svg-rare-features.fan
+  sha256: 40dca06ff06a55379089402df58f62c215b0a72dfb76fd6702825c26b42dfd8e
+  description: Same as svg, biased toward obscure and rarely-implemented corners of
+    the spec (mesh gradients, uncommon filter primitives, baseProfile/contentScriptType
+    and other seldom-used root attributes)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: mostly
+  version: '1.0'
+  title: Scalable Vector Graphics
+  extensions:
+  - svg
+  mime: image/svg+xml
+  reference: https://www.w3.org/TR/SVG2/
+  targets:
+  - imagemagick
 - format: tiff
   kind: tiff
   path: specs/tiff/tiff/tiff.fan
@@ -524,3 +930,194 @@ specs:
   - imagemagick
   - ffmpeg
   - webpinfo
+- format: xbm
+  kind: xbm
+  path: specs/xbm/xbm/xbm.fan
+  sha256: b3d928577d95547f69796df26baa9975ab49a659022673f5eecfffa39fffdb90
+  description: X11 (unsigned char/char) and X10 (short) XBM dialects, with and without
+    a cursor hotspot
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: X BitMap
+  extensions:
+  - xbm
+  mime: image/x-xbitmap
+  reference: https://www.x.org/releases/current/doc/libX11/libX11/libX11.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: xbm
+  kind: xbm-boundary
+  path: specs/xbm/xbm-boundary/xbm-boundary.fan
+  sha256: 98660db30bd8cea3c1fa778282977f6cf251b5af39660a9005d351eec4028a37
+  description: Same as xbm, with values taken from the edges of what the format allows
+    (dimensions that stress ceil() row padding, a degenerate 0x0 bitmap, and hotspot
+    values parsers rarely range-check)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: X BitMap
+  extensions:
+  - xbm
+  mime: image/x-xbitmap
+  reference: https://www.x.org/releases/current/doc/libX11/libX11/libX11.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: xbm
+  kind: xbm-guards
+  path: specs/xbm/xbm-guards/xbm-guards.fan
+  sha256: db364a32a4acaacea525a685094cfada9464d1d5ecdb90964c9e418e23c81f5a
+  description: 'Same dialects as xbm, wrapped in #ifndef include guards or nested
+    #if preprocessor conditionals, with both hotspot-define orderings and large/asymmetric
+    geometries'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: X BitMap
+  extensions:
+  - xbm
+  mime: image/x-xbitmap
+  reference: https://www.x.org/releases/current/doc/libX11/libX11/libX11.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: xbm
+  kind: xbm-lexical
+  path: specs/xbm/xbm-lexical/xbm-lexical.fan
+  sha256: 17d1482e3ab3eba2c2cd0859c1377d1643c43dc7c41141aaadeefe6a2af7c4ef
+  description: Same dialects as xbm, with the surrounding C lexical detail varied
+    instead of the geometry (arbitrary identifier stems, inline comments, variable-width
+    hex literals, optional trailing comma)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: never
+  version: '1.0'
+  title: X BitMap
+  extensions:
+  - xbm
+  mime: image/x-xbitmap
+  reference: https://www.x.org/releases/current/doc/libX11/libX11/libX11.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: xpm
+  kind: xpm
+  path: specs/xpm/xpm/xpm.fan
+  sha256: 85d05a7d9b65030108b50c5f5302eac43f62d2c358f238b3b72813d7af2ec846
+  description: Core XPM3 features one at a time (hex colours, multi-char pixels, cursor
+    hotspot, multi-visual colour keys, XPMEXT, named colours, transparency)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: X PixMap
+  extensions:
+  - xpm
+  mime: image/x-xpixmap
+  reference: https://www.x.org/docs/XPM/xpm.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: xpm
+  kind: xpm-catalog
+  path: specs/xpm/xpm-catalog/xpm-catalog.fan
+  sha256: 8f1532cd782a9ac2742904b73858724735632a1a221b39e6a16d78a55fe8cf24
+  description: A curated, mostly-fixed catalogue of representative example files spanning
+    the XPM3, XPM2 and XPM1 dialects; useful as compatibility samples, with far less
+    per-run variation than xpm or xpm-legacy
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: mostly
+  version: '1.0'
+  title: X PixMap
+  extensions:
+  - xpm
+  mime: image/x-xpixmap
+  reference: https://www.x.org/docs/XPM/xpm.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: xpm
+  kind: xpm-legacy
+  path: specs/xpm/xpm-legacy/xpm-legacy.fan
+  sha256: 2aa9766939445cc58d0f466f4d2acdbddebba728fb5d7ff8fb3c12789235ee7e
+  description: Same as xpm, plus the deprecated XPM1 (#define + _colors[]/ _pixels[]
+    arrays) and XPM2 (plain-text "! XPM2") dialects, with boundary hex-width colour
+    values and large hotspot coordinates
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: mostly
+  version: '1.0'
+  title: X PixMap
+  extensions:
+  - xpm
+  mime: image/x-xpixmap
+  reference: https://www.x.org/docs/XPM/xpm.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg
+- format: xpm
+  kind: xpm-lexical
+  path: specs/xpm/xpm-lexical/xpm-lexical.fan
+  sha256: 0d598aef007e687ca719152571e9d0cba79a4f89a8cebd7955f647c0482cd2ce
+  description: Same as xpm, with the surrounding C lexical detail varied instead (storage-class
+    spelling, optional const qualifier, arbitrary identifiers, interspersed comments)
+    and the fuller X colour notation catalogue (rgb:/rgbi) intensities alongside hex
+    and named colours)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: X PixMap
+  extensions:
+  - xpm
+  mime: image/x-xpixmap
+  reference: https://www.x.org/docs/XPM/xpm.pdf
+  targets:
+  - pillow
+  - imagemagick
+  - ffmpeg

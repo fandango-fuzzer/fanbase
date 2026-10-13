@@ -1,0 +1,13 @@
+title: NanoSVG, built to be measured
+formats: [svg]
+run: ["/opt/cov/bin/svg-harness", "{file}"]
+needs:
+  commands: [svg-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "nanosvg"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "nanosvg"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "nanosvg"]
+  seeds: ["/opt/cov/seeds/svg/*"]

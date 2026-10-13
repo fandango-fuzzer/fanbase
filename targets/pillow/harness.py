@@ -4,6 +4,14 @@ import sys
 
 from PIL import Image, ImageSequence
 
+# Pillow reads HEIC only with this plugin; it is used where it is installed.
+try:
+    import pillow_heif
+
+    pillow_heif.register_heif_opener()
+except ImportError:
+    pass
+
 # Beyond twice this many pixels Pillow refuses (DecompressionBombError), which the target
 # calls a resource limit: the file asks for more than it may have.
 Image.MAX_IMAGE_PIXELS = 100_000_000

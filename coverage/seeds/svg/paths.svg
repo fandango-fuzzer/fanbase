@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 200 120">
+  <path d="M10 10 L60 10 L60 40 H10 V10 Z" fill="#cde"/>
+  <path d="m80 10 c20 -10 40 10 60 0 s30 20 50 0" fill="none" stroke="#a33" stroke-width="2"/>
+  <path d="M10 60 Q40 30 70 60 T130 60" fill="none" stroke="#393"/>
+  <path d="M20 100 A25 15 0 1 1 70 100 A25 15 0 0 1 20 100 z" fill="#fc6" fill-rule="evenodd"/>
+  <path d="M100 80 l30 0 l0 30 l-30 0 z m10 10 l10 0 l0 10 l-10 0 z" fill="#69c" fill-rule="evenodd"/>
+</svg>

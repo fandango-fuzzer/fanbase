@@ -1,0 +1,19 @@
+format: xpm
+kind: xpm-lexical
+description: Same as xpm, with the surrounding C lexical detail varied instead (storage-class
+  spelling, optional const qualifier, arbitrary identifiers, interspersed comments)
+  and the fuller X colour notation catalogue (rgb:/rgbi) intensities alongside hex
+  and named colours)
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'
+title: X PixMap
+extensions:
+- xpm
+mime: image/x-xpixmap
+reference: https://www.x.org/docs/XPM/xpm.pdf

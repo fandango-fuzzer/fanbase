@@ -79,6 +79,10 @@ commit `index.yml.sig`, then the release is made. A release whose signature does
 `release.yml` checks it against the maintainer's key (the one built into fanbase) and fails, without releasing, if the
 index is not signed or was changed after it was signed. A failed run on the 1st of a month means: sign, then run it again.
 
+When a change adds a library to `coverage/` (a new format to measure), its image is rebuilt by `coverage-image.yml` when the change
+reaches `main` (about half an hour), and the quality step of a release runs in that image: **wait for the run of `coverage-image`
+to finish before making a release**, or the new formats are measured without their libraries.
+
 A run started by hand (Actions, release, Run workflow) has the option **force**: it releases even if nothing changed since the
 last release, for a milestone such as the version a paper cites. The index must still be signed, and with Zenodo switched on the
 release is archived under a permanent DOI, so look before you tick it.

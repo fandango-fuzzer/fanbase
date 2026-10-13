@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="70" viewBox="0 0 120 70">
+  <title>Reused shapes</title>
+  <desc>A shape defined once and placed three times</desc>
+  <defs>
+    <path id="star" d="M10 0 L12.4 7 L20 7.6 L14 12.4 L16 20 L10 15.6 L4 20 L6 12.4 L0 7.6 L7.6 7 Z"/>
+    <clipPath id="clip"><circle cx="90" cy="35" r="20"/></clipPath>
+  </defs>
+  <use xlink:href="#star" x="5" y="5" fill="gold" stroke="#850"/>
+  <use xlink:href="#star" x="35" y="25" fill="tomato"/>
+  <use xlink:href="#star" x="10" y="40" fill="skyblue" transform="scale(1.5)"/>
+  <rect x="70" y="15" width="40" height="40" fill="#593" clip-path="url(#clip)"/>
+</svg>

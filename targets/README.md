@@ -9,11 +9,12 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 
 | target | judges | needs |
 |---|---|---|
-| `pillow` | bmp, gif, jpeg, png, tiff, webp | Python package Pillow |
-| `imagemagick` | the same | `identify` (ImageMagick); a file that it decodes is accepted, warnings or not |
+| `pillow` | bmp, gif, heic, jpeg, png, ppm, tiff, webp, xbm, xpm | Python package Pillow (and `pillow-heif`, which gives it a HEIC reader) |
+| `imagemagick` | the same, and svg | `identify` (ImageMagick); a file that it decodes is accepted, warnings or not. It reads SVG with `rsvg-convert` (`librsvg2-bin`) |
 | `imagemagick-strict` | the same | the same, but a warning rejects the file: "is it clean?" rather than "does it decode?" (not in any format's `targets` by default) |
-| `ffmpeg` | the same | `ffmpeg` |
+| `ffmpeg` | the same as Pillow | `ffmpeg` (not for jxl: it exits 0 on a truncated JPEG XL file, so it accepts files that nothing decodes) |
 | `djpeg` | jpeg | `djpeg` (libjpeg-turbo) |
+| `djxl` | jxl | `djxl` (`libjxl-tools`); the picture is decoded in full. A small wrapper gives it a file to write to, since the flag that says not to is newer than Ubuntu 24.04's version |
 | `tiffinfo` | tiff | `tiffinfo` (libtiff) |
 | `webpinfo` | webp | `webpinfo` (libwebp) |
 | `giftext` | gif | `giftext` (giflib) |
@@ -31,9 +32,15 @@ not ready anywhere else.
 | `libtiff-cov` | tiff | libtiff 4.7.2 |
 | `libwebp-cov` | webp | libwebp 1.6.0 |
 | `stb-bmp-cov` | bmp | stb_image, BMP only |
+| `libheif-cov` | heic | libheif 1.23.6 |
+| `libjxl-cov` | jxl | libjxl 0.12.0 |
+| `ffmpeg-pnm-cov` | ppm | FFmpeg n9.0.2, its PNM decoders |
+| `ffmpeg-xbm-cov` | xbm | FFmpeg n9.0.2, its XBM decoder |
+| `ffmpeg-xpm-cov` | xpm | FFmpeg n9.0.2, its XPM decoder |
+| `nanosvg-cov` | svg | NanoSVG |
 
-On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck`,
-and `pip install Pillow`. `fanbase targets` says which of them can run on your machine.
+On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin libjxl-tools`,
+and `pip install Pillow pillow-heif`. `fanbase targets` says which of them can run on your machine.
 
 **Where a target runs.** On a pull request (`evaluate.yml`), with a read-only token and no secrets, because a pull
 request from a fork brings its own targets. On `main`, once a week and by hand (`evaluate-main.yml`), in a job that

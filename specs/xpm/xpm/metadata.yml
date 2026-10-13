@@ -1,0 +1,17 @@
+format: xpm
+kind: xpm
+description: Core XPM3 features one at a time (hex colours, multi-char pixels, cursor
+  hotspot, multi-visual colour keys, XPMEXT, named colours, transparency)
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'
+title: X PixMap
+extensions:
+- xpm
+mime: image/x-xpixmap
+reference: https://www.x.org/docs/XPM/xpm.pdf

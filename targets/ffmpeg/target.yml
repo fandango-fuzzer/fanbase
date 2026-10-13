@@ -2,10 +2,14 @@ title: FFmpeg
 formats:
 - bmp
 - gif
+- heic
 - jpeg
 - png
+- ppm
 - tiff
 - webp
+- xbm
+- xpm
 run:
 - ffmpeg
 - -v

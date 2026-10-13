@@ -8,7 +8,8 @@
 
 It asks gcov about every object that was built with counting, so that code that never ran is in the total as well,
 and keeps only the files that libs.json says are the library's own for reading (the include/exclude patterns, on the
-path from the library's source folder).
+path from the library's source folder). A library whose build also makes objects that are not for reading (an encoder,
+the codecs of other formats) says which objects to ask about with "objects", a pattern on their path from the build folder.
 """
 import json
 import re
@@ -25,10 +26,13 @@ def main(name: str) -> int:
         return 2
     src, build = Path(conf["src"]).resolve(), Path(conf["build"])
     include, exclude = re.compile(conf["include"]), re.compile(conf["exclude"])
+    objects = re.compile(conf["objects"]) if conf.get("objects") else None
 
     lines: dict[str, int] = {}
     branches: dict[str, int] = {}
     for gcno in sorted(build.rglob("*.gcno")):
+        if objects and not objects.search(gcno.relative_to(build).as_posix()):
+            continue
         done = subprocess.run(["gcov", "--json-format", "--stdout", "--branch-probabilities", str(gcno)],
                               capture_output=True, text=True, cwd=build)
         if done.returncode != 0:

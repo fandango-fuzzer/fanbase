@@ -1,0 +1,13 @@
+title: libjxl, built to be measured
+formats: [jxl]
+run: ["/opt/cov/bin/jxl-harness", "{file}"]
+needs:
+  commands: [jxl-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libjxl"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libjxl"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libjxl"]
+  seeds: ["/opt/cov/seeds/jxl/*"]

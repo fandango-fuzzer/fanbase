@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: X BitMap
+mime: image/x-xbitmap
+extensions:
+- xbm
+reference: https://www.x.org/releases/current/doc/libX11/libX11/libX11.pdf
+targets:
+- pillow
+- imagemagick
+- ffmpeg

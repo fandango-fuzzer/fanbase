@@ -46,5 +46,57 @@
     "build": "/opt/cov/build/stb-bmp",
     "include": "^stb_image\\.h$",
     "exclude": "^$"
+  },
+  "libheif": {
+    "title": "libheif",
+    "version": "1.23.6",
+    "src": "/opt/cov/src/libheif",
+    "build": "/opt/cov/build/libheif",
+    "include": "^libheif/.*\\.cc$",
+    "exclude": "^libheif/api/|(^|/)(encoder|unc_encoder[a-z_]*|rgb2yuv[a-z_]*|plugins_unix|plugins_windows)\\.cc$|_enc\\.cc$|/plugins/encoder_"
+  },
+  "libjxl": {
+    "title": "libjxl",
+    "version": "0.12.0",
+    "src": "/opt/cov/src/libjxl",
+    "build": "/opt/cov/build/libjxl",
+    "objects": "/jxl_dec-obj\\.dir/",
+    "include": "^lib/jxl/.*\\.(cc|h)$",
+    "exclude": "(^|/)(enc_[a-z0-9_]*|encode|test_[a-z0-9_]*|testing)\\.(cc|h)$"
+  },
+  "ffmpeg-pnm": {
+    "title": "FFmpeg (PNM family, for PPM)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg",
+    "objects": "^libavcodec/(pnm|pnmdec|pnm_parser)\\.",
+    "include": "^libavcodec/(pnm|pnmdec|pnm_parser)\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-xbm": {
+    "title": "FFmpeg (XBM)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg",
+    "objects": "^libavcodec/(xbmdec)\\.",
+    "include": "^libavcodec/(xbmdec)\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-xpm": {
+    "title": "FFmpeg (XPM)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg",
+    "objects": "^libavcodec/(xpmdec)\\.",
+    "include": "^libavcodec/(xpmdec)\\.c$",
+    "exclude": "^$"
+  },
+  "nanosvg": {
+    "title": "NanoSVG",
+    "version": "239e102",
+    "src": "/opt/cov/src/nanosvg",
+    "build": "/opt/cov/build/nanosvg",
+    "include": "^nanosvg\\.h$",
+    "exclude": "^$"
   }
 }

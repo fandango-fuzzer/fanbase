@@ -1,0 +1,8 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: JPEG XL
+mime: image/jxl
+extensions:
+- jxl
+reference: https://www.iso.org/standard/85066.html
+targets:
+- djxl

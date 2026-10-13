@@ -1,0 +1,8 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Scalable Vector Graphics
+mime: image/svg+xml
+extensions:
+- svg
+reference: https://www.w3.org/TR/SVG2/
+targets:
+- imagemagick

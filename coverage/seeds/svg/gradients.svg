@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="160" height="100" viewBox="0 0 160 100">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f00"/>
+      <stop offset="0.5" stop-color="#ff0" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#00f"/>
+    </linearGradient>
+    <linearGradient id="derived" xlink:href="#base" gradientTransform="rotate(45)" spreadMethod="reflect"/>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+      <stop offset="0%" style="stop-color:white;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#369;stop-opacity:1"/>
+    </radialGradient>
+  </defs>
+  <rect x="5" y="5" width="70" height="40" fill="url(#base)"/>
+  <rect x="85" y="5" width="70" height="40" fill="url(#derived)"/>
+  <circle cx="45" cy="72" r="24" fill="url(#glow)"/>
+  <rect x="85" y="55" width="70" height="35" fill="url(#glow)" stroke="url(#base)" stroke-width="4"/>
+</svg>
