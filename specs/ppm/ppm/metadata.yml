@@ -1,0 +1,17 @@
+format: ppm
+kind: ppm
+description: P3 (ASCII) and P6 (raw) PPMs with 8-bit and 16-bit samples, header comments
+  and whitespace
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'
+title: Portable Pixmap
+extensions:
+- ppm
+mime: image/x-portable-pixmap
+reference: http://netpbm.sourceforge.net/doc/ppm.html

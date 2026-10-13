@@ -1,0 +1,18 @@
+format: xbm
+kind: xbm-guards
+description: 'Same dialects as xbm, wrapped in #ifndef include guards or nested #if
+  preprocessor conditionals, with both hotspot-define orderings and large/asymmetric
+  geometries'
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'
+title: X BitMap
+extensions:
+- xbm
+mime: image/x-xbitmap
+reference: https://www.x.org/releases/current/doc/libX11/libX11/libX11.pdf

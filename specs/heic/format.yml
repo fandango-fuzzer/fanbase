@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: High Efficiency Image File Format
+mime: image/heic
+extensions:
+- heic
+reference: https://www.iso.org/standard/89035.html
+targets:
+- pillow
+- imagemagick
+- ffmpeg

@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Portable Pixmap
+mime: image/x-portable-pixmap
+extensions:
+- ppm
+reference: http://netpbm.sourceforge.net/doc/ppm.html
+targets:
+- pillow
+- imagemagick
+- ffmpeg
