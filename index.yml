@@ -154,7 +154,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: rarely
+  decodes: never
   version: '1.0'
   title: High Efficiency Image File Format
   extensions:
@@ -178,7 +178,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: rarely
+  decodes: never
   version: '1.0'
   title: High Efficiency Image File Format
   extensions:
@@ -202,7 +202,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: rarely
+  decodes: never
   version: '1.0'
   title: High Efficiency Image File Format
   extensions:
@@ -226,7 +226,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: rarely
+  decodes: never
   version: '1.0'
   title: High Efficiency Image File Format
   extensions:
@@ -316,14 +316,14 @@ specs:
   path: specs/jxl/jxl/jxl.fan
   sha256: 1ef36a8cf0702c6a3385b5878a82ab74ea7be292244b895d13f8f28194cd9679
   description: Raw JPEG XL codestreams with a real bit-packed header and metadata;
-    the entropy-coded frame body is a structurally-framed stub, so files rarely decode
+    the entropy-coded frame body is a structurally-framed stub, so files do not decode
   fanbase: 0.5.0
   fandango: '>=1.3'
   requires: []
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: rarely
+  decodes: never
   version: '1.0'
   title: JPEG XL
   extensions:
@@ -331,9 +331,7 @@ specs:
   mime: image/jxl
   reference: https://www.iso.org/standard/85066.html
   targets:
-  - pillow
-  - imagemagick
-  - ffmpeg
+  - djxl
 - format: jxl
   kind: jxl-frames
   path: specs/jxl/jxl-frames/jxl-frames.fan
@@ -355,9 +353,7 @@ specs:
   mime: image/jxl
   reference: https://www.iso.org/standard/85066.html
   targets:
-  - pillow
-  - imagemagick
-  - ffmpeg
+  - djxl
 - format: jxl
   kind: jxl-frames-boundary
   path: specs/jxl/jxl-frames-boundary/jxl-frames-boundary.fan
@@ -380,9 +376,7 @@ specs:
   mime: image/jxl
   reference: https://www.iso.org/standard/85066.html
   targets:
-  - pillow
-  - imagemagick
-  - ffmpeg
+  - djxl
 - format: png
   kind: png
   path: specs/png/png/png.fan
@@ -557,7 +551,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: mostly
   version: '1.0'
   title: Portable Pixmap
   extensions:
@@ -580,7 +574,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: mostly
   version: '1.0'
   title: Portable Pixmap
   extensions:
@@ -603,7 +597,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: mostly
   version: '1.0'
   title: Portable Pixmap
   extensions:
@@ -626,7 +620,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: mostly
   version: '1.0'
   title: Scalable Vector Graphics
   extensions:
@@ -648,7 +642,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: rarely
   version: '1.0'
   title: Scalable Vector Graphics
   extensions:
@@ -669,7 +663,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: rarely
   version: '1.0'
   title: Scalable Vector Graphics
   extensions:
@@ -735,7 +729,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: rarely
   version: '1.0'
   title: Scalable Vector Graphics
   extensions:
@@ -757,7 +751,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: mostly
   version: '1.0'
   title: Scalable Vector Graphics
   extensions:
@@ -1020,7 +1014,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: never
   version: '1.0'
   title: X BitMap
   extensions:
@@ -1067,7 +1061,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: mostly
   version: '1.0'
   title: X PixMap
   extensions:
@@ -1091,7 +1085,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: always
+  decodes: mostly
   version: '1.0'
   title: X PixMap
   extensions:

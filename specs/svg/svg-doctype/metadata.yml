@@ -8,7 +8,7 @@ requires: []
 authors:
 - The Fandango Fuzzer Team
 license: Apache-2.0
-decodes: always
+decodes: rarely
 version: '1.0'
 title: Scalable Vector Graphics
 extensions:

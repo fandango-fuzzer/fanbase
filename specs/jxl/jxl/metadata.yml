@@ -1,14 +1,14 @@
 format: jxl
 kind: jxl
 description: Raw JPEG XL codestreams with a real bit-packed header and metadata; the
-  entropy-coded frame body is a structurally-framed stub, so files rarely decode
+  entropy-coded frame body is a structurally-framed stub, so files do not decode
 fanbase: 0.5.0
 fandango: '>=1.3'
 requires: []
 authors:
 - The Fandango Fuzzer Team
 license: Apache-2.0
-decodes: rarely
+decodes: never
 version: '1.0'
 title: JPEG XL
 extensions:

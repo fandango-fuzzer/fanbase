@@ -9,7 +9,7 @@ requires: []
 authors:
 - The Fandango Fuzzer Team
 license: Apache-2.0
-decodes: rarely
+decodes: never
 version: '1.0'
 title: High Efficiency Image File Format
 extensions:

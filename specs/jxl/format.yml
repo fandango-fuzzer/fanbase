@@ -5,4 +5,4 @@ extensions:
 - jxl
 reference: https://www.iso.org/standard/85066.html
 targets:
-- ffmpeg
+- djxl
