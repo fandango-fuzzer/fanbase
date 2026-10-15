@@ -519,7 +519,7 @@ specs:
 - format: ppm
   kind: ppm
   path: specs/ppm/ppm/ppm.fan
-  sha256: 3a07301be3e7a263a6cd29089b79e475ff6e7bc91cf43cd989f996e42f9d840f
+  sha256: 99fcee8b5394aed82658387ea4941980179895654b6da5ef695ff8a22793154e
   description: P3 (ASCII) and P6 (raw) PPMs with 8-bit and 16-bit samples, header
     comments and whitespace
   fanbase: 0.5.0
@@ -529,7 +529,7 @@ specs:
   - The Fandango Fuzzer Team
   license: Apache-2.0
   decodes: always
-  version: '1.0'
+  version: '1.1'
   title: Portable Pixmap
   extensions:
   - ppm
@@ -597,7 +597,7 @@ specs:
   authors:
   - The Fandango Fuzzer Team
   license: Apache-2.0
-  decodes: mostly
+  decodes: always
   version: '1.0'
   title: Portable Pixmap
   extensions:
@@ -1004,10 +1004,10 @@ specs:
 - format: xbm
   kind: xbm-lexical
   path: specs/xbm/xbm-lexical/xbm-lexical.fan
-  sha256: 17d1482e3ab3eba2c2cd0859c1377d1643c43dc7c41141aaadeefe6a2af7c4ef
+  sha256: ce2480ff6b51ee09c1abe7280c1044c362f132d2d70fa1384d77e381ea427a37
   description: Same dialects as xbm, with the surrounding C lexical detail varied
-    instead of the geometry (arbitrary identifier stems, inline comments, variable-width
-    hex literals, optional trailing comma)
+    instead of the geometry (a few identifier stems, inline comments, variable-width
+    hex literals, optional trailing comma), for sizes of 8 to 32 pixels
   fanbase: 0.5.0
   fandango: '>=1.3'
   requires: []
@@ -1015,7 +1015,7 @@ specs:
   - The Fandango Fuzzer Team
   license: Apache-2.0
   decodes: never
-  version: '1.0'
+  version: '1.1'
   title: X BitMap
   extensions:
   - xbm
