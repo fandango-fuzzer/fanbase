@@ -1,12 +1,17 @@
 title: FFmpeg
 formats:
+- aac
 - bmp
+- flac
 - gif
 - heic
 - jpeg
+- mp3
+- ogg
 - png
 - ppm
 - tiff
+- wav
 - webp
 - xbm
 - xpm

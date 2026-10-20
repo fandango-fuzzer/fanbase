@@ -1,0 +1,9 @@
+title: mpg123
+formats: [mp3]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # mpg123 FILE, decoded to nothing; accepted if it gave audio
+needs:
+  commands: [mpg123]
+version: [mpg123, --version]
+classify:
+  - match: "(?i)out of memory"
+    as: resource-limit

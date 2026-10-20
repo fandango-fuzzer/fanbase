@@ -1,0 +1,6 @@
+title: flac (libFLAC)
+formats: [flac]
+run: [flac, --test, --silent, "{file}"]   # decodes every frame and checks the MD5 sum of the audio, if the file has one
+needs:
+  commands: [flac]
+version: [flac, --version]
