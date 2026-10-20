@@ -1,0 +1,12 @@
+format: wav
+kind: wav-boundary
+description: Same as wav, with values taken from the edges of what the format allows
+  (1 Hz to 192 kHz, A-law, mu-law, 18 channels, undefined loop types)
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'

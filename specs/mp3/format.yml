@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: MPEG-1/2 Audio Layer III
+mime: audio/mpeg
+extensions:
+- mp3
+reference: https://www.iso.org/standard/22412.html
+targets:
+- ffmpeg
+- libsndfile
+- mpg123

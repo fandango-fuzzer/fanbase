@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Free Lossless Audio Codec
+mime: audio/flac
+extensions:
+- flac
+reference: https://www.rfc-editor.org/rfc/rfc9639
+targets:
+- ffmpeg
+- libsndfile
+- flac

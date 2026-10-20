@@ -1,0 +1,9 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Waveform Audio File Format
+mime: audio/wav
+extensions:
+- wav
+reference: https://www.loc.gov/preservation/digital/formats/fdd/fdd000001.shtml
+targets:
+- ffmpeg
+- libsndfile
