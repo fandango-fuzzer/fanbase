@@ -752,7 +752,7 @@ specs:
 - format: png
   kind: png-container
   path: specs/png/png-container/png-container.fan
-  sha256: 1475f63294a543cc4d8c15d0357ea7e9b44a1f713eee048682ebd431bd37b772
+  sha256: b5131002fa96fc15016dc7c7963aab9ba9f5803605a4884ebd83cef4bcf939a7
   description: PNG chunk structure only; image data is arbitrary bytes, so most files
     do not decode
   fanbase: 0.5.0
@@ -762,7 +762,7 @@ specs:
   - The Fandango Fuzzer Team
   license: Apache-2.0
   decodes: never
-  version: '1.0'
+  version: '1.1'
   title: Portable Network Graphics
   extensions:
   - png
