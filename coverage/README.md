@@ -17,6 +17,7 @@ it makes so that nothing is compiled on every run.
 | libheif | 1.23.6 | commit `f81f28a` of `v1.23.6` | `libheif/` without the C API, the encoders and plugin loading; HEVC is decoded by the system's libde265, which is not counted |
 | libjxl | 0.12.0 | commit `a7a9c78` of `v0.12.0` | the decoder, `lib/jxl` (what `jxl_dec` is made of); highway, brotli and skcms are the ones its commit pins, and highway is built without SIMD |
 | FFmpeg | n9.0.2 | commit `946fcce` of `n9.0.2` | the decoders of PPM (`pnm*`), XBM and XPM, from a build that has only those; one build, counted as three libraries (`ffmpeg-pnm`, `ffmpeg-xbm`, `ffmpeg-xpm`) |
+| FFmpeg | n9.0.2 | the same commit, built again | for sound, from a second build that has only these: the demuxers of WAV, FLAC, Ogg, MP3 and AAC (ADTS) and their decoders (PCM, FLAC, Vorbis, MPEG audio, AAC; Opus is built so that Ogg Opus files are read, and not counted), counted as five libraries (`ffmpeg-wav`, `ffmpeg-flac`, `ffmpeg-ogg`, `ffmpeg-mp3`, `ffmpeg-aac`) |
 | NanoSVG | `239e102` | SHA-256 of the file | the header, which reads a document into shapes (it is lenient: the program refuses a document that has no size) |
 
 Everything is compiled with `gcc --coverage -O0` (`g++` for libheif and libjxl). Each library has a small program (`harness/`) that reads a file the
@@ -26,7 +27,7 @@ makes objects that are not for reading, says which of them gcov is asked about).
 the counters, and `cov-snapshot LIB` asks gcov about every object that was built, so that code that never ran is in the
 total, and prints what ran as JSON. The real files are made at build time, with ImageMagick, from its built-in picture
 (`make-seeds.sh`): several encodings of each format, so that they reach different parts of a library. HEIC is made by libheif's
-own `heif-enc` (HEVC by kvazaar) and JPEG XL by `cjxl`; the SVG files are written by hand (`seeds/svg/`), because no tool makes
+own `heif-enc` (HEVC by kvazaar), JPEG XL by `cjxl`, and the sound files by the system's FFmpeg from two tones (with LAME, libvorbis and libopus for MP3, Vorbis and Opus); the SVG files are written by hand (`seeds/svg/`), because no tool makes
 a vector drawing from a picture.
 
 What this does not tell: it is *line* and *branch* coverage of the reading path, with the library compiled without

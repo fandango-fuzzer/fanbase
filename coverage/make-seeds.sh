@@ -1,11 +1,12 @@
 #!/bin/sh
 # A few real files of each format, made by real tools (ImageMagick, from its built-in picture; libheif's and libjxl's own
-# encoders for HEIC and JPEG XL) and not by a grammar: what the generated files are compared with. Different encodings, so
-# that they reach different parts of a library. The SVG files are written by hand, in seed-sources/, since no tool makes a
-# vector drawing from a picture.
+# encoders for HEIC and JPEG XL; FFmpeg, from two tones, for the sound formats) and not by a grammar: what the generated
+# files are compared with. Different encodings, so that they reach different parts of a library. The SVG files are written
+# by hand, in seed-sources/, since no tool makes a vector drawing from a picture.
 set -eu
 OUT=/opt/cov/seeds
-mkdir -p "$OUT/png" "$OUT/jpeg" "$OUT/gif" "$OUT/tiff" "$OUT/webp" "$OUT/bmp" "$OUT/heic" "$OUT/jxl" "$OUT/ppm" "$OUT/xbm" "$OUT/xpm" "$OUT/svg"
+mkdir -p "$OUT/png" "$OUT/jpeg" "$OUT/gif" "$OUT/tiff" "$OUT/webp" "$OUT/bmp" "$OUT/heic" "$OUT/jxl" "$OUT/ppm" "$OUT/xbm" "$OUT/xpm" "$OUT/svg" \
+    "$OUT/wav" "$OUT/flac" "$OUT/ogg" "$OUT/mp3" "$OUT/aac"
 cd /tmp
 convert rose: -resize 70x46 base.png
 
@@ -96,6 +97,47 @@ convert base.png -colorspace Gray gray.jpg
 "$HEIF_ENC" base.jpg --uncompressed -o "$OUT/heic/uncompressed.heif" > /dev/null
 "$HEIF_ENC" base.jpg --jpeg -o "$OUT/heic/jpeg.heif" > /dev/null
 
+# Sound, with the FFmpeg of the system (its own encoders, and LAME, libvorbis and libopus through it), from two tones
+sound() { ffmpeg -nostdin -v error -y "$@"; }
+sound -f lavfi -i "sine=frequency=440:duration=0.5" -f lavfi -i "sine=frequency=660:duration=0.5" -filter_complex amerge=inputs=2 \
+    -ar 44100 tones.wav
+sound -i tones.wav "$OUT/wav/plain.wav"
+sound -i tones.wav -ac 1 -ar 8000 -c:a pcm_u8 "$OUT/wav/eight-bit.wav"
+sound -i tones.wav -c:a pcm_s24le -ar 48000 "$OUT/wav/twenty-four-bit.wav"
+sound -i tones.wav -c:a pcm_f32le "$OUT/wav/float.wav"
+sound -i tones.wav -ac 1 -ar 8000 -c:a pcm_alaw "$OUT/wav/a-law.wav"
+sound -i tones.wav -ac 1 -ar 8000 -c:a pcm_mulaw "$OUT/wav/mu-law.wav"
+sound -i tones.wav -metadata title=Seed -metadata artist=Fanbase "$OUT/wav/tagged.wav"
+sound -i tones.wav -rf64 always "$OUT/wav/rf64.wav"
+
+sound -i tones.wav "$OUT/flac/plain.flac"
+sound -i tones.wav -compression_level 0 "$OUT/flac/fast.flac"
+sound -i tones.wav -compression_level 12 "$OUT/flac/best.flac"
+sound -i tones.wav -ac 1 -ar 8000 "$OUT/flac/mono.flac"
+sound -i tones.wav -sample_fmt s32 -bits_per_raw_sample 24 -ar 96000 "$OUT/flac/twenty-four-bit.flac"
+sound -i tones.wav -metadata title=Seed -metadata artist=Fanbase "$OUT/flac/tagged.flac"
+
+sound -i tones.wav -c:a libvorbis -q:a 2 "$OUT/ogg/vorbis-low.ogg"
+sound -i tones.wav -c:a libvorbis -q:a 8 "$OUT/ogg/vorbis-high.ogg"
+sound -i tones.wav -ac 1 -ar 22050 -c:a libvorbis "$OUT/ogg/vorbis-mono.ogg"
+sound -i tones.wav -c:a libvorbis -metadata title=Seed -metadata artist=Fanbase "$OUT/ogg/tagged.ogg"
+sound -i tones.wav -c:a libopus -b:a 64k "$OUT/ogg/opus.ogg"
+sound -i tones.wav -c:a flac -f ogg "$OUT/ogg/flac.ogg"
+
+sound -i tones.wav -c:a libmp3lame -b:a 128k "$OUT/mp3/cbr.mp3"
+sound -i tones.wav -c:a libmp3lame -q:a 2 "$OUT/mp3/vbr.mp3"
+sound -i tones.wav -c:a libmp3lame -ac 1 -ar 22050 -b:a 32k "$OUT/mp3/mpeg-2.mp3"
+sound -i tones.wav -c:a libmp3lame -ac 1 -ar 8000 -b:a 16k "$OUT/mp3/mpeg-2-5.mp3"
+sound -i tones.wav -c:a libmp3lame -id3v2_version 4 -write_id3v1 1 -metadata title=Seed -metadata artist=Fanbase "$OUT/mp3/tagged.mp3"
+sound -i tones.wav -c:a mp2 -f mp2 "$OUT/mp3/layer-2.mp3"
+
+sound -i tones.wav -c:a aac -f adts "$OUT/aac/plain.aac"
+sound -i tones.wav -c:a aac -ac 1 -ar 8000 -f adts "$OUT/aac/mono.aac"
+sound -i tones.wav -c:a aac -ac 6 -f adts "$OUT/aac/surround.aac"
+sound -i tones.wav -c:a aac -b:a 32k -f adts "$OUT/aac/low-rate.aac"
+sound -i tones.wav -c:a aac -profile:a aac_main -f adts "$OUT/aac/main-profile.aac"
+sound -i tones.wav -c:a aac -profile:a aac_ltp -strict -2 -f adts "$OUT/aac/ltp.aac"   # LTP is "experimental" in FFmpeg's encoder
+
 cp /opt/cov/seed-sources/svg/*.svg "$OUT/svg/"
-rm -f base.png base.jpg gray.jpg gray.png alpha.png sixteen.png
+rm -f base.png base.jpg gray.jpg gray.png alpha.png sixteen.png tones.wav
 find "$OUT" -type f | sort | sed 's#^#seed: #'

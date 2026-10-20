@@ -1,0 +1,13 @@
+title: FFmpeg's MP3 demuxer, ID3 and APE tag readers and MPEG audio decoders, built to be measured
+formats: [mp3]
+run: ["/opt/cov/bin/ffmpeg-audio-harness", "{file}"]
+needs:
+  commands: [ffmpeg-audio-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-mp3"]
+classify:
+  - match: "(?i)too large|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-mp3"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-mp3"]
+  seeds: ["/opt/cov/seeds/mp3/*"]
