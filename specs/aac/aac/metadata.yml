@@ -1,0 +1,12 @@
+format: aac
+kind: aac
+description: ADTS frames with a free header and a random raw_data_block, frame_length
+  written for each payload size; files do not decode
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: never
+version: '1.0'

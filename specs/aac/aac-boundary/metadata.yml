@@ -1,0 +1,13 @@
+format: aac
+kind: aac-boundary
+description: Same as aac, with values taken from the edges of what the format allows
+  (all profiles, sampling indices and channel configurations, CRC-protected frames),
+  and ADIF files
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: rarely
+version: '1.0'

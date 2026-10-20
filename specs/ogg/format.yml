@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Ogg
+mime: audio/ogg
+extensions:
+- ogg
+- oga
+reference: https://www.rfc-editor.org/rfc/rfc3533
+targets:
+- ffmpeg
+- libsndfile
+- ogginfo

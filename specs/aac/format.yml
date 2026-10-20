@@ -1,0 +1,9 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Advanced Audio Coding
+mime: audio/aac
+extensions:
+- aac
+reference: https://www.iso.org/standard/76383.html
+targets:
+- ffmpeg
+- faad

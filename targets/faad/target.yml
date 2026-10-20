@@ -1,0 +1,9 @@
+title: faad (FAAD2)
+formats: [aac]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # faad -w FILE, decoded to nothing; accepted if it said no error
+needs:
+  commands: [faad]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)memory"
+    as: resource-limit

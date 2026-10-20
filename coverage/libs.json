@@ -91,6 +91,51 @@
     "include": "^libavcodec/(xpmdec)\\.c$",
     "exclude": "^$"
   },
+  "ffmpeg-wav": {
+    "title": "FFmpeg (WAV)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-audio",
+    "objects": "^libavformat/(wavdec|riffdec|pcm)\\.|^libavcodec/pcm\\.",
+    "include": "^libavformat/(wavdec|riffdec|pcm)\\.c$|^libavcodec/pcm\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-flac": {
+    "title": "FFmpeg (FLAC)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-audio",
+    "objects": "^libavformat/(flacdec|flac_picture)\\.|^libavcodec/(flacdec|flac|flac_parser|flacdsp)\\.",
+    "include": "^libavformat/(flacdec|flac_picture)\\.c$|^libavcodec/(flacdec|flac|flac_parser|flacdsp|flacdsp_template|flacdsp_lpc_template)\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-ogg": {
+    "title": "FFmpeg (Ogg, with Vorbis)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-audio",
+    "objects": "^libavformat/(oggdec|oggparse[a-z0-9]+)\\.|^libavcodec/(vorbisdec|vorbis|vorbis_parser)\\.",
+    "include": "^libavformat/(oggdec|oggparse[a-z0-9]+)\\.c$|^libavcodec/(vorbisdec|vorbis|vorbis_parser)\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-mp3": {
+    "title": "FFmpeg (MP3)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-audio",
+    "objects": "^libavformat/(mp3dec|id3v1|id3v2|apetag)\\.|^libavcodec/(mpegaudiodec_float|mpegaudiodec_common|mpegaudiodecheader|mpegaudio_parser|mpegaudio)\\.",
+    "include": "^libavformat/(mp3dec|id3v1|id3v2|apetag)\\.c$|^libavcodec/(mpegaudiodec_float|mpegaudiodec_template|mpegaudiodec_common|mpegaudiodecheader|mpegaudio_parser|mpegaudio)\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-aac": {
+    "title": "FFmpeg (AAC)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-audio",
+    "objects": "^libavformat/aacdec\\.|^libavcodec/(aac/aacdec[a-z_]*|adts_header|aac_parser|aac_ac3_parser|aacsbr|aacps_float|aacps_common|mpeg4audio)\\.",
+    "include": "^libavformat/aacdec\\.c$|^libavcodec/(aac/aacdec[a-z_]*|adts_header|aac_parser|aac_ac3_parser|aacsbr|aacsbr_template|aacps_float|aacps|aacps_common|mpeg4audio)\\.c$",
+    "exclude": "^$"
+  },
   "nanosvg": {
     "title": "NanoSVG",
     "version": "239e102",

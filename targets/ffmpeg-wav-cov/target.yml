@@ -1,0 +1,13 @@
+title: FFmpeg's WAV demuxer and PCM decoders, built to be measured
+formats: [wav]
+run: ["/opt/cov/bin/ffmpeg-audio-harness", "{file}"]
+needs:
+  commands: [ffmpeg-audio-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-wav"]
+classify:
+  - match: "(?i)too large|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-wav"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-wav"]
+  seeds: ["/opt/cov/seeds/wav/*"]

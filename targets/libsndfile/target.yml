@@ -1,0 +1,12 @@
+title: libsndfile
+formats: [flac, mp3, ogg, wav]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # reads every frame of the file; its exit status: 0 it did
+needs:
+  python: [soundfile]
+  pip: [soundfile]
+version: ["{python}", "-c", "import soundfile; print(soundfile.__libsndfile_version__)"]
+classify:
+  - match: "(?i)unsupported|not supported|unknown format"
+    as: unsupported
+  - match: "(?i)memory"
+    as: resource-limit

@@ -1,0 +1,6 @@
+title: ogginfo (vorbis-tools)
+formats: [ogg]
+run: [ogginfo, -q, "{file}"]   # checks the pages and the streams in them (Vorbis, Theora, Opus, ...); exit 1 on an error
+needs:
+  commands: [ogginfo]
+version: [ogginfo, -V]

@@ -85,6 +85,20 @@ mkdir -p "$BUILD/ffmpeg"
 make -C "$BUILD/ffmpeg" -j"$(nproc)" > "$BUILD/ffmpeg.build.log" 2>&1 || { tail -30 "$BUILD/ffmpeg.build.log" >&2; exit 1; }
 make -C "$BUILD/ffmpeg" install > /dev/null
 
+# --- the same FFmpeg again, with the demuxers and decoders of WAV, FLAC, Ogg (Vorbis, Opus, FLAC), MP3 (layers I to III)
+# and AAC (ADTS), in a build of its own, so that the one above stays as it is
+mkdir -p "$BUILD/ffmpeg-audio"
+(cd "$BUILD/ffmpeg-audio" && "$SRC/ffmpeg/configure" --prefix="$PREFIX/ffmpeg-audio" --cc=gcc \
+    --disable-everything --disable-autodetect --disable-programs --disable-doc --disable-network \
+    --disable-avdevice --disable-avfilter --disable-swscale \
+    --disable-asm --disable-stripping --disable-debug --optflags=-O0 --extra-cflags="$CFLAGS_COV" --extra-ldflags=--coverage \
+    --disable-shared --enable-static --enable-pic --enable-protocol=file \
+    --enable-demuxer=wav,flac,ogg,mp3,aac --enable-parser=flac,vorbis,opus,mpegaudio,aac \
+    --enable-decoder=pcm_u8,pcm_s16le,pcm_s24le,pcm_s32le,pcm_f32le,pcm_f64le,pcm_alaw,pcm_mulaw,flac,vorbis,opus,mp1float,mp2float,mp3float,aac \
+    > "$BUILD/ffmpeg-audio.configure.log" 2>&1) || { tail -30 "$BUILD/ffmpeg-audio.configure.log" >&2; exit 1; }
+make -C "$BUILD/ffmpeg-audio" -j"$(nproc)" > "$BUILD/ffmpeg-audio.build.log" 2>&1 || { tail -30 "$BUILD/ffmpeg-audio.build.log" >&2; exit 1; }
+make -C "$BUILD/ffmpeg-audio" install > /dev/null
+
 # --- NanoSVG (one header, at a pinned commit; the program is the library, as with stb_image)
 mkdir -p "$SRC/nanosvg" "$BUILD/nanosvg"
 curl -fsSL "https://raw.githubusercontent.com/memononen/nanosvg/239e102ec2c691f2902e20ace2ed36ee4a35cfe6/src/nanosvg.h" -o "$SRC/nanosvg/nanosvg.h"

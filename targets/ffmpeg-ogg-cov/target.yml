@@ -1,0 +1,13 @@
+title: FFmpeg's Ogg demuxer and Vorbis decoder, built to be measured
+formats: [ogg]
+run: ["/opt/cov/bin/ffmpeg-audio-harness", "{file}"]
+needs:
+  commands: [ffmpeg-audio-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-ogg"]
+classify:
+  - match: "(?i)too large|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-ogg"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-ogg"]
+  seeds: ["/opt/cov/seeds/ogg/*"]

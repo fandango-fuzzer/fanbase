@@ -1,0 +1,13 @@
+title: FFmpeg's ADTS demuxer and AAC decoder, built to be measured
+formats: [aac]
+run: ["/opt/cov/bin/ffmpeg-audio-harness", "{file}"]
+needs:
+  commands: [ffmpeg-audio-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-aac"]
+classify:
+  - match: "(?i)too large|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-aac"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-aac"]
+  seeds: ["/opt/cov/seeds/aac/*"]

@@ -32,6 +32,9 @@ harness jxl jxl.c "-I$PREFIX/libjxl/include" "$PREFIX/libjxl/lib/libjxl.a" "$PRE
 # one program for the three formats FFmpeg's decoders are built for
 harness ffmpeg ffmpeg.c "-I$PREFIX/ffmpeg/include" "$PREFIX/ffmpeg/lib/libavformat.a" "$PREFIX/ffmpeg/lib/libavcodec.a" \
     "$PREFIX/ffmpeg/lib/libavutil.a" -lm -lpthread
+# and one for the five sound formats of the other FFmpeg build
+harness ffmpeg-audio ffmpeg-audio.c "-I$PREFIX/ffmpeg-audio/include" "$PREFIX/ffmpeg-audio/lib/libavformat.a" \
+    "$PREFIX/ffmpeg-audio/lib/libavcodec.a" "$PREFIX/ffmpeg-audio/lib/libswresample.a" "$PREFIX/ffmpeg-audio/lib/libavutil.a" -lm -lpthread
 
 # NanoSVG is one header too: the program is the library, so it is the one that counts
 mkdir -p "$BUILD/nanosvg"
