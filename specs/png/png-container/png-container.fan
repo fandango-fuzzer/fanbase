@@ -8,6 +8,8 @@
 # TODO:
 # * Could this serve as a template for the other `png.fan` specs?
 # * Try not to depend on `random`; let Fandango do this
+# * Indexed images (and so PLTE and hIST) hardly ever come out: Fandango picks
+#   the other colour types. They do when <image> is <image_indexed> alone.
 
 
 import random
@@ -15,7 +17,22 @@ import zlib
 
 <start> ::= <png>
 
-<png> ::= <signature> <cgbi_chunk>? <ihdr_chunk> <chunks_before_plte> <plte_section> <chunks_after_plte> <idat_chunk>+ <chunks_after_idat> <iend_chunk>
+<png> ::= <signature> <cgbi_chunk>? <image>
+
+# The colour type in IHDR decides whether there is a PLTE, how large it may be,
+# and which tRNS and bKGD there can be: one layout per colour type (and, for
+# indexed images, per bit depth), so that these follow from the grammar.
+<image> ::= <image_gray> | <image_truecolor> | <image_indexed> | <image_gray_alpha> | <image_truecolor_alpha>
+<image_gray>            ::= <ihdr_gray> <chunks_before_plte> <after_plte_gray> <image_end>
+<image_truecolor>       ::= <ihdr_truecolor> <chunks_before_plte> <after_plte_truecolor> <image_end>
+<image_gray_alpha>      ::= <ihdr_gray_alpha> <chunks_before_plte> <after_plte_gray_alpha> <image_end>
+<image_truecolor_alpha> ::= <ihdr_truecolor_alpha> <chunks_before_plte> <after_plte_truecolor_alpha> <image_end>
+<image_indexed>         ::= <image_indexed_1> | <image_indexed_2> | <image_indexed_4> | <image_indexed_8>
+<image_indexed_1> ::= <ihdr_indexed_1> <chunks_before_plte> <plte_chunk_1> <after_plte_indexed> <image_end>
+<image_indexed_2> ::= <ihdr_indexed_2> <chunks_before_plte> <plte_chunk_2> <after_plte_indexed> <image_end>
+<image_indexed_4> ::= <ihdr_indexed_4> <chunks_before_plte> <plte_chunk_4> <after_plte_indexed> <image_end>
+<image_indexed_8> ::= <ihdr_indexed_8> <chunks_before_plte> <plte_chunk_8> <after_plte_indexed> <image_end>
+<image_end>             ::= <idat_chunk>+ <chunks_after_idat> <iend_chunk>
 
 <signature> ::= b'\x89PNG\r\n\x1a\n'
 
@@ -35,49 +52,137 @@ where <cgbi_crc> == int.to_bytes(zlib.crc32(bytes(<cgbi_type>) + bytes(<cgbi_dat
 # IDAT. Unknown private chunks may appear in all three groups.
 
 <chunks_before_plte> ::= <chrm_chunk>? <gama_chunk>? <iccp_chunk>? <sbit_chunk>? <srgb_chunk>? <phys_chunk>? <exif_chunk>? <splt_chunk>* <text_group>* <unknown_chunk>*
-<chunks_after_plte>  ::= <bkgd_chunk>? <hist_chunk>? <trns_chunk>? <text_group>* <unknown_chunk>*
+<after_plte_gray>            ::= <bkgd_chunk_gray>? <trns_chunk_gray>? <text_group>* <unknown_chunk>*
+<after_plte_truecolor>       ::= <bkgd_chunk_truecolor>? <trns_chunk_truecolor>? <text_group>* <unknown_chunk>*
+<after_plte_indexed>         ::= <bkgd_chunk_indexed>? <hist_chunk>? <trns_chunk_indexed>? <text_group>* <unknown_chunk>*
+<after_plte_gray_alpha>      ::= <bkgd_chunk_gray>? <text_group>* <unknown_chunk>*
+<after_plte_truecolor_alpha> ::= <bkgd_chunk_truecolor>? <text_group>* <unknown_chunk>*
 <chunks_after_idat>  ::= <text_group>* <time_chunk>? <unknown_chunk>*
 
 <text_group> ::= <text_chunk> | <ztxt_chunk> | <itxt_chunk>
 
 # IHDR - image header (critical, always first, fixed 13-byte payload)
 
-<ihdr_chunk>  ::= <ihdr_length> <ihdr_type> <ihdr_data> <ihdr_crc>
 <ihdr_length> ::= <byte>{4}
 <ihdr_type>   ::= b'IHDR'
-<ihdr_data>   ::= <width> <height> <bit_depth_color_type> <ihdr_compression> <ihdr_filter> <ihdr_interlace>
-<ihdr_crc>    ::= <byte>{4}
+<ihdr_size>   ::= <width> <height>
+
+<ihdr_gray>      ::= <ihdr_length> <ihdr_type> <ihdr_data_gray> <ihdr_crc_gray>
+<ihdr_data_gray> ::= <ihdr_size> <bit_depth_gray> b'\x00' <ihdr_compression> <ihdr_filter> <ihdr_interlace>
+<bit_depth_gray> ::= b'\x01' | b'\x02' | b'\x04' | b'\x08' | b'\x10'
+<ihdr_crc_gray>  ::= <byte>{4}
+where <ihdr_crc_gray> == int.to_bytes(zlib.crc32(b'IHDR' + bytes(<ihdr_data_gray>)) & 0xffffffff, 4, 'big')
+
+<ihdr_truecolor>      ::= <ihdr_length> <ihdr_type> <ihdr_data_truecolor> <ihdr_crc_truecolor>
+<ihdr_data_truecolor> ::= <ihdr_size> <bit_depth_truecolor> b'\x02' <ihdr_compression> <ihdr_filter> <ihdr_interlace>
+<bit_depth_truecolor> ::= b'\x08' | b'\x10'
+<ihdr_crc_truecolor>  ::= <byte>{4}
+where <ihdr_crc_truecolor> == int.to_bytes(zlib.crc32(b'IHDR' + bytes(<ihdr_data_truecolor>)) & 0xffffffff, 4, 'big')
+
+<ihdr_gray_alpha>      ::= <ihdr_length> <ihdr_type> <ihdr_data_gray_alpha> <ihdr_crc_gray_alpha>
+<ihdr_data_gray_alpha> ::= <ihdr_size> <bit_depth_gray_alpha> b'\x04' <ihdr_compression> <ihdr_filter> <ihdr_interlace>
+<bit_depth_gray_alpha> ::= b'\x08' | b'\x10'
+<ihdr_crc_gray_alpha>  ::= <byte>{4}
+where <ihdr_crc_gray_alpha> == int.to_bytes(zlib.crc32(b'IHDR' + bytes(<ihdr_data_gray_alpha>)) & 0xffffffff, 4, 'big')
+
+<ihdr_truecolor_alpha>      ::= <ihdr_length> <ihdr_type> <ihdr_data_truecolor_alpha> <ihdr_crc_truecolor_alpha>
+<ihdr_data_truecolor_alpha> ::= <ihdr_size> <bit_depth_truecolor_alpha> b'\x06' <ihdr_compression> <ihdr_filter> <ihdr_interlace>
+<bit_depth_truecolor_alpha> ::= b'\x08' | b'\x10'
+<ihdr_crc_truecolor_alpha>  ::= <byte>{4}
+where <ihdr_crc_truecolor_alpha> == int.to_bytes(zlib.crc32(b'IHDR' + bytes(<ihdr_data_truecolor_alpha>)) & 0xffffffff, 4, 'big')
+
+<ihdr_indexed_1>      ::= <ihdr_length> <ihdr_type> <ihdr_data_indexed_1> <ihdr_crc_indexed_1>
+<ihdr_data_indexed_1> ::= <ihdr_size> <bit_depth_indexed_1> b'\x03' <ihdr_compression> <ihdr_filter> <ihdr_interlace>
+<bit_depth_indexed_1> ::= b'\x01'
+<ihdr_crc_indexed_1>  ::= <byte>{4}
+where <ihdr_crc_indexed_1> == int.to_bytes(zlib.crc32(b'IHDR' + bytes(<ihdr_data_indexed_1>)) & 0xffffffff, 4, 'big')
+
+<ihdr_indexed_2>      ::= <ihdr_length> <ihdr_type> <ihdr_data_indexed_2> <ihdr_crc_indexed_2>
+<ihdr_data_indexed_2> ::= <ihdr_size> <bit_depth_indexed_2> b'\x03' <ihdr_compression> <ihdr_filter> <ihdr_interlace>
+<bit_depth_indexed_2> ::= b'\x02'
+<ihdr_crc_indexed_2>  ::= <byte>{4}
+where <ihdr_crc_indexed_2> == int.to_bytes(zlib.crc32(b'IHDR' + bytes(<ihdr_data_indexed_2>)) & 0xffffffff, 4, 'big')
+
+<ihdr_indexed_4>      ::= <ihdr_length> <ihdr_type> <ihdr_data_indexed_4> <ihdr_crc_indexed_4>
+<ihdr_data_indexed_4> ::= <ihdr_size> <bit_depth_indexed_4> b'\x03' <ihdr_compression> <ihdr_filter> <ihdr_interlace>
+<bit_depth_indexed_4> ::= b'\x04'
+<ihdr_crc_indexed_4>  ::= <byte>{4}
+where <ihdr_crc_indexed_4> == int.to_bytes(zlib.crc32(b'IHDR' + bytes(<ihdr_data_indexed_4>)) & 0xffffffff, 4, 'big')
+
+<ihdr_indexed_8>      ::= <ihdr_length> <ihdr_type> <ihdr_data_indexed_8> <ihdr_crc_indexed_8>
+<ihdr_data_indexed_8> ::= <ihdr_size> <bit_depth_indexed_8> b'\x03' <ihdr_compression> <ihdr_filter> <ihdr_interlace>
+<bit_depth_indexed_8> ::= b'\x08'
+<ihdr_crc_indexed_8>  ::= <byte>{4}
+where <ihdr_crc_indexed_8> == int.to_bytes(zlib.crc32(b'IHDR' + bytes(<ihdr_data_indexed_8>)) & 0xffffffff, 4, 'big')
 
 where <ihdr_length> == int.to_bytes(13, 4, 'big')
-where <ihdr_crc> == int.to_bytes(zlib.crc32(bytes(<ihdr_type>) + bytes(<ihdr_data>)) & 0xffffffff, 4, 'big')
 
 <width>  ::= <byte>{4} := int.to_bytes(random.choice([1, 0x7fffffff, random.randint(1, 4000)]), 4, 'big')
 <height> ::= <byte>{4} := int.to_bytes(random.choice([1, 0x7fffffff, random.randint(1, 4000)]), 4, 'big')
-
-<bit_depth_color_type> ::= <bit_depth> <color_type>
-<bit_depth>  ::= b'\x01' | b'\x02' | b'\x04' | b'\x08' | b'\x10'
-<color_type> ::= b'\x00' | b'\x02' | b'\x03' | b'\x04' | b'\x06'
-
-where ((bytes(<color_type>) == b'\x00') and (bytes(<bit_depth>) in (b'\x01', b'\x02', b'\x04', b'\x08', b'\x10'))) or ((bytes(<color_type>) == b'\x02') and (bytes(<bit_depth>) in (b'\x08', b'\x10'))) or ((bytes(<color_type>) == b'\x03') and (bytes(<bit_depth>) in (b'\x01', b'\x02', b'\x04', b'\x08'))) or ((bytes(<color_type>) == b'\x04') and (bytes(<bit_depth>) in (b'\x08', b'\x10'))) or ((bytes(<color_type>) == b'\x06') and (bytes(<bit_depth>) in (b'\x08', b'\x10')))
 
 <ihdr_compression> ::= b'\x00'
 <ihdr_filter>      ::= b'\x00'
 <ihdr_interlace>   ::= b'\x00' | b'\x01'
 
-<plte_section> ::= <plte_chunk> | b''
 
-where (bytes(<color_type>) == b'\x03') == (len(bytes(<plte_section>)) > 0)
-
-<plte_chunk>  ::= <plte_length> <plte_type> <plte_data> <plte_crc>
-<plte_length> ::= <byte>{4}
 <plte_type>   ::= b'PLTE'
-<plte_data>   ::= <plte_entry>{1,64} | <plte_entry>{256}
 <plte_entry>  ::= <byte>{3}
-<plte_crc>    ::= <byte>{4}
 
-where <plte_length> == int.to_bytes(len(bytes(<plte_data>)), 4, 'big')
-where <plte_crc> == int.to_bytes(zlib.crc32(bytes(<plte_type>) + bytes(<plte_data>)) & 0xffffffff, 4, 'big')
-where (bytes(<color_type>) != b'\x03') or (len(bytes(<plte_data>)) // 3 <= 2 ** int.from_bytes(bytes(<bit_depth>), 'big'))
+<plte_chunk_1>  ::= <plte_length_1> <plte_type> <plte_data_1> <plte_crc_1>
+<plte_length_1> ::= <byte>{4}
+<plte_data_1>   ::= <plte_entry>{1,2}
+<plte_crc_1>    ::= <byte>{4}
+where <plte_length_1> == int.to_bytes(len(bytes(<plte_data_1>)), 4, 'big')
+where <plte_crc_1> == int.to_bytes(zlib.crc32(bytes(<plte_type>) + bytes(<plte_data_1>)) & 0xffffffff, 4, 'big')
+
+<plte_chunk_2>  ::= <plte_length_2> <plte_type> <plte_data_2> <plte_crc_2>
+<plte_length_2> ::= <byte>{4}
+<plte_data_2>   ::= <plte_entry>{1,4}
+<plte_crc_2>    ::= <byte>{4}
+where <plte_length_2> == int.to_bytes(len(bytes(<plte_data_2>)), 4, 'big')
+where <plte_crc_2> == int.to_bytes(zlib.crc32(bytes(<plte_type>) + bytes(<plte_data_2>)) & 0xffffffff, 4, 'big')
+
+<plte_chunk_4>  ::= <plte_length_4> <plte_type> <plte_data_4> <plte_crc_4>
+<plte_length_4> ::= <byte>{4}
+<plte_data_4>   ::= <plte_entry>{1,16}
+<plte_crc_4>    ::= <byte>{4}
+where <plte_length_4> == int.to_bytes(len(bytes(<plte_data_4>)), 4, 'big')
+where <plte_crc_4> == int.to_bytes(zlib.crc32(bytes(<plte_type>) + bytes(<plte_data_4>)) & 0xffffffff, 4, 'big')
+
+<plte_chunk_8>  ::= <plte_length_8> <plte_type> <plte_data_8> <plte_crc_8>
+<plte_length_8> ::= <byte>{4}
+<plte_data_8>   ::= <plte_entry>{1,64} | <plte_entry>{256}
+<plte_crc_8>    ::= <byte>{4}
+where <plte_length_8> == int.to_bytes(len(bytes(<plte_data_8>)), 4, 'big')
+where <plte_crc_8> == int.to_bytes(zlib.crc32(bytes(<plte_type>) + bytes(<plte_data_8>)) & 0xffffffff, 4, 'big')
+
+where forall <i> in <image_indexed_1>:
+    forall <h> in <i>..<hist_data>:
+        len(bytes(<h>)) == len(bytes(<i>.<plte_chunk_1>.<plte_data_1>)) // 3 * 2
+where forall <i> in <image_indexed_1>:
+    forall <r> in <i>..<trns_data_indexed>:
+        len(bytes(<r>)) <= len(bytes(<i>.<plte_chunk_1>.<plte_data_1>)) // 3
+
+where forall <i> in <image_indexed_2>:
+    forall <h> in <i>..<hist_data>:
+        len(bytes(<h>)) == len(bytes(<i>.<plte_chunk_2>.<plte_data_2>)) // 3 * 2
+where forall <i> in <image_indexed_2>:
+    forall <r> in <i>..<trns_data_indexed>:
+        len(bytes(<r>)) <= len(bytes(<i>.<plte_chunk_2>.<plte_data_2>)) // 3
+
+where forall <i> in <image_indexed_4>:
+    forall <h> in <i>..<hist_data>:
+        len(bytes(<h>)) == len(bytes(<i>.<plte_chunk_4>.<plte_data_4>)) // 3 * 2
+where forall <i> in <image_indexed_4>:
+    forall <r> in <i>..<trns_data_indexed>:
+        len(bytes(<r>)) <= len(bytes(<i>.<plte_chunk_4>.<plte_data_4>)) // 3
+
+where forall <i> in <image_indexed_8>:
+    forall <h> in <i>..<hist_data>:
+        len(bytes(<h>)) == len(bytes(<i>.<plte_chunk_8>.<plte_data_8>)) // 3 * 2
+where forall <i> in <image_indexed_8>:
+    forall <r> in <i>..<trns_data_indexed>:
+        len(bytes(<r>)) <= len(bytes(<i>.<plte_chunk_8>.<plte_data_8>)) // 3
 
 # IDAT: one or more chunks. Empty ones are legal as long as the whole stream is not.
 
@@ -266,14 +371,9 @@ where <splt_crc_16> == int.to_bytes(zlib.crc32(bytes(<splt_type_16>) + bytes(<sp
 <splt_name> ::= rb'[\x01-\xff]{1,79}'
 
 # tRNS: the shape depends on the IHDR colour type, so there is one chunk rule
-# per colour type, each tied to IHDR with a where clause.
+# per colour type; the image layouts above say which one an image can have.
 
-<trns_chunk> ::= <trns_chunk_gray> | <trns_chunk_truecolor> | <trns_chunk_indexed>
 
-where (len(bytes(<trns_chunk_gray>)) == 0) or (bytes(<color_type>) == b'\x00')
-where (len(bytes(<trns_chunk_truecolor>)) == 0) or (bytes(<color_type>) == b'\x02')
-where (len(bytes(<trns_chunk_indexed>)) == 0) or (bytes(<color_type>) == b'\x03')
-where (len(bytes(<trns_data_indexed>)) == 0) or (len(bytes(<trns_data_indexed>)) <= len(bytes(<plte_data>)) // 3)
 
 <trns_chunk_gray>      ::= <trns_length_gray> <trns_type_gray> <trns_data_gray> <trns_crc_gray>
 <trns_length_gray>     ::= <byte>{4}
@@ -305,11 +405,7 @@ where <trns_crc_indexed> == int.to_bytes(zlib.crc32(bytes(<trns_type_indexed>) +
 # bKGD: 2 bytes for gray, 6 for RGB, 1 palette index for indexed. Split per colour
 # type like tRNS.
 
-<bkgd_chunk> ::= <bkgd_chunk_gray> | <bkgd_chunk_truecolor> | <bkgd_chunk_indexed>
 
-where (len(bytes(<bkgd_chunk_gray>)) == 0) or (bytes(<color_type>) == b'\x00') or (bytes(<color_type>) == b'\x04')
-where (len(bytes(<bkgd_chunk_truecolor>)) == 0) or (bytes(<color_type>) == b'\x02') or (bytes(<color_type>) == b'\x06')
-where (len(bytes(<bkgd_chunk_indexed>)) == 0) or (bytes(<color_type>) == b'\x03')
 
 <bkgd_chunk_gray>      ::= <bkgd_length_gray> <bkgd_type_gray> <bkgd_data_gray> <bkgd_crc_gray>
 <bkgd_length_gray>     ::= <byte>{4}
@@ -349,8 +445,6 @@ where <bkgd_crc_indexed> == int.to_bytes(zlib.crc32(bytes(<bkgd_type_indexed>) +
 
 where <hist_length> == int.to_bytes(len(bytes(<hist_data>)), 4, 'big')
 where <hist_crc> == int.to_bytes(zlib.crc32(bytes(<hist_type>) + bytes(<hist_data>)) & 0xffffffff, 4, 'big')
-where (len(bytes(<hist_chunk>)) == 0) or (len(bytes(<plte_data>)) > 0)
-where len(bytes(<hist_data>)) == (len(bytes(<plte_data>)) // 3) * 2
 
 <unknown_chunk>  ::= <unknown_length> <unknown_type> <unknown_data> <unknown_crc>
 <unknown_length> ::= <byte>{4}
