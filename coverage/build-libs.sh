@@ -104,4 +104,21 @@ mkdir -p "$SRC/nanosvg" "$BUILD/nanosvg"
 curl -fsSL "https://raw.githubusercontent.com/memononen/nanosvg/239e102ec2c691f2902e20ace2ed36ee4a35cfe6/src/nanosvg.h" -o "$SRC/nanosvg/nanosvg.h"
 echo "e34fd5d084be106cea972d19ce5d27fd96d17ba89f8d06bdceee058420c8b2b0  $SRC/nanosvg/nanosvg.h" | sha256sum -c -
 
+# --- libarchive 3.8.10, for the archive formats (its tag is an annotated one: this is its commit); the decompressors it
+# calls into (zlib, bzip2, liblzma, zstd) are the system's, and only its readers are counted
+pin_git libarchive https://github.com/libarchive/libarchive v3.8.10 0c48412be2d94afe1859a807ea7896a18d8900bd
+cmake_build libarchive -DENABLE_TEST=OFF -DENABLE_TAR=OFF -DENABLE_CPIO=OFF -DENABLE_CAT=OFF -DENABLE_UNZIP=OFF \
+    -DENABLE_OPENSSL=OFF -DENABLE_MBEDTLS=OFF -DENABLE_NETTLE=OFF -DENABLE_CNG=OFF -DENABLE_LIBB2=OFF -DENABLE_LIBXML2=OFF \
+    -DENABLE_EXPAT=OFF -DENABLE_PCREPOSIX=OFF -DENABLE_PCRE2POSIX=OFF -DENABLE_ACL=OFF -DENABLE_XATTR=OFF -DENABLE_ICONV=OFF \
+    -DENABLE_LZ4=OFF -DENABLE_LZO=OFF -DENABLE_ZLIB=ON -DENABLE_BZip2=ON -DENABLE_LZMA=ON -DENABLE_ZSTD=ON
+
+# --- 7-Zip 26.05, for ARJ, which libarchive does not read: its console program with every format (7zz), of which only the
+# ARJ reader is counted. Its own makefile, with counting and without optimisation (the last -O wins)
+pin_git 7zip https://github.com/ip7z/7zip 26.05 b88c6bc09339de32f7d18bbab900686b244f42ba
+mkdir -p "$BUILD/7zip" "$PREFIX/7zip/bin"
+make -C "$SRC/7zip/CPP/7zip/Bundles/Alone2" -f ../../cmpl_gcc.mak -j"$(nproc)" O="$BUILD/7zip" \
+    CFLAGS_BASE_LIST="-c $CFLAGS_COV" LDFLAGS_STATIC_3=--coverage CFLAGS_WARN_WALL= LFLAGS_STRIP= > "$BUILD/7zip.build.log" 2>&1 \
+    || { tail -30 "$BUILD/7zip.build.log" >&2; exit 1; }
+cp "$BUILD/7zip/7zz" "$PREFIX/7zip/bin/7zz"
+
 echo "built:"; ls "$PREFIX"

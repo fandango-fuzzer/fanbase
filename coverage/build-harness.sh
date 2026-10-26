@@ -41,4 +41,11 @@ mkdir -p "$BUILD/nanosvg"
 gcc --coverage -O0 -g -I"$SRC/nanosvg" -c "$HARNESS/svg.c" -o "$BUILD/nanosvg/svg.o"
 gcc "$BUILD/nanosvg/svg.o" -o "$BIN/svg-harness" -lm --coverage
 
+# one program for the seven archive formats libarchive reads, which is told which of them a file is
+harness archive archive.c "-I$PREFIX/libarchive/include" "$PREFIX/libarchive/lib/libarchive.a" -lz -lbz2 -llzma -lzstd
+
+# 7-Zip is its own program, and the one that counts, as it is: under a name of its own, so that it is not taken for the
+# 7-Zip the system has
+ln -sf "$PREFIX/7zip/bin/7zz" "$BIN/7zz-cov"
+
 echo "built:"; ls "$BIN"

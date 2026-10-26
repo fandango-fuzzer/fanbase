@@ -143,5 +143,77 @@
     "build": "/opt/cov/build/nanosvg",
     "include": "^nanosvg\\.h$",
     "exclude": "^$"
+  },
+  "libarchive-7z": {
+    "title": "libarchive (7z)",
+    "version": "3.8.10",
+    "src": "/opt/cov/src/libarchive",
+    "build": "/opt/cov/build/libarchive",
+    "objects": "/(archive_read_support_format_7zip|archive_ppmd7)\\.c\\.gcno$",
+    "include": "^libarchive/(archive_read_support_format_7zip|archive_ppmd7)\\.c$",
+    "exclude": "^$"
+  },
+  "libarchive-ar": {
+    "title": "libarchive (ar)",
+    "version": "3.8.10",
+    "src": "/opt/cov/src/libarchive",
+    "build": "/opt/cov/build/libarchive",
+    "objects": "/(archive_read_support_format_ar)\\.c\\.gcno$",
+    "include": "^libarchive/(archive_read_support_format_ar)\\.c$",
+    "exclude": "^$"
+  },
+  "libarchive-cab": {
+    "title": "libarchive (Cabinet)",
+    "version": "3.8.10",
+    "src": "/opt/cov/src/libarchive",
+    "build": "/opt/cov/build/libarchive",
+    "objects": "/(archive_read_support_format_cab)\\.c\\.gcno$",
+    "include": "^libarchive/(archive_read_support_format_cab)\\.c$",
+    "exclude": "^$"
+  },
+  "libarchive-cpio": {
+    "title": "libarchive (cpio)",
+    "version": "3.8.10",
+    "src": "/opt/cov/src/libarchive",
+    "build": "/opt/cov/build/libarchive",
+    "objects": "/(archive_read_support_format_cpio)\\.c\\.gcno$",
+    "include": "^libarchive/(archive_read_support_format_cpio)\\.c$",
+    "exclude": "^$"
+  },
+  "libarchive-rar": {
+    "title": "libarchive (RAR)",
+    "version": "3.8.10",
+    "src": "/opt/cov/src/libarchive",
+    "build": "/opt/cov/build/libarchive",
+    "objects": "/(archive_read_support_format_rar|archive_read_support_format_rar5|archive_ppmd7|archive_blake2s_ref|archive_blake2sp_ref)\\.c\\.gcno$",
+    "include": "^libarchive/(archive_read_support_format_rar|archive_read_support_format_rar5|archive_ppmd7|archive_blake2s_ref|archive_blake2sp_ref)\\.c$",
+    "exclude": "^$"
+  },
+  "libarchive-tar": {
+    "title": "libarchive (tar)",
+    "version": "3.8.10",
+    "src": "/opt/cov/src/libarchive",
+    "build": "/opt/cov/build/libarchive",
+    "objects": "/(archive_read_support_format_tar)\\.c\\.gcno$",
+    "include": "^libarchive/(archive_read_support_format_tar)\\.c$",
+    "exclude": "^$"
+  },
+  "libarchive-zip": {
+    "title": "libarchive (ZIP)",
+    "version": "3.8.10",
+    "src": "/opt/cov/src/libarchive",
+    "build": "/opt/cov/build/libarchive",
+    "objects": "/(archive_read_support_format_zip|archive_ppmd8)\\.c\\.gcno$",
+    "include": "^libarchive/(archive_read_support_format_zip|archive_ppmd8)\\.c$",
+    "exclude": "^$"
+  },
+  "7zip-arj": {
+    "title": "7-Zip (ARJ)",
+    "version": "26.05",
+    "src": "/opt/cov/src/7zip",
+    "build": "/opt/cov/build/7zip",
+    "objects": "^(ArjHandler|LzhDecoder)\\.gcno$",
+    "include": "^CPP/7zip/(Archive/ArjHandler|Compress/LzhDecoder)\\.cpp$",
+    "exclude": "^$"
   }
 }

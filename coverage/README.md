@@ -19,8 +19,10 @@ it makes so that nothing is compiled on every run.
 | FFmpeg | n9.0.2 | commit `946fcce` of `n9.0.2` | the decoders of PPM (`pnm*`), XBM and XPM, from a build that has only those; one build, counted as three libraries (`ffmpeg-pnm`, `ffmpeg-xbm`, `ffmpeg-xpm`) |
 | FFmpeg | n9.0.2 | the same commit, built again | for sound, from a second build that has only these: the demuxers of WAV, FLAC, Ogg, MP3 and AAC (ADTS) and their decoders (PCM, FLAC, Vorbis, MPEG audio, AAC; Opus is built so that Ogg Opus files are read, and not counted), counted as five libraries (`ffmpeg-wav`, `ffmpeg-flac`, `ffmpeg-ogg`, `ffmpeg-mp3`, `ffmpeg-aac`) |
 | NanoSVG | `239e102` | SHA-256 of the file | the header, which reads a document into shapes (it is lenient: the program refuses a document that has no size) |
+| libarchive | 3.8.10 | commit `0c48412` of `v3.8.10` | the readers of 7z, ar, Cabinet, cpio, RAR (and RAR 5), tar and ZIP, with the PPMd and BLAKE2 code they use; one build, counted as seven libraries (`libarchive-7z`, `-ar`, `-cab`, `-cpio`, `-rar`, `-tar`, `-zip`), and its program enables only the reader of the format it is told. The decompressors it calls into (zlib, bzip2, liblzma, zstd) are the system's |
+| 7-Zip | 26.05 | commit `b88c6bc` of `26.05` | for ARJ, which libarchive does not read: its console program (`7zz`) with every format, of which only the ARJ reader and its LZH decoder are counted (`7zip-arj`); the program is the one that counts, as it is |
 
-Everything is compiled with `gcc --coverage -O0` (`g++` for libheif and libjxl). Each library has a small program (`harness/`) that reads a file the
+Everything is compiled with `gcc --coverage -O0` (`g++` for libheif, libjxl and 7-Zip). Each library has a small program (`harness/`) that reads a file the
 way an application does and exits 0 if the library took it, 1 if it said no, and a name in `libs.json` that says which
 files count (`include` and `exclude`, patterns on the path from the library's source folder; `objects`, if the build also
 makes objects that are not for reading, says which of them gcov is asked about). `cov-reset LIB` clears
@@ -28,7 +30,9 @@ the counters, and `cov-snapshot LIB` asks gcov about every object that was built
 total, and prints what ran as JSON. The real files are made at build time, with ImageMagick, from its built-in picture
 (`make-seeds.sh`): several encodings of each format, so that they reach different parts of a library. HEIC is made by libheif's
 own `heif-enc` (HEVC by kvazaar), JPEG XL by `cjxl`, and the sound files by the system's FFmpeg from two tones (with LAME, libvorbis and libopus for MP3, Vorbis and Opus); the SVG files are written by hand (`seeds/svg/`), because no tool makes
-a vector drawing from a picture.
+a vector drawing from a picture. The archives are made from a small tree of files by the tools that write them (Info-ZIP's zip, 7-Zip, GNU tar and cpio,
+binutils' ar and bsdtar, gcab, ARJ), in several of their variants; RAR, which no free tool writes, comes from the archives that libarchive's own tests read
+(made by WinRAR; the ones that are about bugs are left out).
 
 What this does not tell: it is *line* and *branch* coverage of the reading path, with the library compiled without
 optimisation and without SIMD; codecs a library calls into (zlib, the JPEG codec libtiff uses) are the system's and not
