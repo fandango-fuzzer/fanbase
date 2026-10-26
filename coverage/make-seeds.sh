@@ -2,11 +2,14 @@
 # A few real files of each format, made by real tools (ImageMagick, from its built-in picture; libheif's and libjxl's own
 # encoders for HEIC and JPEG XL; FFmpeg, from two tones, for the sound formats) and not by a grammar: what the generated
 # files are compared with. Different encodings, so that they reach different parts of a library. The SVG files are written
-# by hand, in seed-sources/, since no tool makes a vector drawing from a picture.
+# by hand, in seed-sources/, since no tool makes a vector drawing from a picture. The archives are made by the tools that
+# write them, from a small tree of files; RAR, which no free tool writes, comes from the archives that libarchive's own tests
+# read (made by WinRAR).
 set -eu
 OUT=/opt/cov/seeds
 mkdir -p "$OUT/png" "$OUT/jpeg" "$OUT/gif" "$OUT/tiff" "$OUT/webp" "$OUT/bmp" "$OUT/heic" "$OUT/jxl" "$OUT/ppm" "$OUT/xbm" "$OUT/xpm" "$OUT/svg" \
-    "$OUT/wav" "$OUT/flac" "$OUT/ogg" "$OUT/mp3" "$OUT/aac"
+    "$OUT/wav" "$OUT/flac" "$OUT/ogg" "$OUT/mp3" "$OUT/aac" \
+    "$OUT/zip" "$OUT/tar" "$OUT/7z" "$OUT/rar" "$OUT/cab" "$OUT/cpio" "$OUT/arj" "$OUT/ar"
 cd /tmp
 convert rose: -resize 70x46 base.png
 
@@ -138,6 +141,66 @@ sound -i tones.wav -c:a aac -b:a 32k -f adts "$OUT/aac/low-rate.aac"
 sound -i tones.wav -c:a aac -profile:a aac_main -f adts "$OUT/aac/main-profile.aac"
 sound -i tones.wav -c:a aac -profile:a aac_ltp -strict -2 -f adts "$OUT/aac/ltp.aac"   # LTP is "experimental" in FFmpeg's encoder
 
+# Archives, of a small tree: text, numbers, bytes that do not compress, a folder in a folder, a link, a long name
+mkdir -p tree/dir/sub/a-folder-whose-name-is-long-enough-that-a-path-in-it-is-more-than-a-hundred-characters
+(cd tree && printf 'hello hello hello hello\n' > hello.txt && seq 1 3000 > dir/numbers.txt \
+    && python3 -c "import random; random.seed(1); open('dir/sub/bytes.bin', 'wb').write(random.randbytes(2000))" \
+    && cp hello.txt dir/sub/a-folder-whose-name-is-long-enough-that-a-path-in-it-is-more-than-a-hundred-characters/hello.txt \
+    && ln -s hello.txt link)
+cd tree
+zip -q -r -0 "$OUT/zip/stored.zip" .
+zip -q -r "$OUT/zip/deflate.zip" .
+zip -q -r -Z bzip2 "$OUT/zip/bzip2.zip" .
+zip -q -r -y "$OUT/zip/symlink.zip" .
+zip -q -r -fz "$OUT/zip/zip64.zip" .
+zip -q - hello.txt dir/numbers.txt > "$OUT/zip/streamed.zip"          # to a pipe: sizes in data descriptors after the data
+echo "an archive comment" | zip -q -r -z "$OUT/zip/comment.zip" .
+7z a -bso0 -bsp0 -tzip -mm=LZMA "$OUT/zip/lzma.zip" .
+7z a -bso0 -bsp0 -tzip -mm=PPMd "$OUT/zip/ppmd.zip" .
+7z a -bso0 -bsp0 "$OUT/7z/lzma2.7z" .
+7z a -bso0 -bsp0 -m0=LZMA "$OUT/7z/lzma.7z" .
+7z a -bso0 -bsp0 -m0=PPMd "$OUT/7z/ppmd.7z" .
+7z a -bso0 -bsp0 -m0=BZip2 "$OUT/7z/bzip2.7z" .
+7z a -bso0 -bsp0 -m0=Deflate "$OUT/7z/deflate.7z" .
+7z a -bso0 -bsp0 -mx0 "$OUT/7z/stored.7z" .
+7z a -bso0 -bsp0 -ms=off "$OUT/7z/not-solid.7z" .
+7z a -bso0 -bsp0 -mf=Delta:4 "$OUT/7z/delta.7z" .
+tar --format=ustar -cf "$OUT/tar/ustar.tar" hello.txt dir/numbers.txt link
+tar --format=gnu -cf "$OUT/tar/gnu.tar" .
+tar --format=pax -cf "$OUT/tar/pax.tar" .
+tar --format=v7 -cf "$OUT/tar/v7.tar" hello.txt dir/numbers.txt
+tar --format=oldgnu -cf "$OUT/tar/oldgnu.tar" .
+truncate -s 1M ../sparse.bin && printf 'data' | dd of=../sparse.bin bs=1 seek=500000 conv=notrunc 2>/dev/null
+tar --format=gnu --sparse -cf "$OUT/tar/sparse.tar" -C .. sparse.bin
+tar --format=pax --sparse -cf "$OUT/tar/sparse-pax.tar" -C .. sparse.bin
+find . | cpio -o -H newc --quiet > "$OUT/cpio/newc.cpio"
+find . | cpio -o -H crc --quiet > "$OUT/cpio/crc.cpio"
+find . | cpio -o -H odc --quiet > "$OUT/cpio/odc.cpio"
+find . | cpio -o -H bin --quiet > "$OUT/cpio/bin.cpio"
+printf 'int fanbase(void) { return 1; }\n' > ../lib.c && gcc -c ../lib.c -o lib.o
+ar rc "$OUT/ar/plain.a" hello.txt dir/numbers.txt
+ar rcs "$OUT/ar/library.a" lib.o                                     # a static library: a symbol table first
+ar rc "$OUT/ar/long-names.a" dir/sub/a-folder-whose-name-is-long-enough-that-a-path-in-it-is-more-than-a-hundred-characters/hello.txt
+bsdtar --format arbsd -cf "$OUT/ar/bsd.a" hello.txt dir/numbers.txt
+rm lib.o
+gcab -c "$OUT/cab/stored.cab" hello.txt dir/numbers.txt dir/sub/bytes.bin
+gcab -c -z "$OUT/cab/mszip.cab" hello.txt dir/numbers.txt dir/sub/bytes.bin
+arj a -y -r -m1 "$OUT/arj/method1.arj" hello.txt dir > /dev/null
+arj a -y -r -m2 "$OUT/arj/method2.arj" hello.txt dir > /dev/null
+arj a -y -r -m3 "$OUT/arj/method3.arj" hello.txt dir > /dev/null
+arj a -y -r -m4 "$OUT/arj/method4.arj" hello.txt dir > /dev/null
+arj a -y -m0 "$OUT/arj/stored.arj" hello.txt dir/numbers.txt > /dev/null
+cd /tmp
+for name in rar rar_compress_best rar_filter rar_unicode rar5_stored rar5_compressed rar5_solid rar5_blake2 rar5_arm; do
+    python3 -c "
+import binascii, sys
+out = open(sys.argv[2], 'wb')
+for line in open(sys.argv[1]):
+    if line.startswith('begin ') or line.strip() in ('', 'end', '\`'):
+        continue
+    out.write(binascii.a2b_uu(line))" "/opt/cov/src/libarchive/libarchive/test/test_read_format_$name.rar.uu" "$OUT/rar/$name.rar"
+done
+
 cp /opt/cov/seed-sources/svg/*.svg "$OUT/svg/"
-rm -f base.png base.jpg gray.jpg gray.png alpha.png sixteen.png tones.wav
+rm -f base.png base.jpg gray.jpg gray.png alpha.png sixteen.png tones.wav sparse.bin lib.c && rm -r tree
 find "$OUT" -type f | sort | sed 's#^#seed: #'

@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: cpio
+mime: application/x-cpio
+extensions:
+- cpio
+reference: https://man.freebsd.org/cgi/man.cgi?query=cpio&sektion=5
+targets:
+- libarchive
+- 7zip
+- cpio

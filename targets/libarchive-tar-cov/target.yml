@@ -1,0 +1,15 @@
+title: libarchive's tar reader, built to be measured
+formats: [tar]
+run: ["/opt/cov/bin/archive-harness", "tar", "{file}"]   # only its tar reader enabled
+needs:
+  commands: [archive-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libarchive-tar"]
+classify:
+  - match: "(?i)unsupported|not supported"
+    as: unsupported
+  - match: "(?i)can't allocate|out of memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libarchive-tar"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libarchive-tar"]
+  seeds: ["/opt/cov/seeds/tar/*"]

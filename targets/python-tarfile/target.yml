@@ -1,0 +1,7 @@
+title: Python's tarfile
+formats: [tar]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # reads every member, and the contents of the regular files
+version: ["{python}", "-c", "import platform; print(platform.python_version())"]
+classify:
+  - match: "^MemoryError"
+    as: resource-limit

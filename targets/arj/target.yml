@@ -1,0 +1,11 @@
+title: ARJ (open-source ARJ)
+formats: [arj]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # arj t FILE: every file decompressed and its CRC-32 checked; its exit status
+needs:
+  commands: [arj]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)unsupported|unknown method|password"
+    as: unsupported
+  - match: "(?i)out of memory|not enough memory"
+    as: resource-limit

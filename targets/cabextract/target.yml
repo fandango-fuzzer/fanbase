@@ -1,0 +1,11 @@
+title: cabextract (libmspack)
+formats: [cab]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # cabextract -t FILE: every file decompressed and its checksums checked; its exit status
+needs:
+  commands: [cabextract]
+version: [cabextract, --version]
+classify:
+  - match: "(?i)not supported|unsupported"
+    as: unsupported
+  - match: "(?i)out of memory"
+    as: resource-limit

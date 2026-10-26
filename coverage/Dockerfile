@@ -14,10 +14,13 @@ LABEL org.opencontainers.image.source="https://github.com/fandango-fuzzer/fanbas
       org.opencontainers.image.description="The libraries that read the Fanbase registry's formats, built so that what a run reaches is counted" \
       org.opencontainers.image.licenses="Apache-2.0"
 
-RUN apt-get update \
+# unrar and 7-Zip's RAR codec are in Debian's non-free
+RUN sed -i 's/^Components: main$/Components: main non-free/' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
     && apt-get install -y --no-install-recommends build-essential cmake ninja-build pkg-config git ca-certificates curl \
-        zlib1g-dev libjpeg-dev liblzma-dev libzstd-dev imagemagick webp age ffmpeg libjpeg-turbo-progs libtiff-tools giflib-tools pngcheck \
+        zlib1g-dev libjpeg-dev liblzma-dev libzstd-dev libbz2-dev imagemagick webp age ffmpeg libjpeg-turbo-progs libtiff-tools giflib-tools pngcheck \
         libpng-dev libde265-dev libkvazaar-dev libbrotli-dev libjxl-tools librsvg2-bin flac mpg123 faad vorbis-tools \
+        libarchive-tools 7zip 7zip-rar unzip zip cpio cabextract unrar arj unar gcab \
     && rm -rf /var/lib/apt/lists/*
 
 # `fanbase` is the one to evaluate with; pass FANBASE=/path/to/a.whl to build with a version that is not released.

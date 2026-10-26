@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Unix archive (ar)
+mime: application/x-archive
+extensions:
+- a
+- ar
+reference: https://man.freebsd.org/cgi/man.cgi?query=ar&sektion=5
+targets:
+- libarchive
+- 7zip
+- gnu-ar

@@ -1,0 +1,15 @@
+title: libarchive's ZIP reader, built to be measured
+formats: [zip]
+run: ["/opt/cov/bin/archive-harness", "zip", "{file}"]   # only its ZIP reader enabled
+needs:
+  commands: [archive-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libarchive-zip"]
+classify:
+  - match: "(?i)unsupported|not supported"
+    as: unsupported
+  - match: "(?i)can't allocate|out of memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libarchive-zip"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libarchive-zip"]
+  seeds: ["/opt/cov/seeds/zip/*"]

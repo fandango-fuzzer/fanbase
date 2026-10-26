@@ -60,6 +60,22 @@ jobs:
               cov-snapshot $lib | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(sys.argv[1], len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")" $lib
             done'
 
+      - name: Every archive reader reads a real file of its format, and counts it
+        run: |
+          docker run --rm fanbase-coverage sh -c '
+            set -e
+            cd /tmp
+            count() { cov-snapshot $1 | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(sys.argv[1], len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")" $1; }
+            for item in 7z:7z/lzma2.7z ar:ar/plain.a cab:cab/mszip.cab cpio:cpio/newc.cpio rar:rar/rar5_compressed.rar tar:tar/pax.tar zip:zip/deflate.zip; do
+              format=${item%%:*}; seed=${item#*:}
+              cov-reset libarchive-$format
+              archive-harness $format /opt/cov/seeds/$seed
+              count libarchive-$format
+            done
+            cov-reset 7zip-arj
+            7zz-cov t -tarj /opt/cov/seeds/arj/method1.arj > /dev/null
+            count 7zip-arj'
+
       - name: Publish
         if: github.ref == 'refs/heads/main'
         env:

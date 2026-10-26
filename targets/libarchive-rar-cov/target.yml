@@ -1,0 +1,15 @@
+title: libarchive's RAR reader, built to be measured
+formats: [rar]
+run: ["/opt/cov/bin/archive-harness", "rar", "{file}"]   # only its RAR readers (RAR 1.5 to 4, and RAR 5) enabled
+needs:
+  commands: [archive-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libarchive-rar"]
+classify:
+  - match: "(?i)unsupported|not supported"
+    as: unsupported
+  - match: "(?i)can't allocate|out of memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libarchive-rar"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libarchive-rar"]
+  seeds: ["/opt/cov/seeds/rar/*"]

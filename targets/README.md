@@ -24,6 +24,18 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `ogginfo` | ogg | `ogginfo` (`vorbis-tools`): checks the pages, and the headers of the Vorbis, Theora, Opus, Speex or FLAC streams in them; it does not decode the audio |
 | `mpg123` | mp3 | `mpg123`; it exits 0 whatever it reads, so a small wrapper accepts a file only if mpg123 got audio out of it |
 | `faad` | aac | `faad` (FAAD2); it exits 0 even when it cannot decode a file, so a small wrapper reads its `Error:` line |
+| `libarchive` | 7z, ar, cab, cpio, rar, tar, zip | `bsdtar` (`libarchive-tools`); every entry is read to its end, which is when the checksums are checked. A small wrapper sends the contents to nothing and leaves the names of the entries out of what it said |
+| `7zip` | the same, and arj | `7z` (`7zip`, and `7zip-rar` for RAR); `7z t` decodes every entry and checks it. Left to itself it opens a file as whatever archive it finds in it, and checks fields its readers do not need, so a small wrapper tells it the format the file's extension names (`-t`) |
+| `unzip` | zip | `unzip` (Info-ZIP); `unzip -t` decodes every entry and checks its CRC-32 |
+| `python-zipfile` | zip | Python's `zipfile`; every member is read to its end |
+| `gnu-tar` | tar | `tar` (GNU); every header and its checksum is read (tar has no checksum of the contents) |
+| `python-tarfile` | tar | Python's `tarfile`; every member is read |
+| `cpio` | cpio | `cpio` (GNU); every entry is read, nothing is written, and the sums of the `crc` format are checked |
+| `cabextract` | cab | `cabextract` (libmspack); `cabextract -t` decodes every file and checks it |
+| `unrar` | rar | `unrar` (RARLAB, non-free); `unrar t` decodes every file and checks it. A small wrapper drops the lines that say which file it is testing |
+| `arj` | arj | `arj` (the open-source ARJ); `arj t` decodes every file and checks its CRC-32. It starts with a banner and puts the reason last, so a small wrapper prints the reason first |
+| `unar` | 7z, arj, rar, zip | `lsar` (The Unarchiver, `unar`); `lsar -t` decodes every entry and checks it. It judges only the formats that have checksums, and a small wrapper accepts a file only if it was read as the format of its extension |
+| `gnu-ar` | ar | `ar` (GNU binutils); a small wrapper reads out every member (`ar p`), to nothing, which is what finds an archive that ends inside a member |
 
 The `*-cov` targets are the libraries built to be measured, from [`coverage/`](../coverage/README.md), and run only in
 its image, with `fanbase evaluate --coverage`: they are not named by any format, and `fanbase targets` shows them as
@@ -48,9 +60,18 @@ not ready anywhere else.
 | `ffmpeg-ogg-cov` | ogg | FFmpeg n9.0.2, its Ogg demuxer and Vorbis decoder |
 | `ffmpeg-mp3-cov` | mp3 | FFmpeg n9.0.2, its MP3 demuxer, tag readers and MPEG audio decoders |
 | `ffmpeg-aac-cov` | aac | FFmpeg n9.0.2, its ADTS demuxer and AAC decoder |
+| `libarchive-7z-cov` | 7z | libarchive 3.8.10, its 7z reader |
+| `libarchive-ar-cov` | ar | libarchive 3.8.10, its ar reader |
+| `libarchive-cab-cov` | cab | libarchive 3.8.10, its Cabinet reader |
+| `libarchive-cpio-cov` | cpio | libarchive 3.8.10, its cpio reader |
+| `libarchive-rar-cov` | rar | libarchive 3.8.10, its RAR readers (RAR 1.5 to 4, and RAR 5) |
+| `libarchive-tar-cov` | tar | libarchive 3.8.10, its tar reader |
+| `libarchive-zip-cov` | zip | libarchive 3.8.10, its ZIP reader |
+| `7zip-arj-cov` | arj | 7-Zip 26.05, its ARJ reader |
 
 On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin libjxl-tools
-flac mpg123 faad vorbis-tools`, and `pip install Pillow pillow-heif soundfile`. `fanbase targets` says which of them can run on your machine.
+flac mpg123 faad vorbis-tools libarchive-tools 7zip 7zip-rar unzip cpio cabextract unrar arj unar` (`unrar` and `7zip-rar` are in Debian's
+non-free and Ubuntu's multiverse), and `pip install Pillow pillow-heif soundfile`. `fanbase targets` says which of them can run on your machine.
 
 **Where a target runs.** On a pull request (`evaluate.yml`), with a read-only token and no secrets, because a pull
 request from a fork brings its own targets. On `main`, once a week and by hand (`evaluate-main.yml`), in a job that

@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: ARJ
+mime: application/x-arj
+extensions:
+- arj
+reference: https://arj.sourceforge.net/
+targets:
+- 7zip
+- arj
+- unar

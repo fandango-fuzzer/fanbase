@@ -1,0 +1,11 @@
+title: 7-Zip
+formats: [7z, ar, arj, cab, cpio, rar, tar, zip]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # 7z t FILE, every entry decoded and checked; accepted if it read the file as its format
+needs:
+  commands: [7z]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)unsupported"
+    as: unsupported
+  - match: "(?i)can ?not allocate memory|not enough memory"
+    as: resource-limit

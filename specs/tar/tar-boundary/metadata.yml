@@ -1,0 +1,13 @@
+format: tar
+kind: tar-boundary
+description: tar archives with fields at and past the edges (special mode bits, largest
+  ids, V7 and old GNU magic, every POSIX, GNU and vendor typeflag, misaligned pax
+  records)
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: rarely
+version: '1.0'

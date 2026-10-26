@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: RAR
+mime: application/vnd.rar
+extensions:
+- rar
+reference: https://www.rarlab.com/technote.htm
+targets:
+- libarchive
+- 7zip
+- unrar
+- unar

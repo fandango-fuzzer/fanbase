@@ -1,0 +1,12 @@
+format: 7z
+kind: 7z
+description: 7z archives of one file stored with the Copy coder, with the header's
+  offset, size and CRCs (no compression, one file)
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'

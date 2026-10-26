@@ -1,0 +1,15 @@
+title: libarchive's 7z reader, built to be measured
+formats: [7z]
+run: ["/opt/cov/bin/archive-harness", "7z", "{file}"]   # only its 7z reader enabled
+needs:
+  commands: [archive-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libarchive-7z"]
+classify:
+  - match: "(?i)unsupported|not supported"
+    as: unsupported
+  - match: "(?i)can't allocate|out of memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libarchive-7z"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libarchive-7z"]
+  seeds: ["/opt/cov/seeds/7z/*"]

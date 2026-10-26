@@ -1,0 +1,11 @@
+title: libarchive (bsdtar)
+formats: [7z, ar, cab, cpio, rar, tar, zip]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # bsdtar -x -O -f FILE, the contents to nothing; its exit status
+needs:
+  commands: [bsdtar]
+version: [bsdtar, --version]
+classify:
+  - match: "(?i)unsupported|not supported"
+    as: unsupported
+  - match: "(?i)can't allocate|out of memory"
+    as: resource-limit

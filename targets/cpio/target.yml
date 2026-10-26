@@ -1,0 +1,9 @@
+title: GNU cpio
+formats: [cpio]
+run: [cpio, -i, --only-verify-crc, --quiet, --force-local, -F, "{file}"]   # reads every entry, nothing is written; the sums of the crc format are checked
+needs:
+  commands: [cpio]
+version: [cpio, --version]
+classify:
+  - match: "(?i)memory exhausted"
+    as: resource-limit

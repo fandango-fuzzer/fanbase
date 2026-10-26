@@ -1,0 +1,11 @@
+title: UnZip (Info-ZIP)
+formats: [zip]
+run: [unzip, -t, -qq, "{file}"]   # tests every entry: decompressed and its CRC-32 checked; exit 0 if all of them passed
+needs:
+  commands: [unzip]
+version: [unzip, -v]
+classify:
+  - match: "(?i)unsupported compression method|need PK compat|unable to get password"
+    as: unsupported
+  - match: "(?i)out of memory|insufficient memory"
+    as: resource-limit

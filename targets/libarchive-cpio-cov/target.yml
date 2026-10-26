@@ -1,0 +1,15 @@
+title: libarchive's cpio reader, built to be measured
+formats: [cpio]
+run: ["/opt/cov/bin/archive-harness", "cpio", "{file}"]   # only its cpio reader enabled
+needs:
+  commands: [archive-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libarchive-cpio"]
+classify:
+  - match: "(?i)unsupported|not supported"
+    as: unsupported
+  - match: "(?i)can't allocate|out of memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libarchive-cpio"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libarchive-cpio"]
+  seeds: ["/opt/cov/seeds/cpio/*"]

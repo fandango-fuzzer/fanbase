@@ -65,7 +65,8 @@ jobs:
       - name: The parsers
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends age imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin libjxl-tools flac mpg123 faad vorbis-tools
+          sudo apt-get install -y --no-install-recommends age imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin libjxl-tools flac mpg123 faad vorbis-tools \
+            libarchive-tools 7zip 7zip-rar unzip cpio cabextract unrar arj unar
 
       - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow pillow-heif soundfile
 

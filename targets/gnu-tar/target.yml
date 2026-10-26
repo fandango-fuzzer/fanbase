@@ -1,0 +1,9 @@
+title: GNU tar
+formats: [tar]
+run: [tar, --force-local, -t, -v, -f, "{file}"]   # reads every header (and its checksum) and skips over the contents; exit 0 if it got to the end
+needs:
+  commands: [tar]
+version: [tar, --version]
+classify:
+  - match: "(?i)memory exhausted"
+    as: resource-limit
