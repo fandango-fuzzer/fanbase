@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: 7z
+mime: application/x-7z-compressed
+extensions:
+- 7z
+reference: https://github.com/ip7z/7zip/blob/main/DOC/7zFormat.txt
+targets:
+- libarchive
+- 7zip
+- unar

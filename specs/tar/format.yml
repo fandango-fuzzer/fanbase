@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Tape Archive
+mime: application/x-tar
+extensions:
+- tar
+reference: https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html
+targets:
+- libarchive
+- 7zip
+- gnu-tar
+- python-tarfile

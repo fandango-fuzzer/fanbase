@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Microsoft Cabinet
+mime: application/vnd.ms-cab-compressed
+extensions:
+- cab
+reference: https://learn.microsoft.com/en-us/previous-versions/bb417343(v=msdn.10)
+targets:
+- libarchive
+- 7zip
+- cabextract
