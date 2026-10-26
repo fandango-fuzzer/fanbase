@@ -1,0 +1,9 @@
+title: The Unarchiver (lsar)
+formats: [7z, arj, rar, zip]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # lsar -t FILE: every entry decompressed and its checksum checked
+needs:
+  commands: [lsar]
+version: [lsar, --version]
+classify:
+  - match: "(?i)unsupported|requires a password"
+    as: unsupported

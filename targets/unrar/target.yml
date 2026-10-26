@@ -1,0 +1,11 @@
+title: UnRAR (RARLAB)
+formats: [rar]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # unrar t FILE: every file decompressed and its checksum checked; its exit status
+needs:
+  commands: [unrar]
+version: [unrar, -iver]
+classify:
+  - match: "(?i)unknown method|unsupported|password"
+    as: unsupported
+  - match: "(?i)not enough memory"
+    as: resource-limit

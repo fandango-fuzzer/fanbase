@@ -1,0 +1,9 @@
+title: Python's zipfile
+formats: [zip]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # reads every member, decompressed and its CRC-32 checked
+version: ["{python}", "-c", "import platform; print(platform.python_version())"]
+classify:
+  - match: "(?i)^(NotImplementedError|RuntimeError)|not supported|password required"
+    as: unsupported
+  - match: "^MemoryError"
+    as: resource-limit

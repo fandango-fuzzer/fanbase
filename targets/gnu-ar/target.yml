@@ -1,0 +1,9 @@
+title: GNU ar (binutils)
+formats: [ar]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # ar p FILE: every member read out, to nothing; its exit status
+needs:
+  commands: [ar]
+version: [ar, --version]
+classify:
+  - match: "(?i)memory exhausted|out of memory"
+    as: resource-limit
