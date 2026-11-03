@@ -1,0 +1,9 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Concise Binary Object Representation
+mime: application/cbor
+extensions:
+- cbor
+reference: https://www.rfc-editor.org/rfc/rfc8949
+targets:
+- cbor2
+- cbor-diag

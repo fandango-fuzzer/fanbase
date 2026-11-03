@@ -1,0 +1,12 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: JavaScript Object Notation
+mime: application/json
+extensions:
+- json
+reference: https://www.rfc-editor.org/rfc/rfc8259
+targets:
+- python-json
+- jq
+- yajl
+- json-pp
+- node-json
