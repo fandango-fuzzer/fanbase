@@ -36,6 +36,16 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `arj` | arj | `arj` (the open-source ARJ); `arj t` decodes every file and checks its CRC-32. It starts with a banner and puts the reason last, so a small wrapper prints the reason first |
 | `unar` | 7z, arj, rar, zip | `lsar` (The Unarchiver, `unar`); `lsar -t` decodes every entry and checks it. It judges only the formats that have checksums, and a small wrapper accepts a file only if it was read as the format of its extension |
 | `gnu-ar` | ar | `ar` (GNU binutils); a small wrapper reads out every member (`ar p`), to nothing, which is what finds an archive that ends inside a member |
+| `libxml2` | xml | `xmllint` (`libxml2-utils`): is the document well-formed? It is not let at the network, and does not substitute entities. A small wrapper leaves the file's name, the line and the names of elements out of what it said |
+| `expat` | xml | `xmlwf` (`expat`): is the document well-formed? A small wrapper takes its reason from "FILE:LINE:COLUMN: reason" |
+| `xerces` | xml | `SAX2Count` (`libxerces-c-samples`), one of Xerces-C++'s sample programs, which parses a document without validating it. Xerces loads an external DTD that a document names, over the network too, so a small wrapper points every proxy it could use at a port where nothing listens: a document whose DTD is a URL is refused, as one is whose DTD is not there |
+| `python-json` | json | Python's `json`, with its defaults (it takes NaN, Infinity and repeated keys); the file must be UTF-8 |
+| `jq` | json | `jq`; it reads a stream of values, so a small wrapper accepts a file only if it holds exactly one |
+| `yajl` | json | `json_verify` (`yajl-tools`, YAJL), which reads standard input: a small wrapper gives it the file |
+| `json-pp` | json | `json_pp` (Perl's JSON::PP), which reads standard input: a small wrapper gives it the file and keeps its reason without the offset |
+| `node-json` | json | Node.js, `JSON.parse` (V8); the file is decoded as strict UTF-8 first |
+| `cbor2` | cbor | Python package cbor2; the file must be one data item and nothing after it. It turns the tags it knows into values and rejects content that does not fit its tag (a date that is not one), so it judges validity |
+| `cbor-diag` | cbor | Python package cbor-diag, which calls the Rust crate of that name to write the file in diagnostic notation; well-formedness only. What the crate has not implemented is counted as unsupported |
 
 The `*-cov` targets are the libraries built to be measured, from [`coverage/`](../coverage/README.md), and run only in
 its image, with `fanbase evaluate --coverage`: they are not named by any format, and `fanbase targets` shows them as
@@ -68,10 +78,14 @@ not ready anywhere else.
 | `libarchive-tar-cov` | tar | libarchive 3.8.10, its tar reader |
 | `libarchive-zip-cov` | zip | libarchive 3.8.10, its ZIP reader |
 | `7zip-arj-cov` | arj | 7-Zip 26.05, its ARJ reader |
+| `libxml2-cov` | xml | libxml2 2.15.4, its parser |
+| `expat-cov` | xml | Expat 2.10.0 |
+| `json-c-cov` | json | json-c 0.19, its parser |
+| `libcbor-cov` | cbor | libcbor 0.14.0, its decoder |
 
 On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin libjxl-tools
-flac mpg123 faad vorbis-tools libarchive-tools 7zip 7zip-rar unzip cpio cabextract unrar arj unar` (`unrar` and `7zip-rar` are in Debian's
-non-free and Ubuntu's multiverse), and `pip install Pillow pillow-heif soundfile`. `fanbase targets` says which of them can run on your machine.
+flac mpg123 faad vorbis-tools libarchive-tools 7zip 7zip-rar unzip cpio cabextract unrar arj unar libxml2-utils expat libxerces-c-samples jq
+yajl-tools nodejs` (`unrar` and `7zip-rar` are in Debian's non-free and Ubuntu's multiverse), and `pip install Pillow pillow-heif soundfile cbor2 cbor-diag`. `fanbase targets` says which of them can run on your machine.
 
 **Where a target runs.** On a pull request (`evaluate.yml`), with a read-only token and no secrets, because a pull
 request from a fork brings its own targets. On `main`, once a week and by hand (`evaluate-main.yml`), in a job that

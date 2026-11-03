@@ -21,6 +21,10 @@ it makes so that nothing is compiled on every run.
 | NanoSVG | `239e102` | SHA-256 of the file | the header, which reads a document into shapes (it is lenient: the program refuses a document that has no size) |
 | libarchive | 3.8.10 | commit `0c48412` of `v3.8.10` | the readers of 7z, ar, Cabinet, cpio, RAR (and RAR 5), tar and ZIP, with the PPMd and BLAKE2 code they use; one build, counted as seven libraries (`libarchive-7z`, `-ar`, `-cab`, `-cpio`, `-rar`, `-tar`, `-zip`), and its program enables only the reader of the format it is told. The decompressors it calls into (zlib, bzip2, liblzma, zstd) are the system's |
 | 7-Zip | 26.05 | commit `b88c6bc` of `26.05` | for ARJ, which libarchive does not read: its console program (`7zz`) with every format, of which only the ARJ reader and its LZH decoder are counted (`7zip-arj`); the program is the one that counts, as it is |
+| libxml2 | 2.15.4 | commit `9649899` of `v2.15.4` | its parser: `parser.c`, `parserInternals.c`, `SAX2.c`, `entities.c`, `valid.c`, `tree.c`, `encoding.c`, `uri.c` and the dictionary, hash and string code they use; the program reads a document as `xmllint` does, without the network |
+| Expat | 2.10.0 | commit `a70841d` of `R_2_10_0` | `xmlparse.c`, `xmlrole.c` and `xmltok.c` (with the files it includes); the program reads a document as `xmlwf` does |
+| json-c | 0.19 | commit `aa716cd` of `json-c-0.19-20260627` | the tokener, the objects it builds, and the hash table, array and buffer code they use; the program reads strictly (RFC 8259, UTF-8 checked), and only white space may follow the value |
+| libcbor | 0.14.0 | commit `6730c20` of `v0.14.0` | the decoder (`cbor_load`, the streaming decoder, the loaders and builder callbacks) and the item code it uses, not the encoders; the program refuses data after the item |
 
 Everything is compiled with `gcc --coverage -O0` (`g++` for libheif, libjxl and 7-Zip). Each library has a small program (`harness/`) that reads a file the
 way an application does and exits 0 if the library took it, 1 if it said no, and a name in `libs.json` that says which
@@ -32,7 +36,9 @@ total, and prints what ran as JSON. The real files are made at build time, with 
 own `heif-enc` (HEVC by kvazaar), JPEG XL by `cjxl`, and the sound files by the system's FFmpeg from two tones (with LAME, libvorbis and libopus for MP3, Vorbis and Opus); the SVG files are written by hand (`seeds/svg/`), because no tool makes
 a vector drawing from a picture. The archives are made from a small tree of files by the tools that write them (Info-ZIP's zip, 7-Zip, GNU tar and cpio,
 binutils' ar and bsdtar, gcab, ARJ), in several of their variants; RAR, which no free tool writes, comes from the archives that libarchive's own tests read
-(made by WinRAR; the ones that are about bugs are left out).
+(made by WinRAR; the ones that are about bugs are left out). The XML files are written by hand (`seeds/xml/`), and the SVG
+ones count too; JSON is made by Python's `json` from a few kinds of data, and CBOR by cbor2 from Python values, with
+the examples of RFC 8949's appendix A.
 
 What this does not tell: it is *line* and *branch* coverage of the reading path, with the library compiled without
 optimisation and without SIMD; codecs a library calls into (zlib, the JPEG codec libtiff uses) are the system's and not

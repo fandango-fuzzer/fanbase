@@ -1,0 +1,9 @@
+title: Node.js (V8's JSON.parse)
+formats: [json]
+run: [node, "{dir}/harness.js", "{file}"]   # JSON.parse of the file, read as strict UTF-8
+needs:
+  commands: [node]
+version: [node, --version]
+classify:
+  - match: "(?i)out of memory|call stack"
+    as: resource-limit

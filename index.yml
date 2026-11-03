@@ -349,6 +349,74 @@ specs:
   - libarchive
   - 7zip
   - cabextract
+- format: cbor
+  kind: cbor
+  path: specs/cbor/cbor/cbor.fan
+  sha256: 5a00fa0c3c895a673c4dd820642a8614487db6a6642618e14d79be23b6976ba9
+  description: CBOR data items of every major type in preferred serialization, with
+    common tags (dates, bignums, decimal fractions, embedded CBOR, URIs, UUIDs)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Concise Binary Object Representation
+  mime: application/cbor
+  extensions:
+  - cbor
+  reference: https://www.rfc-editor.org/rfc/rfc8949
+  targets:
+  - cbor2
+  - cbor-diag
+- format: cbor
+  kind: cbor-boundary
+  path: specs/cbor/cbor-boundary/cbor-boundary.fan
+  sha256: f7228e28c7eec5a182cdd5a8d1fe1310bf6a67e5e58a14eda92948c564ba1a65
+  description: 'CBOR data items at the edges of well-formedness: overlong heads, the
+    largest arguments, every length width, indefinite lengths, all simple values and
+    float specials'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Concise Binary Object Representation
+  mime: application/cbor
+  extensions:
+  - cbor
+  reference: https://www.rfc-editor.org/rfc/rfc8949
+  targets:
+  - cbor2
+  - cbor-diag
+- format: cbor
+  kind: cbor-tags
+  path: specs/cbor/cbor-tags/cbor-tags.fan
+  sha256: 8c9f932d0906c4797ac3d22af511cbdc24cd1fb0638947a3a27d946726844c67
+  description: CBOR items built around the registered tags, each with content valid
+    for it (dates, bignums, rationals, regular expressions, UUIDs, IP addresses, sets
+    and more)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Concise Binary Object Representation
+  mime: application/cbor
+  extensions:
+  - cbor
+  reference: https://www.rfc-editor.org/rfc/rfc8949
+  targets:
+  - cbor2
+  - cbor-diag
 - format: cpio
   kind: cpio
   path: specs/cpio/cpio/cpio.fan
@@ -729,6 +797,56 @@ specs:
   - imagemagick
   - ffmpeg
   - djpeg
+- format: json
+  kind: json
+  path: specs/json/json/json.fan
+  sha256: 4f84a53efebb735d0606f5c2c496209801ea0c266064d8ba56890390c1caa50b
+  description: JSON texts of objects, arrays and scalars nested up to three levels
+    (twelve along one branch), with every string escape and the whole number syntax
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: JavaScript Object Notation
+  mime: application/json
+  extensions:
+  - json
+  reference: https://www.rfc-editor.org/rfc/rfc8259
+  targets:
+  - python-json
+  - jq
+  - yajl
+  - json-pp
+  - node-json
+- format: json
+  kind: json-boundary
+  path: specs/json/json-boundary/json-boundary.fan
+  sha256: 28190025aa455f4487c2112180f7f6bc33fd1d62ffdd143cdf3b6ea67989963f
+  description: 'JSON texts at the edges of what parsers agree on: numbers past double
+    and 64-bit precision, lone surrogates, repeated keys, long strings and deep nesting'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: JavaScript Object Notation
+  mime: application/json
+  extensions:
+  - json
+  reference: https://www.rfc-editor.org/rfc/rfc8259
+  targets:
+  - python-json
+  - jq
+  - yajl
+  - json-pp
+  - node-json
 - format: jxl
   kind: jxl
   path: specs/jxl/jxl/jxl.fan
@@ -1749,6 +1867,78 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+- format: xml
+  kind: xml
+  path: specs/xml/xml/xml.fan
+  sha256: 75286c2048f530da630ae60b7040544eb9b0ba7c555c99a20e79d2589a0c5a8d
+  description: XML documents with a declaration, comments, processing instructions,
+    a DOCTYPE with an internal subset of declarations, and nesting elements with attributes,
+    text, CDATA and references
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Extensible Markup Language
+  mime: application/xml
+  extensions:
+  - xml
+  reference: https://www.w3.org/TR/xml/
+  targets:
+  - libxml2
+  - expat
+  - xerces
+- format: xml
+  kind: xml-boundary
+  path: specs/xml/xml-boundary/xml-boundary.fan
+  sha256: 906106a6774d0bde1b28940f60dfaf410d66df9483987175d97907d438c53a1e
+  description: 'XML documents at the edges of well-formedness: both versions and quote
+    styles, external identifiers, character references to the ends of the ranges,
+    namespaces, unusual names and white space'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Extensible Markup Language
+  mime: application/xml
+  extensions:
+  - xml
+  reference: https://www.w3.org/TR/xml/
+  targets:
+  - libxml2
+  - expat
+  - xerces
+- format: xml
+  kind: xml-valid
+  path: specs/xml/xml-valid/xml-valid.fan
+  sha256: 7a2a3698463328d99921ad7766a6e6c9defdf73fe794ea6b762866f36a19f141
+  description: 'XML documents of which those with a DOCTYPE are valid against it,
+    with every kind of declaration, namespaces, the xml: attributes and elements twelve
+    deep'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Extensible Markup Language
+  mime: application/xml
+  extensions:
+  - xml
+  reference: https://www.w3.org/TR/xml/
+  targets:
+  - libxml2
+  - expat
+  - xerces
 - format: xpm
   kind: xpm
   path: specs/xpm/xpm/xpm.fan

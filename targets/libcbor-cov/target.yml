@@ -1,0 +1,13 @@
+title: libcbor's decoder, built to be measured
+formats: [cbor]
+run: ["/opt/cov/bin/cbor-harness", "{file}"]
+needs:
+  commands: [cbor-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libcbor"]
+classify:
+  - match: "(?i)out of memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libcbor"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libcbor"]
+  seeds: ["/opt/cov/seeds/cbor/*"]

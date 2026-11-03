@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<root xmlns="urn:example:default" xmlns:a="urn:example:a" xmlns:b="urn:example:b">
+  <a:item b:flag="yes">one</a:item>
+  <item xmlns="">two</item>
+  <b:list><b:entry a:n="1"/><b:entry a:n="2"/></b:list>
+</root>

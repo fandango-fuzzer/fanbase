@@ -4,12 +4,14 @@
 # files are compared with. Different encodings, so that they reach different parts of a library. The SVG files are written
 # by hand, in seed-sources/, since no tool makes a vector drawing from a picture. The archives are made by the tools that
 # write them, from a small tree of files; RAR, which no free tool writes, comes from the archives that libarchive's own tests
-# read (made by WinRAR).
+# read (made by WinRAR). The XML files are written by hand (seed-sources/xml/), and the SVG ones count as XML too; JSON
+# is written by Python's json, and CBOR by cbor2, with the examples of RFC 8949's appendix A.
 set -eu
 OUT=/opt/cov/seeds
 mkdir -p "$OUT/png" "$OUT/jpeg" "$OUT/gif" "$OUT/tiff" "$OUT/webp" "$OUT/bmp" "$OUT/heic" "$OUT/jxl" "$OUT/ppm" "$OUT/xbm" "$OUT/xpm" "$OUT/svg" \
     "$OUT/wav" "$OUT/flac" "$OUT/ogg" "$OUT/mp3" "$OUT/aac" \
-    "$OUT/zip" "$OUT/tar" "$OUT/7z" "$OUT/rar" "$OUT/cab" "$OUT/cpio" "$OUT/arj" "$OUT/ar"
+    "$OUT/zip" "$OUT/tar" "$OUT/7z" "$OUT/rar" "$OUT/cab" "$OUT/cpio" "$OUT/arj" "$OUT/ar" \
+    "$OUT/xml" "$OUT/json" "$OUT/cbor"
 cd /tmp
 convert rose: -resize 70x46 base.png
 
@@ -200,6 +202,56 @@ for line in open(sys.argv[1]):
         continue
     out.write(binascii.a2b_uu(line))" "/opt/cov/src/libarchive/libarchive/test/test_read_format_$name.rar.uu" "$OUT/rar/$name.rar"
 done
+
+# XML: written by hand, and the SVG drawings
+cp /opt/cov/seed-sources/xml/*.xml "$OUT/xml/"
+for drawing in /opt/cov/seed-sources/svg/*.svg; do cp "$drawing" "$OUT/xml/svg-$(basename "$drawing" .svg).xml"; done
+
+# JSON, by Python's json, from a few kinds of data
+python3 - "$OUT/json" <<'PYTHON'
+import json, sys
+out = sys.argv[1]
+record = {"id": 7, "name": "Ada", "tags": ["a", "b"], "active": True, "score": 9.5, "parent": None, "nested": {"x": [1, 2, {"y": []}]}}
+def write(name, text):
+    open(f"{out}/{name}.json", "w", encoding="utf-8").write(text)
+write("pretty", json.dumps(record, indent=2))
+write("compact", json.dumps([record, record], separators=(",", ":")))
+write("escaped", json.dumps({"text": "café ☺ \U0001F600 \"q\" \\ / \b\f\n\r\t \u0001", "kéy": "v"}))
+write("utf8", json.dumps({"de": "Grüße", "el": "καλημέρα", "ja": "こんにちは"}, ensure_ascii=False))
+write("numbers", '[0, -0, 1, -1, 9223372036854775807, -9223372036854775808, 1.5, -0.25, 1e10, 1E-10, 2.5e+300, 0.1e1]')
+write("deep", "[" * 30 + "{\"leaf\": true}" + "]" * 30)
+write("empty", '{"a": {}, "b": [], "c": "", "d": [{}, []]}')
+write("scalar", '"just a string"')
+write("records", json.dumps([{"n": i, "sq": i * i, "even": i % 2 == 0} for i in range(30)]))
+PYTHON
+
+# CBOR, by cbor2 from Python values (its tags too), and the examples of RFC 8949, appendix A
+python3 - "$OUT/cbor" <<'PYTHON'
+import cbor2, datetime, decimal, fractions, ipaddress, re, sys, uuid
+out = sys.argv[1]
+values = {
+    "record": {"id": 7, "name": "Ada", "tags": ["a", "b"], "active": True, "score": 9.5, "parent": None, "raw": b"\x00\x01"},
+    "integers": [0, 23, 24, 255, 256, 65535, 65536, 2**32, 2**64 - 1, -1, -24, -25, -2**64, 2**70, -2**70],
+    "floats": [0.0, -0.0, 1.5, 65504.0, 1e300, float("inf"), float("-inf"), float("nan"), 5e-324],
+    "strings": ["", "a", "café", "\U0001F600", "x" * 300, b"", b"\xff" * 300],
+    "tags": [datetime.datetime(2013, 3, 21, 20, 4, tzinfo=datetime.timezone.utc), decimal.Decimal("273.15"),
+             fractions.Fraction(1, 3), uuid.UUID(int=2**127), ipaddress.ip_address("192.168.0.1"),
+             ipaddress.ip_network("10.0.0.0/8"), re.compile("a+b*"), {1, 2, 3}, datetime.date(2020, 1, 1)],
+    "nested": [[[[{"k": [1, {"j": [2, 3]}]}]]]],
+}
+for name, value in values.items():
+    open(f"{out}/{name}.cbor", "wb").write(cbor2.dumps(value, datetime_as_timestamp=False, value_sharing=False))
+open(f"{out}/canonical.cbor", "wb").write(cbor2.dumps(values["record"], canonical=True))
+appendix_a = ["1b000000e8d4a51000", "1bffffffffffffffff", "c249010000000000000000", "3bffffffffffffffff", "3903e7",
+              "f93c00", "fb3ff199999999999a", "f97bff", "fa7f7fffff", "f90001", "f9c400", "f97e00", "f0", "f8ff",
+              "c074323031332d30332d32315432303a30343a30305a", "c1fb41d452d9ec200000", "d74401020304", "d818456449455446",
+              "d82076687474703a2f2f7777772e6578616d706c652e636f6d", "64f0908591", "8301820203820405",
+              "98190102030405060708090a0b0c0d0e0f101112131415161718181819",
+              "a56161614161626142616361436164614461656145", "5f42010243030405ff", "7f657374726561646d696e67ff", "9fff",
+              "9f018202039f0405ffff", "83019f0203ff820405", "bf61610161629f0203ffff", "bf6346756ef563416d7421ff"]
+for number, item in enumerate(appendix_a):
+    open(f"{out}/rfc8949-{number:02d}.cbor", "wb").write(bytes.fromhex(item))
+PYTHON
 
 cp /opt/cov/seed-sources/svg/*.svg "$OUT/svg/"
 rm -f base.png base.jpg gray.jpg gray.png alpha.png sixteen.png tones.wav sparse.bin lib.c && rm -r tree

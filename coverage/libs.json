@@ -215,5 +215,41 @@
     "objects": "^(ArjHandler|LzhDecoder)\\.gcno$",
     "include": "^CPP/7zip/(Archive/ArjHandler|Compress/LzhDecoder)\\.cpp$",
     "exclude": "^$"
+  },
+  "libxml2": {
+    "title": "libxml2",
+    "version": "2.15.4",
+    "src": "/opt/cov/src/libxml2",
+    "build": "/opt/cov/build/libxml2",
+    "objects": "/LibXml2\\.dir/(parser|parserInternals|SAX2|entities|valid|tree|encoding|uri|dict|hash|xmlstring)\\.c\\.gcno$",
+    "include": "^(parser|parserInternals|SAX2|entities|valid|tree|encoding|uri|dict|hash|xmlstring)\\.c$",
+    "exclude": "^$"
+  },
+  "expat": {
+    "title": "Expat",
+    "version": "2.10.0",
+    "src": "/opt/cov/src/expat",
+    "build": "/opt/cov/build/expat",
+    "objects": "/expat\\.dir/lib/xml(parse|role|tok)\\.c\\.gcno$",
+    "include": "^expat/lib/(xmlparse|xmlrole|xmltok|xmltok_impl|xmltok_ns)\\.c$",
+    "exclude": "^$"
+  },
+  "json-c": {
+    "title": "json-c",
+    "version": "0.19",
+    "src": "/opt/cov/src/json-c",
+    "build": "/opt/cov/build/json-c",
+    "objects": "/json-c(-static)?\\.dir/(json_tokener|json_object|linkhash|arraylist|printbuf)\\.c\\.gcno$",
+    "include": "^(json_tokener|json_object|linkhash|arraylist|printbuf)\\.c$",
+    "exclude": "^$"
+  },
+  "libcbor": {
+    "title": "libcbor",
+    "version": "0.14.0",
+    "src": "/opt/cov/src/libcbor",
+    "build": "/opt/cov/build/libcbor",
+    "objects": "/cbor\\.dir/(cbor|cbor/(streaming/decoding|internal/(builder_callbacks|loaders|unicode|stack|memory_utils)|ints|bytestrings|strings|arrays|maps|tags|floats_ctrls|common|callbacks))\\.c\\.gcno$",
+    "include": "^src/(cbor|cbor/(streaming/decoding|internal/(builder_callbacks|loaders|unicode|stack|memory_utils)|ints|bytestrings|strings|arrays|maps|tags|floats_ctrls|common|callbacks))\\.c$",
+    "exclude": "^$"
   }
 }

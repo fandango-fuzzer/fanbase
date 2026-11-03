@@ -121,4 +121,26 @@ make -C "$SRC/7zip/CPP/7zip/Bundles/Alone2" -f ../../cmpl_gcc.mak -j"$(nproc)" O
     || { tail -30 "$BUILD/7zip.build.log" >&2; exit 1; }
 cp "$BUILD/7zip/7zz" "$PREFIX/7zip/bin/7zz"
 
+# --- libxml2 2.15.4, for XML (its tag is an annotated one: this is its commit); no Python, ICU, iconv, zlib or lzma
+pin_git libxml2 https://gitlab.gnome.org/GNOME/libxml2.git v2.15.4 96498992efa48d52b0e8b83058bd88dbdaf153c1
+cmake_build libxml2 -DLIBXML2_WITH_PYTHON=OFF -DLIBXML2_WITH_ICU=OFF -DLIBXML2_WITH_LZMA=OFF -DLIBXML2_WITH_ZLIB=OFF \
+    -DLIBXML2_WITH_TESTS=OFF -DLIBXML2_WITH_PROGRAMS=OFF -DLIBXML2_WITH_ICONV=OFF -DLIBXML2_WITH_THREADS=OFF
+
+# --- Expat 2.10.0, for XML too (its CMake project is in expat/, so not cmake_build)
+pin_git expat https://github.com/libexpat/libexpat R_2_10_0 a70841d9ffa64ddde29ab824ed6305035ebe4c47
+cmake -S "$SRC/expat/expat" -B "$BUILD/expat" -G Ninja -DCMAKE_BUILD_TYPE=None -DCMAKE_C_FLAGS="$CFLAGS_COV" \
+    -DCMAKE_INSTALL_PREFIX="$PREFIX/expat" -DCMAKE_INSTALL_LIBDIR=lib -DEXPAT_SHARED_LIBS=OFF -DEXPAT_BUILD_TOOLS=OFF \
+    -DEXPAT_BUILD_EXAMPLES=OFF -DEXPAT_BUILD_TESTS=OFF -DEXPAT_BUILD_DOCS=OFF -DEXPAT_BUILD_PKGCONFIG=OFF > "$BUILD/expat.cmake.log" 2>&1 \
+    || { tail -30 "$BUILD/expat.cmake.log" >&2; exit 1; }
+cmake --build "$BUILD/expat" > "$BUILD/expat.build.log" 2>&1 || { tail -30 "$BUILD/expat.build.log" >&2; exit 1; }
+cmake --install "$BUILD/expat" > /dev/null
+
+# --- json-c 0.19, for JSON
+pin_git json-c https://github.com/json-c/json-c json-c-0.19-20260627 aa716cd8d663c976b99b0f30f102ee1d8ef63146
+cmake_build json-c -DBUILD_TESTING=OFF -DBUILD_APPS=OFF -DDISABLE_EXTRA_LIBS=ON -DBUILD_STATIC_LIBS=ON
+
+# --- libcbor 0.14.0, for CBOR
+pin_git libcbor https://github.com/PJK/libcbor v0.14.0 6730c20ab487c0b4dc5fb3fea918937085355bac
+cmake_build libcbor -DWITH_TESTS=OFF -DWITH_EXAMPLES=OFF -DSANITIZE=OFF
+
 echo "built:"; ls "$PREFIX"

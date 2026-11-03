@@ -1,0 +1,13 @@
+title: libxml2's parser, built to be measured
+formats: [xml]
+run: ["/opt/cov/bin/xml-harness", "{file}"]
+needs:
+  commands: [xml-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "libxml2"]
+classify:
+  - match: "(?i)huge|memory|depth"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "libxml2"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "libxml2"]
+  seeds: ["/opt/cov/seeds/xml/*"]
