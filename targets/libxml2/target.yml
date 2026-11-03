@@ -1,0 +1,11 @@
+title: libxml2 (xmllint)
+formats: [xml]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # xmllint --noout --nonet FILE: is it well-formed? Its exit status
+needs:
+  commands: [xmllint]
+version: [xmllint, --version]
+classify:
+  - match: "(?i)memory|huge|exceeds|limit"
+    as: resource-limit
+  - match: "(?i)unsupported encoding|not supported"
+    as: unsupported

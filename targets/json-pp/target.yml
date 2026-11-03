@@ -1,0 +1,9 @@
+title: Perl's JSON::PP (json_pp)
+formats: [json]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # json_pp < FILE, its output to nothing: its exit status
+needs:
+  commands: [json_pp]
+version: [perl, -MJSON::PP, -e, "print $JSON::PP::VERSION"]
+classify:
+  - match: "(?i)out of memory|nesting"
+    as: resource-limit

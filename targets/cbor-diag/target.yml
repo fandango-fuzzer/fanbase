@@ -1,0 +1,12 @@
+title: cbor-diag (Rust, through its Python binding)
+formats: [cbor]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # the file turned into diagnostic notation: one well-formed data item
+needs:
+  python: [cbor_diag]
+  pip: [cbor-diag]
+version: ["{python}", "-c", "import importlib.metadata as m; print(m.version('cbor-diag'))"]
+classify:
+  - match: "(?i)not yet implemented"
+    as: unsupported
+  - match: "(?i)recursion|too deep"
+    as: resource-limit

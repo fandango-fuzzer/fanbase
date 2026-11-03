@@ -1,0 +1,11 @@
+title: Expat (xmlwf)
+formats: [xml]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # xmlwf FILE: is it well-formed? Its exit status
+needs:
+  commands: [xmlwf]
+version: [xmlwf, -v]
+classify:
+  - match: "(?i)out of memory|amplification"
+    as: resource-limit
+  - match: "(?i)unknown encoding"
+    as: unsupported

@@ -1,0 +1,7 @@
+title: Python's json
+formats: [json]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # json.load of the file, read as UTF-8
+version: ["{python}", "-c", "import platform; print(platform.python_version())"]
+classify:
+  - match: "^(MemoryError|RecursionError)"
+    as: resource-limit

@@ -1,0 +1,9 @@
+title: jq
+formats: [json]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # jq -c -s length FILE: the file must be one JSON value
+needs:
+  commands: [jq]
+version: [jq, --version]
+classify:
+  - match: "(?i)out of memory|depth"
+    as: resource-limit

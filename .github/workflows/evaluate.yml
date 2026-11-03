@@ -42,9 +42,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin libjxl-tools flac mpg123 faad vorbis-tools \
-            libarchive-tools 7zip 7zip-rar unzip cpio cabextract unrar arj unar
+            libarchive-tools 7zip 7zip-rar unzip cpio cabextract unrar arj unar \
+            libxml2-utils expat libxerces-c-samples jq yajl-tools
 
-      - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow pillow-heif soundfile
+      - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow pillow-heif soundfile cbor2 cbor-diag
 
       - name: Which targets can run here
         run: fanbase targets

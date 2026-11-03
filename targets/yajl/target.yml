@@ -1,0 +1,9 @@
+title: YAJL (json_verify)
+formats: [json]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # json_verify < FILE: its exit status
+needs:
+  commands: [json_verify]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)out of memory|depth"
+    as: resource-limit

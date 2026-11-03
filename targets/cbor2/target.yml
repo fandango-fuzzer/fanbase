@@ -1,0 +1,10 @@
+title: cbor2 (Python)
+formats: [cbor]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # cbor2.load of the file: one data item, and nothing after it
+needs:
+  python: [cbor2]
+  pip: [cbor2]
+version: ["{python}", "-c", "import importlib.metadata as m; print(m.version('cbor2'))"]
+classify:
+  - match: "(?i)^(MemoryError|RecursionError)|maximum recursion|too deep"
+    as: resource-limit
