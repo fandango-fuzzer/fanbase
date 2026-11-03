@@ -48,4 +48,10 @@ harness archive archive.c "-I$PREFIX/libarchive/include" "$PREFIX/libarchive/lib
 # 7-Zip the system has
 ln -sf "$PREFIX/7zip/bin/7zz" "$BIN/7zz-cov"
 
+# the data formats: XML with libxml2 and with Expat, JSON with json-c, CBOR with libcbor
+harness xml xml.c "-I$PREFIX/libxml2/include/libxml2" "$PREFIX/libxml2/lib/libxml2.a" -lm
+harness expat expat.c "-I$PREFIX/expat/include" "$PREFIX/expat/lib/libexpat.a"
+harness json json.c "-I$PREFIX/json-c/include" "$PREFIX/json-c/lib/libjson-c.a"
+harness cbor cbor.c "-I$PREFIX/libcbor/include" "$PREFIX/libcbor/lib/libcbor.a"
+
 echo "built:"; ls "$BIN"

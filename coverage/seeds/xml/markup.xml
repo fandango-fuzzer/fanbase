@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="style.xsl"?>
+<!-- a comment before the root -->
+<doc>
+  <code><![CDATA[if (a < b && c > d) { return "<ok>"; }]]></code>
+  <!-- a comment inside -->
+  <?app instruction data?>
+  <text>5 &lt; 6 &amp;&amp; 7 &gt; 3, &quot;quoted&quot; &apos;too&apos;</text>
+</doc>

@@ -1,0 +1,13 @@
+title: json-c's parser, built to be measured
+formats: [json]
+run: ["/opt/cov/bin/json-harness", "{file}"]
+needs:
+  commands: [json-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "json-c"]
+classify:
+  - match: "(?i)too deep|memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "json-c"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "json-c"]
+  seeds: ["/opt/cov/seeds/json/*"]

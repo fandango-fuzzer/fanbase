@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE note [
+  <!ELEMENT note (to, from, body)>
+  <!ELEMENT to (#PCDATA)>
+  <!ELEMENT from (#PCDATA)>
+  <!ELEMENT body (#PCDATA|em)*>
+  <!ELEMENT em (#PCDATA)>
+  <!ATTLIST note priority (low|normal|high) "normal" id ID #IMPLIED>
+  <!ENTITY sender "The Sender">
+  <!ENTITY greeting "Hello, &sender;">
+  <!NOTATION gif SYSTEM "image/gif">
+]>
+<note id="n1">
+  <to>Reader</to>
+  <from>&sender;</from>
+  <body>&greeting; and <em>welcome</em>.</body>
+</note>

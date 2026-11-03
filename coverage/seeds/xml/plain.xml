@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+  <book id="b1" lang="en">
+    <title>A Short Title</title>
+    <price currency="EUR">12.50</price>
+  </book>
+  <book id="b2">
+    <title>Another</title>
+    <price currency="USD">8</price>
+  </book>
+</catalog>

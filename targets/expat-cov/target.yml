@@ -1,0 +1,13 @@
+title: Expat, built to be measured
+formats: [xml]
+run: ["/opt/cov/bin/expat-harness", "{file}"]
+needs:
+  commands: [expat-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "expat"]
+classify:
+  - match: "(?i)memory|amplification"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "expat"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "expat"]
+  seeds: ["/opt/cov/seeds/xml/*"]
