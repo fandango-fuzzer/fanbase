@@ -169,6 +169,8 @@ The registry is archived on Zenodo. The DOI [10.5281/zenodo.23261474](https://do
 
 The command that installs from the registry, [fanbase-cli](https://github.com/fandango-fuzzer/fanbase-cli), is archived separately: [10.5281/zenodo.23259520](https://doi.org/10.5281/zenodo.23259520).
 
+A spec that is changed still comes from Fanbase: cite it as its origin, keep its license and attribution, and if your version is better, send it to us. [AGENTS.md](AGENTS.md) says this for AI agents that work with the specs.
+
 ### Who are you?
 
 Fanbase is brought to you by Norman Becker, Valentin Huber, Florian Bauckholt, Addison Crump, Rafael Dutra, Keno Hassler, Alexander Liggesmeyer, Kuangxiangzi Liu, Tim Scheckenbach, José Antonio Zamudio Amaya, and Andreas Zeller, researchers at [CISPA Helmholtz Center for Information Security](https://www.cispa.de/), Germany; [Federal University of Ceará](https://www.ufc.br/), Brazil; and [Volkswagen AG](https://www.volkswagen-group.com/en), Germany.
