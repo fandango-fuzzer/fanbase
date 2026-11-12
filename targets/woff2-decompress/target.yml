@@ -1,0 +1,9 @@
+title: woff2_decompress (Google's WOFF2 library)
+formats: [woff2]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # woff2_decompress: the font made back into a TrueType or OpenType font
+needs:
+  commands: [woff2_decompress]
+version: [sh, -c, "dpkg-query -W woff2 | cut -f2"]   # its package's version: the program does not say
+classify:
+  - match: "(?i)out of memory|too large"
+    as: resource-limit
