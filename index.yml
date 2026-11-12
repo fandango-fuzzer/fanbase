@@ -1056,6 +1056,56 @@ specs:
   - ffmpeg
   - libsndfile
   - ogginfo
+- format: otf
+  kind: otf
+  path: specs/otf/otf/otf.fan
+  sha256: f3aab61265b1cb8084114754fdf3d1e09d7907ffe292dd9b5d285a8ce85760fd
+  description: OpenType fonts with CFF outlines (Type 2 charstrings with hints, hint
+    masks, subroutines and flex), built on the TrueType spec's other tables; no CID-keyed
+    fonts or CFF2
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - ttf
+  decodes: always
+  version: '1.0'
+  title: OpenType font
+  mime: font/otf
+  extensions:
+  - otf
+  reference: https://learn.microsoft.com/en-us/typography/opentype/spec/
+  targets:
+  - freetype
+  - fonttools
+  - ots
+- format: pcf
+  kind: pcf
+  path: specs/pcf/pcf/pcf.fan
+  sha256: 4ec07e1c0032ad0b39b1243a67368ad51a7c23a6d8813ba2e6b084e2c7736d2b
+  description: X11 PCF bitmap fonts with one- or two-byte encodings, both byte and
+    bit orders, every row padding and scan unit, compressed metrics or not, and optional
+    ink metrics, scalable widths, glyph names and accelerators
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Portable Compiled Format (X11 bitmap font)
+  mime: application/x-font-pcf
+  extensions:
+  - pcf
+  reference: https://fontforge.org/docs/techref/pcf-format.html
+  targets:
+  - freetype
+  - pcf2bdf
+  - pillow-pcf
 - format: png
   kind: png
   path: specs/png/png/png.fan
@@ -1635,6 +1685,30 @@ specs:
   - imagemagick
   - ffmpeg
   - tiffinfo
+- format: ttf
+  kind: ttf
+  path: specs/ttf/ttf/ttf.fan
+  sha256: 95a08e176f6cd78bc642876f4250cf21fe3874b034448e60e65e522ed54d1e14
+  description: TrueType fonts with simple and composite glyphs, hinting programs,
+    cmap formats 0, 4, 6, 12, 13 and 14, and optional gasp, hdmx, LTSH, VDMX, kern,
+    vertical metrics and DSIG; no OpenType layout or variations
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: TrueType font
+  mime: font/ttf
+  extensions:
+  - ttf
+  reference: https://learn.microsoft.com/en-us/typography/opentype/spec/
+  targets:
+  - freetype
+  - fonttools
+  - ots
 - format: wav
   kind: wav
   path: specs/wav/wav/wav.fan
@@ -1772,6 +1846,60 @@ specs:
   - imagemagick
   - ffmpeg
   - webpinfo
+- format: woff
+  kind: woff
+  path: specs/woff/woff/woff.fan
+  sha256: f863b848e6821a93d77a46afac27ec1f1c3811ad7ce587d1f50b5408a7048d16
+  description: WOFF 1.0 fonts holding a TrueType or a CFF font, with tables compressed
+    or stored, extended metadata and private data
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - otf
+  decodes: always
+  version: '1.0'
+  title: Web Open Font Format
+  mime: font/woff
+  extensions:
+  - woff
+  reference: https://www.w3.org/TR/WOFF/
+  targets:
+  - freetype
+  - fonttools
+  - ots
+  - woff2sfnt
+- format: woff2
+  kind: woff2
+  path: specs/woff2/woff2/woff2.fan
+  sha256: 8ab62e204924cd152c26f4a6b6ac26e98b119f2a3c169f570f22095f9f46f29c
+  description: WOFF2 fonts holding a TrueType or a CFF font, with glyf and loca transformed
+    or not, an optional hmtx transform, Brotli compression, metadata and private data;
+    no collections
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires:
+  - brotli
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - woff
+  decodes: always
+  version: '1.0'
+  title: Web Open Font Format 2.0
+  mime: font/woff2
+  extensions:
+  - woff2
+  reference: https://www.w3.org/TR/WOFF2/
+  targets:
+  - freetype
+  - fonttools
+  - ots
+  - woff2-decompress
 - format: xbm
   kind: xbm
   path: specs/xbm/xbm/xbm.fan

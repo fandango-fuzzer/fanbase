@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: TrueType font
+mime: font/ttf
+extensions:
+- ttf
+reference: https://learn.microsoft.com/en-us/typography/opentype/spec/
+targets:
+- freetype
+- fonttools
+- ots
