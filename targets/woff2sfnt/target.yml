@@ -1,0 +1,9 @@
+title: woff2sfnt (the WOFF reference code)
+formats: [woff]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # woff2sfnt FILE: the font made back into a TrueType or OpenType font
+needs:
+  commands: [woff2sfnt]
+version: [sh, -c, "dpkg-query -W woff-tools | cut -f2"]   # its package's version: the program does not say
+classify:
+  - match: "(?i)out of memory"
+    as: resource-limit

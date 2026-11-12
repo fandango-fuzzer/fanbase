@@ -1,0 +1,15 @@
+format: otf
+kind: otf
+description: OpenType fonts with CFF outlines (Type 2 charstrings with hints, hint
+  masks, subroutines and flex), built on the TrueType spec's other tables; no CID-keyed
+  fonts or CFF2
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+extends:
+- ttf
+decodes: always
+version: '1.0'

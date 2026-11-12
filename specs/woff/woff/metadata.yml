@@ -1,0 +1,14 @@
+format: woff
+kind: woff
+description: WOFF 1.0 fonts holding a TrueType or a CFF font, with tables compressed
+  or stored, extended metadata and private data
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+extends:
+- otf
+decodes: always
+version: '1.0'

@@ -1,0 +1,9 @@
+title: pcf2bdf
+formats: [pcf]
+run: [pcf2bdf, -o, /dev/null, "{file}"]   # the font written back as BDF, to nothing; its exit status
+needs:
+  commands: [pcf2bdf]
+version: [sh, -c, "dpkg-query -W pcf2bdf | cut -f2"]   # its package's version: the program does not say
+classify:
+  - match: "(?i)out of memory|cannot allocate"
+    as: resource-limit

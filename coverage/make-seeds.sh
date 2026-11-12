@@ -11,7 +11,7 @@ OUT=/opt/cov/seeds
 mkdir -p "$OUT/png" "$OUT/jpeg" "$OUT/gif" "$OUT/tiff" "$OUT/webp" "$OUT/bmp" "$OUT/heic" "$OUT/jxl" "$OUT/ppm" "$OUT/xbm" "$OUT/xpm" "$OUT/svg" \
     "$OUT/wav" "$OUT/flac" "$OUT/ogg" "$OUT/mp3" "$OUT/aac" \
     "$OUT/zip" "$OUT/tar" "$OUT/7z" "$OUT/rar" "$OUT/cab" "$OUT/cpio" "$OUT/arj" "$OUT/ar" \
-    "$OUT/xml" "$OUT/json" "$OUT/cbor"
+    "$OUT/xml" "$OUT/json" "$OUT/cbor" "$OUT/ttf" "$OUT/otf" "$OUT/woff" "$OUT/woff2" "$OUT/pcf"
 cd /tmp
 convert rose: -resize 70x46 base.png
 
@@ -252,6 +252,36 @@ appendix_a = ["1b000000e8d4a51000", "1bffffffffffffffff", "c24901000000000000000
 for number, item in enumerate(appendix_a):
     open(f"{out}/rfc8949-{number:02d}.cbor", "wb").write(bytes.fromhex(item))
 PYTHON
+
+# Fonts: parts of DejaVu (TrueType, hinted) and GNU FreeFont (CFF), cut by fontTools' subsetter, and Cantarell, a variable
+# font with CFF2 outlines; WOFF made from them by sfnt2woff (the WOFF reference code) and by fontTools, WOFF2 by
+# woff2_compress (Google's) and by fontTools (with hmtx transformed too); PCF fonts of X11's misc set, and the same fonts
+# written again by bdftopcf with other paddings, scan units and byte and bit orders
+latin=U+0020-007E,U+00A0-00FF
+dejavu=/usr/share/fonts/truetype/dejavu freefont=/usr/share/fonts/opentype/freefont
+pyftsubset "$dejavu/DejaVuSans.ttf" --unicodes=$latin --output-file="$OUT/ttf/dejavu-sans-latin.ttf"
+pyftsubset "$dejavu/DejaVuSerif-Bold.ttf" --unicodes=$latin,U+0391-03C9 --output-file="$OUT/ttf/dejavu-serif-bold-greek.ttf"
+pyftsubset "$dejavu/DejaVuSans-Bold.ttf" --unicodes=U+0020-007E --no-hinting --output-file="$OUT/ttf/dejavu-sans-bold-unhinted.ttf"
+pyftsubset "$dejavu/DejaVuSerif.ttf" --unicodes=U+0020-024F,U+0400-04FF --layout-features='*' --output-file="$OUT/ttf/dejavu-serif-cyrillic.ttf"
+pyftsubset "$freefont/FreeSans.otf" --unicodes=$latin --output-file="$OUT/otf/freesans-latin.otf"
+pyftsubset "$freefont/FreeSerifBold.otf" --unicodes=$latin,U+0391-03C9 --output-file="$OUT/otf/freeserif-bold-greek.otf"
+pyftsubset "$freefont/FreeMono.otf" --unicodes=U+0020-007E --desubroutinize --output-file="$OUT/otf/freemono-desubroutinized.otf"
+pyftsubset /usr/share/fonts/opentype/cantarell/Cantarell-VF.otf --unicodes=$latin --output-file="$OUT/otf/cantarell-variable.otf"
+for font in "$OUT/ttf/dejavu-sans-latin.ttf" "$OUT/otf/freesans-latin.otf"; do
+    cp "$font" . && sfnt2woff "$(basename "$font")" && mv "$(basename "${font%.*}").woff" "$OUT/woff/sfnt2woff-$(basename "${font%.*}").woff"
+    cp "$font" . && woff2_compress "$(basename "$font")" > /dev/null && mv "$(basename "${font%.*}").woff2" "$OUT/woff2/google-$(basename "${font%.*}").woff2"
+    rm -f "$(basename "$font")"
+done
+pyftsubset "$dejavu/DejaVuSerif-Bold.ttf" --unicodes=$latin --flavor=woff --output-file="$OUT/woff/fonttools-dejavu-serif-bold.woff"
+python3 -m fontTools.ttLib.woff2 compress --hmtx-transform -o "$OUT/woff2/fonttools-hmtx-dejavu-serif-bold.woff2" "$OUT/ttf/dejavu-serif-bold-greek.ttf"
+python3 -m fontTools.ttLib.woff2 compress --no-glyf-transform -o "$OUT/woff2/fonttools-null-dejavu-sans-bold.woff2" "$OUT/ttf/dejavu-sans-bold-unhinted.ttf"
+for font in 6x13 9x15B 10x20 7x14 cursor 12x13ja; do gunzip -c "/usr/share/fonts/X11/misc/$font.pcf.gz" > "$OUT/pcf/$font.pcf"; done
+pcf2bdf -o 6x13.bdf "$OUT/pcf/6x13.pcf"
+bdftopcf -p1 -u1 -l -L -o "$OUT/pcf/6x13-lsb-pad1.pcf" 6x13.bdf
+bdftopcf -p8 -u4 -m -M -o "$OUT/pcf/6x13-msb-pad8.pcf" 6x13.bdf
+bdftopcf -p2 -u2 -m -L -o "$OUT/pcf/6x13-mixed-pad2.pcf" 6x13.bdf
+bdftopcf -t -o "$OUT/pcf/6x13-terminal.pcf" 6x13.bdf
+rm -f 6x13.bdf
 
 cp /opt/cov/seed-sources/svg/*.svg "$OUT/svg/"
 rm -f base.png base.jpg gray.jpg gray.png alpha.png sixteen.png tones.wav sparse.bin lib.c && rm -r tree

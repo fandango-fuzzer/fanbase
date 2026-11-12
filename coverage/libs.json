@@ -251,5 +251,59 @@
     "objects": "/cbor\\.dir/(cbor|cbor/(streaming/decoding|internal/(builder_callbacks|loaders|unicode|stack|memory_utils)|ints|bytestrings|strings|arrays|maps|tags|floats_ctrls|common|callbacks))\\.c\\.gcno$",
     "include": "^src/(cbor|cbor/(streaming/decoding|internal/(builder_callbacks|loaders|unicode|stack|memory_utils)|ints|bytestrings|strings|arrays|maps|tags|floats_ctrls|common|callbacks))\\.c$",
     "exclude": "^$"
+  },
+  "freetype-ttf": {
+    "title": "FreeType (TrueType)",
+    "version": "2.15.0",
+    "src": "/opt/cov/src/freetype",
+    "build": "/opt/cov/build/freetype",
+    "objects": "/src/(truetype/truetype|sfnt/sfnt)\\.c\\.gcno$",
+    "include": "^src/(truetype|sfnt)/",
+    "exclude": "^src/sfnt/(sfwoff|sfwoff2|woff2tags)\\.c$"
+  },
+  "freetype-otf": {
+    "title": "FreeType (CFF)",
+    "version": "2.15.0",
+    "src": "/opt/cov/src/freetype",
+    "build": "/opt/cov/build/freetype",
+    "objects": "/src/(cff/cff|psaux/psaux|pshinter/pshinter|sfnt/sfnt)\\.c\\.gcno$",
+    "include": "^src/(cff|psaux|pshinter|sfnt)/",
+    "exclude": "^src/sfnt/(sfwoff|sfwoff2|woff2tags)\\.c$"
+  },
+  "freetype-woff": {
+    "title": "FreeType (WOFF)",
+    "version": "2.15.0",
+    "src": "/opt/cov/src/freetype",
+    "build": "/opt/cov/build/freetype",
+    "objects": "/src/(sfnt/sfnt|gzip/ftgzip|truetype/truetype|cff/cff|psaux/psaux|pshinter/pshinter)\\.c\\.gcno$",
+    "include": "^src/(sfnt|gzip|truetype|cff|psaux|pshinter)/",
+    "exclude": "^src/sfnt/(sfwoff2|woff2tags)\\.c$"
+  },
+  "freetype-woff2": {
+    "title": "FreeType (WOFF2)",
+    "version": "2.15.0",
+    "src": "/opt/cov/src/freetype",
+    "build": "/opt/cov/build/freetype",
+    "objects": "/src/(sfnt/sfnt|truetype/truetype|cff/cff|psaux/psaux|pshinter/pshinter)\\.c\\.gcno$",
+    "include": "^src/(sfnt|truetype|cff|psaux|pshinter)/",
+    "exclude": "^src/sfnt/sfwoff\\.c$"
+  },
+  "freetype-pcf": {
+    "title": "FreeType (PCF)",
+    "version": "2.15.0",
+    "src": "/opt/cov/src/freetype",
+    "build": "/opt/cov/build/freetype",
+    "objects": "/src/pcf/pcf\\.c\\.gcno$",
+    "include": "^src/pcf/",
+    "exclude": "^$"
+  },
+  "ots": {
+    "title": "OTS",
+    "version": "9.3.0",
+    "src": "/opt/cov/src/ots",
+    "build": "/opt/cov/build/ots",
+    "objects": "^libots\\.a\\.p/src_",
+    "include": "^src/",
+    "exclude": "^$"
   }
 }

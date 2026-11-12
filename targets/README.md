@@ -46,6 +46,13 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `node-json` | json | Node.js, `JSON.parse` (V8); the file is decoded as strict UTF-8 first |
 | `cbor2` | cbor | Python package cbor2; the file must be one data item and nothing after it. It turns the tags it knows into values and rejects content that does not fit its tag (a date that is not one), so it judges validity |
 | `cbor-diag` | cbor | Python package cbor-diag, which calls the Rust crate of that name to write the file in diagnostic notation; well-formedness only. What the crate has not implemented is counted as unsupported |
+| `freetype` | otf, pcf, ttf, woff, woff2 | the system's FreeType (`libfreetype6`, built with zlib and Brotli, which it has on Debian and Ubuntu), called through ctypes: every face is opened, and every glyph loaded, hinted and rendered (a font of bitmaps at its first size). The copy of FreeType that the Python package freetype-py brings reads neither WOFF nor WOFF2 |
+| `fonttools` | otf, ttf, woff, woff2 | Python package fontTools (and brotli, for WOFF2): every table is decompiled, and every glyph's outline read |
+| `ots` | otf, ttf, woff, woff2 | `ots-sanitize` (`opentype-sanitizer`), the OpenType Sanitizer that web browsers check a font with: would one take it? A small wrapper puts its errors before its warnings |
+| `woff2-decompress` | woff2 | `woff2_decompress` (`woff2`, Google's WOFF2 library), which makes the font back into a TrueType or OpenType font; a small wrapper gives it a folder to write it to |
+| `woff2sfnt` | woff | `woff2sfnt` (`woff-tools`), the code that came with the WOFF 1.0 specification; it checks the blocks and decompresses every table. A small wrapper sends the font it writes to nothing |
+| `pcf2bdf` | pcf | `pcf2bdf`: the font is written back as BDF, to nothing |
+| `pillow-pcf` | pcf | Python package Pillow's own PCF reader (`PcfFontFile`, not FreeType): every glyph's metrics and bitmap are read, and the font compiled |
 
 The `*-cov` targets are the libraries built to be measured, from [`coverage/`](../coverage/README.md), and run only in
 its image, with `fanbase evaluate --coverage`: they are not named by any format, and `fanbase targets` shows them as
@@ -82,10 +89,16 @@ not ready anywhere else.
 | `expat-cov` | xml | Expat 2.10.0 |
 | `json-c-cov` | json | json-c 0.19, its parser |
 | `libcbor-cov` | cbor | libcbor 0.14.0, its decoder |
+| `freetype-ttf-cov` | ttf | FreeType 2.15.0, its TrueType driver and sfnt module |
+| `freetype-otf-cov` | otf | FreeType 2.15.0, its CFF driver (with psaux and pshinter) and sfnt module |
+| `freetype-woff-cov` | woff | FreeType 2.15.0, its WOFF reader, with the TrueType and CFF drivers and the sfnt module |
+| `freetype-woff2-cov` | woff2 | FreeType 2.15.0, its WOFF2 reader, with the TrueType and CFF drivers and the sfnt module |
+| `freetype-pcf-cov` | pcf | FreeType 2.15.0, its PCF driver |
+| `ots-ttf-cov`, `ots-otf-cov`, `ots-woff-cov`, `ots-woff2-cov` | ttf, otf, woff, woff2 | OTS 9.3.0, all of its own code, each with the real files of its format |
 
 On Debian or Ubuntu: `apt install imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin libjxl-tools
 flac mpg123 faad vorbis-tools libarchive-tools 7zip 7zip-rar unzip cpio cabextract unrar arj unar libxml2-utils expat libxerces-c-samples jq
-yajl-tools nodejs` (`unrar` and `7zip-rar` are in Debian's non-free and Ubuntu's multiverse), and `pip install Pillow pillow-heif soundfile cbor2 cbor-diag`. `fanbase targets` says which of them can run on your machine.
+yajl-tools nodejs opentype-sanitizer woff2 woff-tools pcf2bdf` (`unrar` and `7zip-rar` are in Debian's non-free and Ubuntu's multiverse), and `pip install Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli`. `fanbase targets` says which of them can run on your machine.
 
 **Where a target runs.** On a pull request (`evaluate.yml`), with a read-only token and no secrets, because a pull
 request from a fork brings its own targets. On `main`, once a week and by hand (`evaluate-main.yml`), in a job that

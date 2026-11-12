@@ -89,6 +89,21 @@ jobs:
               cov-snapshot $lib | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(sys.argv[1], len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")" $lib
             done'
 
+      - name: Every reader of a font format reads a real file of its format, and counts it
+        run: |
+          docker run --rm fanbase-coverage sh -c '
+            set -e
+            cd /tmp
+            for item in freetype-harness:freetype-ttf:ttf/dejavu-sans-latin.ttf freetype-harness:freetype-otf:otf/freesans-latin.otf \
+                        freetype-harness:freetype-woff:woff/sfnt2woff-dejavu-sans-latin.woff \
+                        freetype-harness:freetype-woff2:woff2/google-dejavu-sans-latin.woff2 freetype-harness:freetype-pcf:pcf/6x13.pcf \
+                        ots-sanitize-cov:ots:woff2/google-freesans-latin.woff2; do
+              harness=${item%%:*}; rest=${item#*:}; lib=${rest%%:*}; seed=${rest#*:}
+              cov-reset $lib
+              $harness /opt/cov/seeds/$seed
+              cov-snapshot $lib | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(sys.argv[1], len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")" $lib
+            done'
+
       - name: Publish
         if: github.ref == 'refs/heads/main'
         env:

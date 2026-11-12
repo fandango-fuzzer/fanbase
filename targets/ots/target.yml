@@ -1,0 +1,9 @@
+title: OpenType Sanitizer (ots-sanitize)
+formats: [otf, ttf, woff, woff2]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # ots-sanitize FILE: would a web browser take it? Its exit status
+needs:
+  commands: [ots-sanitize]
+version: [ots-sanitize, --version]
+classify:
+  - match: "(?i)out of memory|exceeds|too large"
+    as: resource-limit
