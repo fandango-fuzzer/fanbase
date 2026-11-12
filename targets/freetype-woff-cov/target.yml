@@ -1,0 +1,13 @@
+title: FreeType's WOFF reader, with its TrueType and CFF drivers and sfnt module, built to be measured
+formats: [woff]
+run: ["/opt/cov/bin/freetype-harness", "{file}"]   # every face opened, every glyph loaded, hinted and rendered
+needs:
+  commands: [freetype-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "freetype-woff"]
+classify:
+  - match: "(?i)out of memory|too large|raster overflow"   # an outline too complex for the rasterizer's own memory
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "freetype-woff"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "freetype-woff"]
+  seeds: ["/opt/cov/seeds/woff/*"]

@@ -22,11 +22,13 @@ RUN sed -i 's/^Components: main$/Components: main non-free/' /etc/apt/sources.li
         libpng-dev libde265-dev libkvazaar-dev libbrotli-dev libjxl-tools librsvg2-bin flac mpg123 faad vorbis-tools \
         libarchive-tools 7zip 7zip-rar unzip zip cpio cabextract unrar arj unar gcab \
         libxml2-utils expat libxerces-c-samples jq yajl-tools perl nodejs \
+        meson libwoff-dev liblz4-dev libgtest-dev opentype-sanitizer woff2 woff-tools pcf2bdf xfonts-utils xfonts-base \
+        fonts-dejavu-core fonts-freefont-otf fonts-cantarell \
     && rm -rf /var/lib/apt/lists/*
 
 # `fanbase` is the one to evaluate with; pass FANBASE=/path/to/a.whl to build with a version that is not released.
 ARG FANBASE="fanbase>=0.5"
-RUN pip install --no-cache-dir fandango-fuzzer Pillow pillow-heif soundfile cbor2 cbor-diag ${FANBASE:+"$FANBASE"}
+RUN pip install --no-cache-dir fandango-fuzzer Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli ${FANBASE:+"$FANBASE"}
 
 # the libraries, from pinned sources, built with counting; the slow part, so first
 COPY build-libs.sh /opt/cov/build-libs.sh

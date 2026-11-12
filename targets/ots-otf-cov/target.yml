@@ -1,0 +1,13 @@
+title: OTS (the OpenType Sanitizer), built to be measured
+formats: [otf]
+run: ["/opt/cov/bin/ots-sanitize-cov", "{file}"]   # ots-sanitize FILE: would a web browser take it?
+needs:
+  commands: [ots-sanitize-cov]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ots"]
+classify:
+  - match: "(?i)out of memory|too large"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ots"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ots"]
+  seeds: ["/opt/cov/seeds/otf/*"]
