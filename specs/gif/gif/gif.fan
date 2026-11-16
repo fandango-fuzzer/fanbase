@@ -6,6 +6,11 @@
 # bits in the headers. Screen sizes, color indices and block lengths often
 # sit on edge values (0, 1, 0xFFFF, ...).
 #
+# What depends on another part of the file (the color tables, the background
+# color, where a frame sits and how big it is, its LZW data) is settled last,
+# by consistent(), from the parts the file has: Fandango builds and recombines
+# the parts of a file separately, so they cannot learn it while being made.
+#
 # TODO:
 # * Replace constructor functions (build_*()) with grammar rules + constraints
 # * Where are the docstrings for the constructor functions?
@@ -13,7 +18,9 @@
 #   for a much better structure.
 
 
-<start>  ::= <gif>
+<start>  ::= <gif_out>
+<gif_out> ::= <gif_file> := consistent(<gif>)
+<gif_file> ::= rb'(?s).+'
 <gif>    ::= <header> <lsd> <body> <trailer>
 
 # Header : version 87a (no extensions officially) vs 89a
@@ -27,9 +34,9 @@
 <lsd>        ::= <canvas> <gsd_packed> <bgcolor> <aspect> <gct>
 <canvas>     ::= <byte>+ := build_canvas()
 <gsd_packed> ::= <byte>+ := build_gsd_packed()
-<bgcolor>    ::= <byte>+ := build_bgcolor()
+<bgcolor>    ::= <byte>                   # an index, settled by consistent()
 <aspect>     ::= rb'\x00' | rb'\x01' | rb'\x31' | rb'\x40' | rb'\xff' | <byte>
-<gct>        ::= <byte>* := build_gct()
+<gct>        ::= b''                      # made by consistent()
 
 # Body : extensions, then >=1 image, then more blocks
 <body>       ::= <extensions> <image_block> <more>
@@ -69,8 +76,8 @@
 
 <image_block>    ::= <image_descriptor> <lct> <image_data>
 <image_descriptor> ::= <byte>+ := build_image_descriptor()
-<lct>            ::= <byte>* := build_lct()
-<image_data>     ::= <byte>+ := build_image_data()
+<lct>            ::= b''                  # made by consistent()
+<image_data>     ::= b''                  # made by consistent()
 
 # Trailer
 <trailer> ::= rb'\x3b'
@@ -82,16 +89,13 @@
 
 where True
 
-# Helpers. _S carries per-image / per-file geometry between the
-# left-to-right generated symbols (set before the symbol that reads it).
+# Helpers. The build_*() ones make a part on its own; consistent() makes the
+# parts agree, in the order of the file.
 import random
-
-_S = {}
 
 def build_canvas():
     cw = random.choice([1, 3, 16, 64, 200, 255, 256, 320, 65535, 0])
     ch = random.choice([1, 3, 16, 64, 200, 255, 256, 240, 65535, 0])
-    _S['cw'], _S['ch'] = cw, ch
     return cw.to_bytes(2, 'little') + ch.to_bytes(2, 'little')
 
 def _rgb(n):
@@ -103,41 +107,23 @@ def build_gsd_packed():
     color_res = random.choice([0, 1, 3, 7, 7])          # bits 4-6
     sort = random.choice([0, 0, 1])                       # bit 3
     size = random.choice([0, 0, 1, 2, 3, 5, 7])           # bits 0-2 -> 2^(n+1)
-    _S['gflag'] = flag
-    _S['gsize'] = size
-    _S['gncolors'] = (2 ** (size + 1)) if flag else 2
     b = (flag << 7) | (color_res << 4) | (sort << 3) | size
     return bytes([b])
 
-def build_bgcolor():
-    n = _S.get('gncolors', 2)
-    return bytes([random.choice([0, n - 1, min(255, n), 255])])
-
-def build_gct():
-    if not _S.get('gflag'):
-        _S['gncolors'] = 2
-        return b''
-    return _rgb(2 ** (_S['gsize'] + 1))
-
 def build_image_descriptor():
-    cw, ch = _S.get('cw', 0), _S.get('ch', 0)
-    # keep pixel count small so LZW stays fast; hit the 1px edge but keep frames
-    # >=1 (a 0-size frame only arises from a 0-size screen), then clamp the frame
-    # inside the logical screen so the file stays spec-valid.
+    # keep pixel count small so LZW stays fast, and hit the 1px edge;
+    # consistent() puts the frame inside the logical screen.
     dims = [1, 1, 2, 3, 4, 5, 8, 10, 16, 24, 32]
-    iw = min(random.choice(dims), cw)
-    ih = min(random.choice(dims), ch)
-    while iw * ih > 1024:
-        ih = min(random.choice(dims), ch)
-    left = random.randint(0, max(0, cw - iw))
-    top = random.randint(0, max(0, ch - ih))
+    iw = random.choice(dims)
+    ih = random.choice(dims)
     lflag = random.choice([0, 0, 0, 1])                   # local table rare
     interlace = random.choice([0, 0, 1])
     sort = random.choice([0, 1])
     lsize = random.choice([0, 1, 2, 3, 7])
-    _S['iw'], _S['ih'] = iw, ih
-    _S['lflag'], _S['lsize'], _S['interlace'] = lflag, lsize, interlace
     packed = (lflag << 7) | (interlace << 6) | (sort << 5) | lsize
+    return descriptor(random.randint(0, 65535), random.randint(0, 65535), iw, ih, packed)
+
+def descriptor(left, top, iw, ih, packed):
     out = bytearray(b'\x2c')             # image separator, then L,T,W,H
     out += left.to_bytes(2, 'little')
     out += top.to_bytes(2, 'little')
@@ -145,14 +131,6 @@ def build_image_descriptor():
     out += ih.to_bytes(2, 'little')
     out.append(packed)
     return bytes(out)
-
-def build_lct():
-    if not _S.get('lflag'):
-        _S['ncolors'] = _S.get('gncolors', 2)
-        return b''
-    n = 2 ** (_S['lsize'] + 1)
-    _S['ncolors'] = n
-    return _rgb(n)
 
 def _gif_lzw(indices, min_code):
     clear = 1 << min_code
@@ -209,9 +187,8 @@ def _frame(data):
     out.append(0)                    # block terminator
     return bytes(out)
 
-def build_image_data():
-    iw, ih = _S.get('iw', 1), _S.get('ih', 1)
-    ncolors = max(2, _S.get('ncolors', 2))
+def build_image_data(iw, ih, ncolors):
+    ncolors = max(2, ncolors)
     min_code = max(2, (ncolors - 1).bit_length())
     pixels = [random.randrange(ncolors) for _ in range(iw * ih)]
     comp = _gif_lzw(pixels, min_code)
@@ -221,3 +198,51 @@ def build_sub_stream():
     length = random.choice([0, 1, 3, 254, 255, 256, 300, 510])
     payload = bytes(random.getrandbits(8) for _ in range(length))
     return _frame(payload)
+
+def _le(data):
+    return int.from_bytes(data, 'little')
+
+def consistent(gif):
+    """The file, with the parts that depend on others made from them: the
+    color tables from the size bits, the background color from the global
+    table, each frame inside the logical screen (a 0-size screen gives a
+    0-size frame), and its LZW data from its size and its table."""
+    st = {}
+
+    def emit(node):
+        name = str(node.symbol)
+        if name == '<canvas>':
+            data = bytes(node)
+            st['cw'], st['ch'] = _le(data[0:2]), _le(data[2:4])
+            return data
+        if name == '<gsd_packed>':
+            data = bytes(node)
+            st['gflag'], st['gsize'] = data[0] >> 7, data[0] & 7
+            return data
+        if name == '<bgcolor>':
+            n = 2 ** (st['gsize'] + 1) if st['gflag'] else 2
+            return bytes([[0, n - 1, min(255, n), 255][bytes(node)[0] % 4]])
+        if name == '<gct>':
+            return _rgb(2 ** (st['gsize'] + 1)) if st['gflag'] else b''
+        if name == '<image_descriptor>':
+            data = bytes(node)
+            cw, ch = st['cw'], st['ch']
+            iw, ih = min(_le(data[5:7]), cw), min(_le(data[7:9]), ch)
+            left = _le(data[1:3]) % (cw - iw + 1)
+            top = _le(data[3:5]) % (ch - ih + 1)
+            st['iw'], st['ih'], st['lflag'], st['lsize'] = iw, ih, data[9] >> 7, data[9] & 7
+            return descriptor(left, top, iw, ih, data[9])
+        if name == '<lct>':
+            return _rgb(2 ** (st['lsize'] + 1)) if st['lflag'] else b''
+        if name == '<image_data>':
+            if st['lflag']:
+                ncolors = 2 ** (st['lsize'] + 1)
+            else:
+                ncolors = 2 ** (st['gsize'] + 1) if st['gflag'] else 2
+            return build_image_data(st['iw'], st['ih'], ncolors)
+        out = b''
+        for child in node.children:
+            out += emit(child) if child.is_non_terminal else bytes(child)
+        return out
+
+    return emit(gif)

@@ -3,6 +3,10 @@
 # keywords, a leap second in tIME, 1 and 256 palette entries, empty and split
 # IDAT chunks.
 #
+# The chunks that depend on IHDR (IDAT, sBIT, bKGD) are made last, by
+# consistent(), from the IHDR that the file has: Fandango builds and recombines
+# the parts of a file separately, so they cannot learn it while being made.
+#
 # TODO:
 # * Replace constructor functions with grammar rules + constraints
 # * Try not to depend on `random`; let Fandango do this
@@ -12,8 +16,6 @@ import zlib
 import struct
 import random
 
-# geometry handed from IHDR to IDAT within one file
-_geom = {}
 _SAMPLES = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}   # channels per colour type
 
 def _chunk(typ, data):
@@ -36,17 +38,20 @@ def mk_ihdr(ct):
     bd = _pick_bd(ct)
     w = random.choice(_DIMS)
     h = random.choice(_DIMS)
-    _geom.clear()
-    _geom.update(w=w, h=h, bd=bd, ct=ct, samples=_SAMPLES[ct])
     data = struct.pack('>IIBBBBB', w, h, bd, ct,
                        0,   # compression method 0 (only legal value)
                        0,   # filter method 0 (only legal value)
                        0)   # interlace 0 (Adam7 raw-size intentionally avoided)
     return _chunk(b'IHDR', data)
 
-def mk_idat_section():
+def geometry(ihdr):
+    """Width, height, bit depth and colour type of an IHDR chunk."""
+    w, h, bd, ct = struct.unpack('>IIBB', ihdr[8:18])
+    return dict(w=w, h=h, bd=bd, ct=ct, samples=_SAMPLES[ct])
+
+def mk_idat_section(geom):
     """Real zlib stream of an all-zero (filter 0) image, split 1..4 IDATs."""
-    w, h, bd, s = _geom['w'], _geom['h'], _geom['bd'], _geom['samples']
+    w, h, bd, s = geom['w'], geom['h'], geom['bd'], geom['samples']
     rowbytes = (w * s * bd + 7) // 8
     raw = (b'\x00' + b'\x00' * rowbytes) * h        # filter byte 0 + zero pixels
     comp = zlib.compress(raw, random.choice(_ZLEVEL))
@@ -136,22 +141,21 @@ def mk_splt():
     return _chunk(b'sPLT', b'pal' + b'\x00' + bytes([depth]) + body)
 
 # colour-type-specific ancillary (sBIT / bKGD / tRNS / hIST)
-def _sig_bits(n):
-    bd = _geom['bd']
+def _sig_bits(n, bd):
     return bytes(random.randint(1, bd) for _ in range(n))   # 1..bitdepth per channel
 
-def mk_sbit():
-    ct = _geom['ct']
+def mk_sbit(geom):
+    ct = geom['ct']
     n = {0: 1, 2: 3, 3: 3, 4: 2, 6: 4}[ct]
     if ct == 3:
         return _chunk(b'sBIT', bytes(random.randint(1, 8) for _ in range(3)))
-    return _chunk(b'sBIT', _sig_bits(n))
+    return _chunk(b'sBIT', _sig_bits(n, geom['bd']))
 
 def _grey_val():
     return struct.pack('>H', random.choice([0, 1, 255, 32768, 65535]))
 
-def mk_bkgd():
-    ct = _geom['ct']
+def mk_bkgd(geom):
+    ct = geom['ct']
     if ct in (0, 4):
         return _chunk(b'bKGD', _grey_val())
     if ct in (2, 6):
@@ -175,9 +179,39 @@ def mk_hist():
 def mk_iend():
     return _chunk(b'IEND', b'')
 
+# the chunks made from IHDR, by the symbol that stands for them
+_FROM_IHDR = {'<idat_section>': mk_idat_section, '<sbit>': mk_sbit, '<bkgd>': mk_bkgd}
+
+def _chunk_nodes(node):
+    """The symbols under `node` that stand for whole chunks (those made of
+    bytes alone), in file order."""
+    inner = [child for child in node.children if child.is_non_terminal]
+    if str(node.symbol) in _FROM_IHDR or not inner:
+        return [node]
+    found = []
+    for child in inner:
+        found += _chunk_nodes(child)
+    return found
+
+def consistent(signature, image):
+    """The file: its chunks as made, except those that depend on IHDR, made
+    again from the IHDR that comes before them."""
+    out, geom = bytes(signature), None
+    for node in _chunk_nodes(image):
+        name = str(node.symbol)
+        if name in _FROM_IHDR:
+            out += _FROM_IHDR[name](geom)
+        else:
+            out += bytes(node)
+            if name.startswith('<ihdr'):
+                geom = geometry(bytes(node))
+    return out
+
 
 # Grammar
-<start> ::= <signature> <image>
+<start> ::= <png>
+<png> ::= <png_file> := consistent(<signature>, <image>)
+<png_file> ::= rb'(?s).+'
 
 <signature> ::= rb'[\x00-\xff]+' := b'\x89PNG\r\n\x1a\n'
 
@@ -223,8 +257,8 @@ def mk_iend():
 <plte_full> ::= rb'[\x00-\xff]+' := mk_plte(256)                 # indexed
 <plte_opt>  ::= rb'[\x00-\xff]+' := mk_plte(random.choice([1, 2, 256]))
 
-# IDAT stream + IEND
-<idat_section> ::= rb'[\x00-\xff]+' := mk_idat_section()
+# IDAT stream (made by consistent()) + IEND
+<idat_section> ::= b'IDAT'
 <iend>         ::= rb'[\x00-\xff]+' := mk_iend()
 
 # ancillary leaves
@@ -239,8 +273,8 @@ def mk_iend():
 <itxt> ::= rb'[\x00-\xff]+' := mk_itxt()
 <exif> ::= rb'[\x00-\xff]+' := mk_exif()
 <splt> ::= rb'[\x00-\xff]+' := mk_splt()
-<sbit> ::= rb'[\x00-\xff]+' := mk_sbit()
-<bkgd> ::= rb'[\x00-\xff]+' := mk_bkgd()
+<sbit> ::= b'sBIT'                  # made by consistent()
+<bkgd> ::= b'bKGD'                  # made by consistent()
 <hist> ::= rb'[\x00-\xff]+' := mk_hist()
 <trns_g> ::= rb'[\x00-\xff]+' := mk_trns_gray()
 <trns_c> ::= rb'[\x00-\xff]+' := mk_trns_color()

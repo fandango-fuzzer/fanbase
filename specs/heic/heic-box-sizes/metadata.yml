@@ -10,7 +10,7 @@ authors:
 - The Fandango Fuzzer Team
 license: Apache-2.0
 decodes: never
-version: '1.0'
+version: '1.1'
 title: High Efficiency Image File Format
 extensions:
 - heic
