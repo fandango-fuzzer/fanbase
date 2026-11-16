@@ -1,0 +1,10 @@
+title: fontTools
+formats: [otf, ttf, woff, woff2]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # every table decompiled, every glyph's outline read
+needs:
+  python: [fontTools, brotli]
+  pip: [fonttools, brotli]
+version: ["{python}", "-c", "import fontTools; print(fontTools.version)"]
+classify:
+  - match: "(?i)^(MemoryError|RecursionError)|maximum recursion"
+    as: resource-limit

@@ -1,0 +1,10 @@
+title: Pillow (PCF)
+formats: [pcf]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # PcfFontFile: every glyph's metrics and bitmap read, and the font compiled
+needs:
+  python: [PIL]
+  pip: [Pillow]
+version: ["{python}", "-c", "import PIL; print(PIL.__version__)"]
+classify:
+  - match: "DecompressionBomb"
+    as: resource-limit

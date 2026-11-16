@@ -143,4 +143,18 @@ cmake_build json-c -DBUILD_TESTING=OFF -DBUILD_APPS=OFF -DDISABLE_EXTRA_LIBS=ON 
 pin_git libcbor https://github.com/PJK/libcbor v0.14.0 6730c20ab487c0b4dc5fb3fea918937085355bac
 cmake_build libcbor -DWITH_TESTS=OFF -DWITH_EXAMPLES=OFF -DSANITIZE=OFF
 
+# --- FreeType 2.15.0, for the fonts (its tag is an annotated one: this is its commit); with the system's zlib, for WOFF,
+# and Brotli, for WOFF2, without PNG, bzip2 and HarfBuzz, and with its error messages
+pin_git freetype https://gitlab.freedesktop.org/freetype/freetype.git VER-2-15-0 37515cf56ba3349656049edbed89ffc6f6466f2d
+cmake_build freetype -DFT_REQUIRE_ZLIB=ON -DFT_REQUIRE_BROTLI=ON -DFT_DISABLE_BZIP2=ON -DFT_DISABLE_PNG=ON -DFT_DISABLE_HARFBUZZ=ON \
+    -DFT_ENABLE_ERROR_STRINGS=ON
+
+# --- OTS 9.3.0, the OpenType Sanitizer, for TrueType, OpenType, WOFF and WOFF2 (its tag is an annotated one: this is its
+# commit): its own program, ots-sanitize, is the one that counts. The libraries it uses (zlib, woff2 and brotli for WOFF2,
+# lz4) are the system's, and only its own code is counted
+pin_git ots https://github.com/khaledhosny/ots v9.3.0 884861e0103b41d7e9845fdaf9fd1e3c12819103
+CFLAGS="$CFLAGS_COV" CXXFLAGS="$CFLAGS_COV" LDFLAGS=--coverage meson setup "$BUILD/ots" "$SRC/ots" --buildtype=plain \
+    --wrap-mode=nofallback -Ddefault_library=static > "$BUILD/ots.setup.log" 2>&1 || { tail -30 "$BUILD/ots.setup.log" >&2; exit 1; }
+meson compile -C "$BUILD/ots" ots-sanitize > "$BUILD/ots.build.log" 2>&1 || { tail -30 "$BUILD/ots.build.log" >&2; exit 1; }
+
 echo "built:"; ls "$PREFIX"

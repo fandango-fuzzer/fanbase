@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+"""Ask the OTS that is built to be measured about a font: exit 0 if its ots-sanitize passes it, else say why and exit 1.
+usage: ots-sanitize-cov FILE
+
+OTS prints its warnings before its errors, and fanbase reads the first line: the errors are printed first, and nothing
+else is changed. A crash of ots-sanitize is passed on as the same signal.
+"""
+import os
+import signal
+import subprocess
+import sys
+
+done = subprocess.run(["/opt/cov/build/ots/ots-sanitize", sys.argv[1]], capture_output=True, text=True, errors="replace")
+if done.returncode < 0:
+    signal.signal(-done.returncode, signal.SIG_DFL)
+    os.kill(os.getpid(), -done.returncode)
+if done.returncode != 0:
+    lines = [line for line in done.stderr.splitlines() if line.strip()]
+    errors = [line for line in lines if line.startswith("ERROR")]
+    print("\n".join(errors + [line for line in lines if line not in errors])
+          or done.stdout.strip() or f"ots-sanitize exited with {done.returncode}", file=sys.stderr)
+    sys.exit(1)

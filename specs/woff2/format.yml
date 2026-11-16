@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Web Open Font Format 2.0
+mime: font/woff2
+extensions:
+- woff2
+reference: https://www.w3.org/TR/WOFF2/
+targets:
+- freetype
+- fonttools
+- ots
+- woff2-decompress

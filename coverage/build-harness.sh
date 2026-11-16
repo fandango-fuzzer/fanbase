@@ -54,4 +54,7 @@ harness expat expat.c "-I$PREFIX/expat/include" "$PREFIX/expat/lib/libexpat.a"
 harness json json.c "-I$PREFIX/json-c/include" "$PREFIX/json-c/lib/libjson-c.a"
 harness cbor cbor.c "-I$PREFIX/libcbor/include" "$PREFIX/libcbor/lib/libcbor.a"
 
+# the fonts: one program for every format FreeType reads; OTS is its own program (ots-sanitize), which bin/ots-sanitize-cov runs
+harness freetype freetype.c "-I$PREFIX/freetype/include/freetype2" "$PREFIX/freetype/lib/libfreetype.a" -lz -lbrotlidec -lm
+
 echo "built:"; ls "$BIN"

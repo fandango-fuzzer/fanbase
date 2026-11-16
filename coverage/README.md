@@ -25,8 +25,10 @@ it makes so that nothing is compiled on every run.
 | Expat | 2.10.0 | commit `a70841d` of `R_2_10_0` | `xmlparse.c`, `xmlrole.c` and `xmltok.c` (with the files it includes); the program reads a document as `xmlwf` does |
 | json-c | 0.19 | commit `aa716cd` of `json-c-0.19-20260627` | the tokener, the objects it builds, and the hash table, array and buffer code they use; the program reads strictly (RFC 8259, UTF-8 checked), and only white space may follow the value |
 | libcbor | 0.14.0 | commit `6730c20` of `v0.14.0` | the decoder (`cbor_load`, the streaming decoder, the loaders and builder callbacks) and the item code it uses, not the encoders; the program refuses data after the item |
+| FreeType | 2.15.0 | commit `37515cf` of `VER-2-15-0` | for the fonts: its TrueType driver, its CFF driver (with psaux and pshinter), its sfnt module with the WOFF and WOFF2 readers, and its PCF driver, built with the system's zlib and Brotli; one build, counted as five libraries (`freetype-ttf`, `-otf`, `-woff`, `-woff2`, `-pcf`), each the drivers its format is read with. The program opens every face, and loads, hints and renders every glyph; the rasterizers are not counted |
+| OTS | 9.3.0 | commit `884861e` of `v9.3.0` | the OpenType Sanitizer, for TrueType, OpenType, WOFF and WOFF2: all of its own code (`src/`), with the system's woff2, Brotli, zlib and lz4, which are not counted; its program (`ots-sanitize`) is the one that counts, as it is |
 
-Everything is compiled with `gcc --coverage -O0` (`g++` for libheif, libjxl and 7-Zip). Each library has a small program (`harness/`) that reads a file the
+Everything is compiled with `gcc --coverage -O0` (`g++` for libheif, libjxl, 7-Zip and OTS). Each library has a small program (`harness/`) that reads a file the
 way an application does and exits 0 if the library took it, 1 if it said no, and a name in `libs.json` that says which
 files count (`include` and `exclude`, patterns on the path from the library's source folder; `objects`, if the build also
 makes objects that are not for reading, says which of them gcov is asked about). `cov-reset LIB` clears
@@ -38,7 +40,10 @@ a vector drawing from a picture. The archives are made from a small tree of file
 binutils' ar and bsdtar, gcab, ARJ), in several of their variants; RAR, which no free tool writes, comes from the archives that libarchive's own tests read
 (made by WinRAR; the ones that are about bugs are left out). The XML files are written by hand (`seeds/xml/`), and the SVG
 ones count too; JSON is made by Python's `json` from a few kinds of data, and CBOR by cbor2 from Python values, with
-the examples of RFC 8949's appendix A.
+the examples of RFC 8949's appendix A. The fonts are parts of DejaVu (TrueType) and GNU FreeFont (CFF), cut by fontTools'
+subsetter, and Cantarell, a variable font with CFF2 outlines; WOFF and WOFF2 are made from them by the reference encoders
+(`sfnt2woff`, Google's `woff2_compress`) and by fontTools, and PCF fonts are X11's misc fonts, and one of them written again
+by `bdftopcf` with other paddings, scan units and byte and bit orders.
 
 What this does not tell: it is *line* and *branch* coverage of the reading path, with the library compiled without
 optimisation and without SIMD; codecs a library calls into (zlib, the JPEG codec libtiff uses) are the system's and not
