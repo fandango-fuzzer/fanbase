@@ -41,8 +41,8 @@ where 0 <= int(<decimal5>) <= 65535
 <p6_deep> ::= "P6" <sep> "3" <sep> "2" <sep> "65535" <raw_terminator> <raw_word>{18}
 
 <raw_bit> ::= "\x00" | "\x01"
-<raw_octet> ::= "\x00" | "\x01" | "\x02" | "\x7f" | "\x80" | "\xfe" | "\xff"
-<raw_word> ::= "\x00\x00" | "\x00\x01" | "\x00\xff" | "\x01\x00" | "\x7f\xff" | "\x80\x00" | "\xff\xfe" | "\xff\xff"
+<raw_octet> ::= "\x00" | "\x01" | "\x02" | "\x7f" | b"\x80" | b"\xfe" | b"\xff"
+<raw_word> ::= "\x00\x00" | "\x00\x01" | b"\x00\xff" | "\x01\x00" | b"\x7f\xff" | b"\x80\x00" | b"\xff\xfe" | b"\xff\xff"
 
 # A comment terminates at LF or CRLF and is whitespace.  Separators are
 # deliberately bounded to avoid nullable repetition and excessive ambiguity.
