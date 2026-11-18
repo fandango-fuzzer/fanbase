@@ -1709,6 +1709,101 @@ specs:
   - freetype
   - fonttools
   - ots
+- format: uvl
+  kind: uvl
+  path: specs/uvl/uvl/uvl.fan
+  sha256: 572f7b971b12b32381a683d4e899f29773081de0e5281e5c2c71dfa8ef04db25
+  description: Feature models with every construct of the reference grammar (namespace,
+    includes, imports, a feature tree up to nine levels deep, typed features, attributes,
+    cardinalities, aggregates, constraints), laid out as all three of its parsers
+    read alike; leaves out the lexical edge cases (see uvl-lexical)
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  source: the ANTLR grammar of uvl-parser (uvl/UVLLexer.g4, uvl/UVLParser.g4, Apache-2.0)
+  decodes: always
+  version: '1.0'
+  title: Universal Variability Language
+  mime: text/plain
+  extensions:
+  - uvl
+  reference: https://github.com/Universal-Variability-Language/uvl-parser
+  targets:
+  - uvl-python
+- format: uvl
+  kind: uvl-boolean
+  path: specs/uvl/uvl-boolean/uvl-boolean.fan
+  sha256: 4287d412ddb878b62dd15c27c1e2aa1672193ef20140704ddfe165146c71e82c
+  description: Same as uvl, at the Boolean language level only (untyped features without
+    cardinality, propositional constraints, plain attribute values), as most feature-model
+    tools read it
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - uvl
+  decodes: always
+  version: '1.0'
+  title: Universal Variability Language
+  mime: text/plain
+  extensions:
+  - uvl
+  reference: https://github.com/Universal-Variability-Language/uvl-parser
+  targets:
+  - uvl-python
+- format: uvl
+  kind: uvl-lexical
+  path: specs/uvl/uvl-lexical/uvl-lexical.fan
+  sha256: 989a00f1b91410fdf93867cc7e072fc1d7643f046a74a104394708023a021418
+  description: Same models as uvl, with the lexical detail its parsers may not read
+    alike (CRLF and CR line ends, comment lines at any indentation, block comments,
+    attributes and constraint lists across lines, blank lines and comments before
+    the first section); ASCII only
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - uvl
+  decodes: mostly
+  version: '1.0'
+  title: Universal Variability Language
+  mime: text/plain
+  extensions:
+  - uvl
+  reference: https://github.com/Universal-Variability-Language/uvl-parser
+  targets:
+  - uvl-python
+- format: uvl
+  kind: uvl-tabs
+  path: specs/uvl/uvl-tabs/uvl-tabs.fan
+  sha256: f4166243d3a7fb1892930938a594d6a144b2d920c4f3ec867eddb99cc3ecd544
+  description: Same as uvl, indented with tabs instead of spaces
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - uvl
+  decodes: always
+  version: '1.0'
+  title: Universal Variability Language
+  mime: text/plain
+  extensions:
+  - uvl
+  reference: https://github.com/Universal-Variability-Language/uvl-parser
+  targets:
+  - uvl-python
 - format: wav
   kind: wav
   path: specs/wav/wav/wav.fan

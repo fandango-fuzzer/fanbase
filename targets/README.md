@@ -24,6 +24,9 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `ogginfo` | ogg | `ogginfo` (`vorbis-tools`): checks the pages, and the headers of the Vorbis, Theora, Opus, Speex or FLAC streams in them; it does not decode the audio |
 | `mpg123` | mp3 | `mpg123`; it exits 0 whatever it reads, so a small wrapper accepts a file only if mpg123 got audio out of it |
 | `faad` | aac | `faad` (FAAD2); it exits 0 even when it cannot decode a file, so a small wrapper reads its `Error:` line |
+| `uvl-python` | uvl | Python package uvlparser (`get_tree`), or the Python parser of a uvl-parser checkout that `UVL_PARSER_ROOT` names |
+| `uvl-java` | uvl | `java`, `javac`, and a uvl-parser checkout built with `mvn package` that `UVL_PARSER_ROOT` names (not in any format's `targets` by default) |
+| `uvl-js` | uvl | `node` (or `deno`, with `UVL_JS_RUNTIME=deno`), and a uvl-parser checkout with `make js_parser` and `npm install` done that `UVL_PARSER_ROOT` names (not in any format's `targets` by default) |
 | `libarchive` | 7z, ar, cab, cpio, rar, tar, zip | `bsdtar` (`libarchive-tools`); every entry is read to its end, which is when the checksums are checked. A small wrapper sends the contents to nothing and leaves the names of the entries out of what it said |
 | `7zip` | the same, and arj | `7z` (`7zip`, and `7zip-rar` for RAR); `7z t` decodes every entry and checks it. Left to itself it opens a file as whatever archive it finds in it, and checks fields its readers do not need, so a small wrapper tells it the format the file's extension names (`-t`) |
 | `unzip` | zip | `unzip` (Info-ZIP); `unzip -t` decodes every entry and checks its CRC-32 |

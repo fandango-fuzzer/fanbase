@@ -1,0 +1,16 @@
+format: uvl
+kind: uvl-lexical
+description: Same models as uvl, with the lexical detail its parsers may not read
+  alike (CRLF and CR line ends, comment lines at any indentation, block comments,
+  attributes and constraint lists across lines, blank lines and comments before the
+  first section); ASCII only
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+extends:
+- uvl
+decodes: mostly
+version: '1.0'

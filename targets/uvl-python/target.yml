@@ -1,0 +1,10 @@
+title: uvl-parser (Python)
+formats: [uvl]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # get_tree(FILE); its exit status: 0 it parsed
+needs:
+  python: [antlr4, uvl]
+  pip: [uvlparser]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "RecursionError"
+    as: resource-limit
