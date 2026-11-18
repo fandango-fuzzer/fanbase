@@ -10,6 +10,6 @@ requires: []
 authors:
 - The Fandango Fuzzer Team
 license: Apache-2.0
-source: the ANTLR grammar of uvl-parser (uvl/UVLLexer.g4, uvl/UVLParser.g4, Apache-2.0)
+source: the ANTLR grammar of uvl-parser (uvl/UVLLexer.g4, uvl/UVLParser.g4, LGPL-3.0)
 decodes: always
 version: '1.0'
