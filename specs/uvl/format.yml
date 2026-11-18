@@ -1,0 +1,9 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Universal Variability Language
+mime: text/plain
+extensions:
+- uvl
+reference: https://github.com/Universal-Variability-Language/uvl-parser
+# uvl-java and uvl-js ask a built checkout of uvl-parser (UVL_PARSER_ROOT); name them with --targets
+targets:
+- uvl-python
