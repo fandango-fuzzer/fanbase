@@ -1,0 +1,9 @@
+title: BusyBox
+formats: [gz, bz2, xz, z]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # gunzip, bunzip2, unxz or uncompress -c < FILE, by its extension: decompressed, to nothing
+needs:
+  commands: [busybox]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)out of memory|cannot allocate"
+    as: resource-limit

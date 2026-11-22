@@ -1,0 +1,9 @@
+title: LZ4 (lz4)
+formats: [lz4]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # lz4 -t FILE: every frame decoded and checked
+needs:
+  commands: [lz4]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)out of memory|cannot allocate|memory usage limit|not enough memory"
+    as: resource-limit

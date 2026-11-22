@@ -1,0 +1,9 @@
+title: gzip (GNU)
+formats: [gz, z]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # gzip -t FILE: every member decompressed and checked
+needs:
+  commands: [gzip]
+version: [gzip, --version]
+classify:
+  - match: "(?i)out of memory|cannot allocate|memory usage limit|not enough memory"
+    as: resource-limit

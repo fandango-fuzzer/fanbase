@@ -1,0 +1,7 @@
+title: Python's gzip
+formats: [gz]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # every member read to its end, its CRC-32 and size checked
+version: ["{python}", "-c", "import platform; print(platform.python_version())"]
+classify:
+  - match: "^MemoryError"
+    as: resource-limit

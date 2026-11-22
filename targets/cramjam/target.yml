@@ -1,0 +1,10 @@
+title: cramjam (Snappy, Rust)
+formats: [sz]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # the whole stream decoded, every chunk's CRC-32C checked
+needs:
+  python: [cramjam]
+  pip: [cramjam]
+version: ["{python}", "-c", "import importlib.metadata as m; print(m.version('cramjam'))"]
+classify:
+  - match: "^MemoryError"
+    as: resource-limit

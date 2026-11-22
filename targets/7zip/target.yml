@@ -1,5 +1,5 @@
 title: 7-Zip
-formats: [7z, ar, arj, cab, cpio, rar, tar, zip]
+formats: [7z, ar, arj, bz2, cab, cpio, gz, rar, tar, xz, z, zip]
 run: ["{python}", "{dir}/harness.py", "{file}"]   # 7z t FILE, every entry decoded and checked; accepted if it read the file as its format
 needs:
   commands: [7z]

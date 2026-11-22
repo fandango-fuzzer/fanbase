@@ -1,0 +1,9 @@
+title: Python's zlib
+formats: [zlib]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # the one stream inflated, its Adler-32 checked, nothing after it
+version: ["{python}", "-c", "import platform; print(platform.python_version())"]
+classify:
+  - match: "(?i)error -?2 while decompressing|need dictionary"
+    as: unsupported
+  - match: "^MemoryError"
+    as: resource-limit

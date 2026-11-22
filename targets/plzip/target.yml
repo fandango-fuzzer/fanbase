@@ -1,0 +1,9 @@
+title: plzip (lzlib)
+formats: [lz]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # plzip -t FILE: every member decompressed (lzlib) and checked
+needs:
+  commands: [plzip]
+version: [plzip, --version]
+classify:
+  - match: "(?i)out of memory|cannot allocate|memory usage limit|not enough memory"
+    as: resource-limit

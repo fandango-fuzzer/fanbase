@@ -1,0 +1,11 @@
+title: XZ Utils (xz)
+formats: [xz]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # xz -t FILE: every stream decompressed and checked
+needs:
+  commands: [xz]
+version: [xz, --version]
+classify:
+  - match: "(?i)unsupported (filter|options|type of integrity check)"
+    as: unsupported
+  - match: "(?i)out of memory|cannot allocate|memory usage limit|not enough memory"
+    as: resource-limit

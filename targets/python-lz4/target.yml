@@ -1,0 +1,12 @@
+title: python-lz4 (frames)
+formats: [lz4]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # every frame read to its end, its checksums checked
+needs:
+  python: [lz4]
+  pip: [lz4]
+version: ["{python}", "-c", "import importlib.metadata as m; print(m.version('lz4'))"]
+classify:
+  - match: "(?i)frameType_unknown"
+    as: unsupported
+  - match: "^MemoryError"
+    as: resource-limit

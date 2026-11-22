@@ -28,7 +28,7 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `uvl-java` | uvl | `java`, `javac`, and a uvl-parser checkout built with `mvn package` that `UVL_PARSER_ROOT` names (not in any format's `targets` by default) |
 | `uvl-js` | uvl | `node` (or `deno`, with `UVL_JS_RUNTIME=deno`), and a uvl-parser checkout with `make js_parser` and `npm install` done that `UVL_PARSER_ROOT` names (not in any format's `targets` by default) |
 | `libarchive` | 7z, ar, cab, cpio, rar, tar, zip | `bsdtar` (`libarchive-tools`); every entry is read to its end, which is when the checksums are checked. A small wrapper sends the contents to nothing and leaves the names of the entries out of what it said |
-| `7zip` | the same, and arj | `7z` (`7zip`, and `7zip-rar` for RAR); `7z t` decodes every entry and checks it. Left to itself it opens a file as whatever archive it finds in it, and checks fields its readers do not need, so a small wrapper tells it the format the file's extension names (`-t`) |
+| `7zip` | the same, and arj, bz2, gz, xz, z | `7z` (`7zip`, and `7zip-rar` for RAR); `7z t` decodes every entry and checks it (a compressed file is one entry). Left to itself it opens a file as whatever archive it finds in it, and checks fields its readers do not need, so a small wrapper tells it the format the file's extension names (`-t`) |
 | `unzip` | zip | `unzip` (Info-ZIP); `unzip -t` decodes every entry and checks its CRC-32 |
 | `python-zipfile` | zip | Python's `zipfile`; every member is read to its end |
 | `gnu-tar` | tar | `tar` (GNU); every header and its checksum is read (tar has no checksum of the contents) |
@@ -56,6 +56,24 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 | `woff2sfnt` | woff | `woff2sfnt` (`woff-tools`), the code that came with the WOFF 1.0 specification; it checks the blocks and decompresses every table. A small wrapper sends the font it writes to nothing |
 | `pcf2bdf` | pcf | `pcf2bdf`: the font is written back as BDF, to nothing |
 | `pillow-pcf` | pcf | Python package Pillow's own PCF reader (`PcfFontFile`, not FreeType): every glyph's metrics and bitmap are read, and the font compiled |
+| `gzip` | gz, z | `gzip` (GNU); `gzip -t` decompresses every member and checks its CRC-32 and size; it reads Unix compress too. A small wrapper leaves the file's name out of what it says; a warning (data after the last member) is a rejection |
+| `python-gzip` | gz | Python's `gzip`; every member is read to its end |
+| `isal` | gz, zlib | Python package isal (python-isal): Intel's ISA-L, a DEFLATE apart from zlib's; a gzip file is read to its end, a zlib stream must end where the file does |
+| `busybox` | gz, bz2, z | `busybox`: its own gunzip, bunzip2 and uncompress, by the file's extension. Not for xz: its unxz is built without the Delta filter and calls a block that has one "corrupted data" |
+| `bzip2` | bz2 | `bzip2`; `bzip2 -t` decompresses every stream and checks its CRCs |
+| `python-bz2` | bz2 | Python's `bz2` (libbzip2); every stream is read to its end |
+| `xz` | xz | `xz` (XZ Utils); `xz -t` decompresses every stream and checks every block. A warning (a check it does not know) is a rejection |
+| `python-lzma` | xz | Python's `lzma` (liblzma), told that the file is .xz; every stream is read to its end. It refuses stream padding after the last stream |
+| `lzip` | lz | `lzip`; `lzip -t` decompresses every member and checks its CRC-32 and sizes. Debian and Ubuntu install plzip as `lzip` when it is there: a small wrapper runs `lzip.lzip`, lzip itself, if there is one |
+| `plzip` | lz | `plzip`, which decompresses with lzlib, a library apart from lzip's own decoder |
+| `lz4` | lz4 | `lz4`; `lz4 -t` decodes every frame (LZ4 frames, legacy frames, skippable frames) and checks the checksums it has |
+| `python-lz4` | lz4 | Python package lz4, its frame API; legacy frames and files of skippable frames alone are what it does not read (unsupported) |
+| `zstd` | zst | `zstd`; `zstd -t` decodes every frame and checks its checksum. A frame that needs a dictionary or a window over 128 MiB is unsupported |
+| `python-zstandard` | zst | Python package zstandard (libzstd); every frame is read to its end |
+| `ncompress` | z | `compress -d` of ncompress, the compress of the Unix tradition (`uncompress` is gzip's on Debian and Ubuntu); a small wrapper gives it the file on its standard input |
+| `python-zlib` | zlib | Python's `zlib`: the one stream, its Adler-32 checked, and nothing after it; a stream that needs a preset dictionary is unsupported |
+| `python-snappy` | sz | Python package python-snappy, its reader of the framing format (the blocks are Google's Snappy); every CRC-32C is checked |
+| `cramjam` | sz | Python package cramjam, whose Snappy is the Rust crate snap, an implementation apart from Google's; every CRC-32C is checked |
 
 The `*-cov` targets are the libraries built to be measured, from [`coverage/`](../coverage/README.md), and run only in
 its image, with `fanbase evaluate --coverage`: they are not named by any format, and `fanbase targets` shows them as

@@ -44,9 +44,10 @@ jobs:
           sudo apt-get install -y --no-install-recommends imagemagick ffmpeg libjpeg-turbo-progs libtiff-tools webp giflib-tools pngcheck librsvg2-bin libjxl-tools flac mpg123 faad vorbis-tools \
             libarchive-tools 7zip 7zip-rar unzip cpio cabextract unrar arj unar \
             libxml2-utils expat libxerces-c-samples jq yajl-tools \
-            opentype-sanitizer woff2 woff-tools pcf2bdf
+            opentype-sanitizer woff2 woff-tools pcf2bdf \
+            lzip plzip lz4 zstd ncompress busybox
 
-      - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli
+      - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli isal lz4 zstandard python-snappy cramjam
       # uvlparser pins an older ANTLR runtime than Fandango's: without its dependencies, Fandango keeps its own
       - run: pip install --no-deps uvlparser
 
