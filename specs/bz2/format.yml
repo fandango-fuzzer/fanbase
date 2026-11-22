@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: bzip2
+mime: application/x-bzip2
+extensions:
+- bz2
+reference: https://sourceware.org/bzip2/
+targets:
+- bzip2
+- python-bz2
+- 7zip
+- busybox

@@ -1,0 +1,13 @@
+format: lz4
+kind: lz4-boundary
+description: 'LZ4 frames at the edges: an empty block and no blocks, a long literal
+  run, a self-overlapping match near the block end, every flag and block size, skippable
+  frames of every magic number, legacy frames'
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'

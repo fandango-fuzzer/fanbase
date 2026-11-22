@@ -278,6 +278,55 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+- format: bz2
+  kind: bz2
+  path: specs/bz2/bz2/bz2.fan
+  sha256: 6b4bc5ef8abf0e7d80ef3eed9c8ba447c49af04e9b0c3c59deed2fe6455b5784
+  description: bzip2 files of one to three streams at every block size, of empty,
+    random, repeated or text data
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: bzip2
+  mime: application/x-bzip2
+  extensions:
+  - bz2
+  reference: https://sourceware.org/bzip2/
+  targets:
+  - bzip2
+  - python-bz2
+  - 7zip
+  - busybox
+- format: bz2
+  kind: bz2-boundary
+  path: specs/bz2/bz2-boundary/bz2-boundary.fan
+  sha256: 9ca90df394cf9a2a01ffaa47215c089cb5d1f7530aa95c3e1a65ccdf96db9fc0
+  description: 'bzip2 files at the edges: every block size, a stream of no blocks,
+    long runs, all 256 byte values, a stream of two blocks, two streams of different
+    block sizes'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: bzip2
+  mime: application/x-bzip2
+  extensions:
+  - bz2
+  reference: https://sourceware.org/bzip2/
+  targets:
+  - bzip2
+  - python-bz2
+  - 7zip
+  - busybox
 - format: cab
   kind: cab
   path: specs/cab/cab/cab.fan
@@ -627,6 +676,60 @@ specs:
   - imagemagick
   - ffmpeg
   - giftext
+- format: gz
+  kind: gz
+  path: specs/gz/gz/gz.fan
+  sha256: bbdcdab88fba7fe9a232913908ff9d519f58f0766b5d46b0d69ed31f6512883c
+  description: 'gzip files of one or two members: every header flag alone and all
+    together (FEXTRA, FNAME, FCOMMENT, FHCRC), stored, fixed and dynamic DEFLATE blocks
+    of data that Fandango draws'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: gzip
+  mime: application/gzip
+  extensions:
+  - gz
+  reference: https://www.rfc-editor.org/rfc/rfc1952
+  targets:
+  - gzip
+  - python-gzip
+  - isal
+  - 7zip
+  - busybox
+- format: gz
+  kind: gz-boundary
+  path: specs/gz/gz-boundary/gz-boundary.fan
+  sha256: 0cd079120323c92f2cbb22224dcfa0a0213f09f81e3b49c76d22f0c0ddbcdb44
+  description: 'Same as gz, at the edges: no data, two stored blocks, sync and full
+    flushes, 258-byte matches, long Latin-1 names and comments, several FEXTRA subfields,
+    four members, zero bytes after the last'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - gz
+  decodes: always
+  version: '1.0'
+  title: gzip
+  mime: application/gzip
+  extensions:
+  - gz
+  reference: https://www.rfc-editor.org/rfc/rfc1952
+  targets:
+  - gzip
+  - python-gzip
+  - isal
+  - 7zip
+  - busybox
 - format: heic
   kind: heic
   path: specs/heic/heic/heic.fan
@@ -913,6 +1016,98 @@ specs:
   reference: https://www.iso.org/standard/85066.html
   targets:
   - djxl
+- format: lz
+  kind: lz
+  path: specs/lz/lz/lz.fan
+  sha256: 53cc516b0ea44516becf16684d8346dafea4b8f737a0991eb41d03c7c67dd215
+  description: lzip files of one or two members with dictionaries of 4 KiB to 8 MiB,
+    one of them not a power of two
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: lzip
+  mime: application/x-lzip
+  extensions:
+  - lz
+  reference: https://www.nongnu.org/lzip/manual/lzip_manual.html#File-format
+  targets:
+  - lzip
+  - plzip
+- format: lz
+  kind: lz-boundary
+  path: specs/lz/lz-boundary/lz-boundary.fan
+  sha256: 01af466d7ccca79d05b1f7f58f23946774fe0ff8ffb1319799cd8e1bc11dd332
+  description: 'Same as lz, at the edges: members of no data and of one byte, the
+    smallest and largest dictionaries, every dictionary size that is not a power of
+    two'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - lz
+  decodes: always
+  version: '1.0'
+  title: lzip
+  mime: application/x-lzip
+  extensions:
+  - lz
+  reference: https://www.nongnu.org/lzip/manual/lzip_manual.html#File-format
+  targets:
+  - lzip
+  - plzip
+- format: lz4
+  kind: lz4
+  path: specs/lz4/lz4/lz4.fan
+  sha256: 1c109de10614a4801834444a766004ff36516ee773e00f692db9e266f1f96592
+  description: LZ4 frames covering every flag and block size, stored and compressed
+    blocks (one with matches, from a compressor), skippable and legacy frames
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: LZ4 frame format
+  mime: application/x-lz4
+  extensions:
+  - lz4
+  reference: https://github.com/lz4/lz4/blob/dev/doc/lz4_Frame_format.md
+  targets:
+  - lz4
+  - python-lz4
+- format: lz4
+  kind: lz4-boundary
+  path: specs/lz4/lz4-boundary/lz4-boundary.fan
+  sha256: 2cb45cc4d99241a8ac8272745c51fff56db1cfd9b9d6bd0211d0d79a38093b22
+  description: 'LZ4 frames at the edges: an empty block and no blocks, a long literal
+    run, a self-overlapping match near the block end, every flag and block size, skippable
+    frames of every magic number, legacy frames'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: LZ4 frame format
+  mime: application/x-lz4
+  extensions:
+  - lz4
+  reference: https://github.com/lz4/lz4/blob/dev/doc/lz4_Frame_format.md
+  targets:
+  - lz4
+  - python-lz4
 - format: mp3
   kind: mp3
   path: specs/mp3/mp3/mp3.fan
@@ -1537,6 +1732,57 @@ specs:
   reference: https://www.w3.org/TR/SVG2/
   targets:
   - imagemagick
+- format: sz
+  kind: sz
+  path: specs/sz/sz/sz.fan
+  sha256: 61cb8cfc6264e638835f62cd5cf95261e36d43e334636009ebcd19d05b3a269c
+  description: 'Snappy framing-format streams: half from the compressor, half written
+    out (literals, copies with 1-, 2- and 4-byte offsets, uncompressed, padding and
+    skippable chunks)'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires:
+  - snappy
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  pip:
+  - python-snappy
+  version: '1.0'
+  title: Snappy framing format
+  mime: application/x-snappy-framed
+  extensions:
+  - sz
+  reference: https://github.com/google/snappy/blob/main/framing_format.txt
+  targets:
+  - python-snappy
+  - cramjam
+- format: sz
+  kind: sz-boundary
+  path: specs/sz/sz-boundary/sz-boundary.fan
+  sha256: 85308f344a05cf8e7afaf93dd69196bd987323d79d9a42c80b6086585d9c4944
+  description: 'Same as sz, at the edges: an empty block, literal lengths at every
+    boundary, the shortest and longest copies, a self-overlapping copy, empty uncompressed
+    chunks, reserved skippable chunks, a second stream identifier'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - sz
+  decodes: always
+  version: '1.0'
+  title: Snappy framing format
+  mime: application/x-snappy-framed
+  extensions:
+  - sz
+  reference: https://github.com/google/snappy/blob/main/framing_format.txt
+  targets:
+  - python-snappy
+  - cramjam
 - format: tar
   kind: tar
   path: specs/tar/tar/tar.fan
@@ -2258,6 +2504,104 @@ specs:
   - pillow
   - imagemagick
   - ffmpeg
+- format: xz
+  kind: xz
+  path: specs/xz/xz/xz.fan
+  sha256: 7565e8b636b07328ce2a2b7304a90c0bd9aa654745add16abbce072f3c4bcbf4
+  description: '.xz streams of one to three blocks: LZMA2 alone or after Delta, the
+    sizes in the block header or not, every check type, dictionaries of 4 KiB to 4
+    MiB'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: XZ
+  mime: application/x-xz
+  extensions:
+  - xz
+  reference: https://tukaani.org/xz/xz-file-format.txt
+  targets:
+  - xz
+  - python-lzma
+  - 7zip
+- format: xz
+  kind: xz-boundary
+  path: specs/xz/xz-boundary/xz-boundary.fan
+  sha256: 354b3ef59026729232ed619227137c73a85f8208e0931948fd9dd7e3ac682dac
+  description: 'Same as xz, at the edges: streams of no blocks, stream padding, BCJ
+    filters, padded block headers, data that does not compress, LZMA2 chunks written
+    out, dictionaries up to 48 MiB'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - xz
+  decodes: always
+  version: '1.0'
+  title: XZ
+  mime: application/x-xz
+  extensions:
+  - xz
+  reference: https://tukaani.org/xz/xz-file-format.txt
+  targets:
+  - xz
+  - python-lzma
+  - 7zip
+- format: z
+  kind: z
+  path: specs/z/z/z.fan
+  sha256: f5b6b1f1a45bb914da4a61dc0598627226b6d7c50588c1d85862d6369ad2be72
+  description: 'Files of Unix compress: real LZW codes with dictionary codes, CLEAR
+    codes and code widths from 9 to 11 bits, with and without block mode'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Unix compress
+  mime: application/x-compress
+  extensions:
+  - Z
+  reference: https://github.com/vapier/ncompress
+  targets:
+  - ncompress
+  - gzip
+  - 7zip
+  - busybox
+- format: z
+  kind: z-boundary
+  path: specs/z/z-boundary/z-boundary.fan
+  sha256: b69a2e56a887a61e1fbd5f3922b5161e5986dcb75b387def2941f89a1f1eab33
+  description: 'Files of Unix compress at the edges: every largest code width, headers
+    alone, CLEAR codes, codes widening stage by stage up to 16 bits'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Unix compress
+  mime: application/x-compress
+  extensions:
+  - Z
+  reference: https://github.com/vapier/ncompress
+  targets:
+  - ncompress
+  - gzip
+  - 7zip
+  - busybox
 - format: zip
   kind: zip
   path: specs/zip/zip/zip.fan
@@ -2309,3 +2653,97 @@ specs:
   - unzip
   - python-zipfile
   - unar
+- format: zlib
+  kind: zlib
+  path: specs/zlib/zlib/zlib.fan
+  sha256: f8394fac3b28f699a3012e635520b829c642410fdf753538db046d63bf066718
+  description: zlib streams of stored, fixed and dynamic DEFLATE blocks, runs, little
+    data and several blocks, of data that Fandango draws
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: zlib
+  mime: application/zlib
+  extensions:
+  - zlib
+  - zz
+  reference: https://www.rfc-editor.org/rfc/rfc1950
+  targets:
+  - python-zlib
+  - isal
+- format: zlib
+  kind: zlib-boundary
+  path: specs/zlib/zlib-boundary/zlib-boundary.fan
+  sha256: f568480cbfe3103fe36b4384a59bf9a7e380b19dedf9845f98d9b96809eeac6d
+  description: 'zlib streams at the edges: every window size (256 bytes to 32 KiB)
+    and FLEVEL, no data, three stored blocks'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: zlib
+  mime: application/zlib
+  extensions:
+  - zlib
+  - zz
+  reference: https://www.rfc-editor.org/rfc/rfc1950
+  targets:
+  - python-zlib
+  - isal
+- format: zst
+  kind: zst
+  path: specs/zst/zst/zst.fan
+  sha256: 3c2fdac63baa642bfc51d0d67f883b3890bc8f0a02dd4ea7da13e219fc037577
+  description: 'Zstandard frames: half from the compressor (levels -7 to 19, compressed
+    blocks), half written out (Raw and RLE blocks, every header field, skippable frames)'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires:
+  - zstandard
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  decodes: always
+  version: '1.0'
+  title: Zstandard
+  mime: application/zstd
+  extensions:
+  - zst
+  reference: https://www.rfc-editor.org/rfc/rfc8878
+  targets:
+  - zstd
+  - python-zstandard
+- format: zst
+  kind: zst-boundary
+  path: specs/zst/zst-boundary/zst-boundary.fan
+  sha256: 9762f841fc48318fea41494a328706aace2c4e57b1451a5dece225e29801d6b9
+  description: 'Same as zst, at the edges: content sizes of two and eight bytes, the
+    largest default window, wide dictionary ID fields, an empty Raw block, a 100,000-byte
+    RLE block, five blocks, two frames'
+  fanbase: 0.5.0
+  fandango: '>=1.3'
+  requires: []
+  authors:
+  - The Fandango Fuzzer Team
+  license: Apache-2.0
+  extends:
+  - zst
+  decodes: always
+  version: '1.0'
+  title: Zstandard
+  mime: application/zstd
+  extensions:
+  - zst
+  reference: https://www.rfc-editor.org/rfc/rfc8878
+  targets:
+  - zstd
+  - python-zstandard
