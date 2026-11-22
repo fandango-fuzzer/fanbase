@@ -1,0 +1,13 @@
+title: lzlib, built to be measured
+formats: [lz]
+run: ["/opt/cov/bin/lzlib-harness", "{file}"]   # every member decompressed and checked
+needs:
+  commands: [lzlib-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "lzlib"]
+classify:
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "lzlib"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "lzlib"]
+  seeds: ["/opt/cov/seeds/lz/*"]

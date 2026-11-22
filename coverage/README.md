@@ -20,15 +20,23 @@ it makes so that nothing is compiled on every run.
 | FFmpeg | n9.0.2 | the same commit, built again | for sound, from a second build that has only these: the demuxers of WAV, FLAC, Ogg, MP3 and AAC (ADTS) and their decoders (PCM, FLAC, Vorbis, MPEG audio, AAC; Opus is built so that Ogg Opus files are read, and not counted), counted as five libraries (`ffmpeg-wav`, `ffmpeg-flac`, `ffmpeg-ogg`, `ffmpeg-mp3`, `ffmpeg-aac`) |
 | NanoSVG | `239e102` | SHA-256 of the file | the header, which reads a document into shapes (it is lenient: the program refuses a document that has no size) |
 | libarchive | 3.8.10 | commit `0c48412` of `v3.8.10` | the readers of 7z, ar, Cabinet, cpio, RAR (and RAR 5), tar and ZIP, with the PPMd and BLAKE2 code they use; one build, counted as seven libraries (`libarchive-7z`, `-ar`, `-cab`, `-cpio`, `-rar`, `-tar`, `-zip`), and its program enables only the reader of the format it is told. The decompressors it calls into (zlib, bzip2, liblzma, zstd) are the system's |
-| 7-Zip | 26.05 | commit `b88c6bc` of `26.05` | for ARJ, which libarchive does not read: its console program (`7zz`) with every format, of which only the ARJ reader and its LZH decoder are counted (`7zip-arj`); the program is the one that counts, as it is |
+| 7-Zip | 26.05 | commit `b88c6bc` of `26.05` | for ARJ, which libarchive does not read: its console program (`7zz`) with every format, of which only the ARJ reader and its LZH decoder are counted (`7zip-arj`), and its readers of gzip, bzip2, xz, Unix compress and Zstandard with their decoders (`7zip-gz`, `-bz2`, `-xz`, `-z`, `-zst`); the program is the one that counts, as it is |
 | libxml2 | 2.15.4 | commit `9649899` of `v2.15.4` | its parser: `parser.c`, `parserInternals.c`, `SAX2.c`, `entities.c`, `valid.c`, `tree.c`, `encoding.c`, `uri.c` and the dictionary, hash and string code they use; the program reads a document as `xmllint` does, without the network |
 | Expat | 2.10.0 | commit `a70841d` of `R_2_10_0` | `xmlparse.c`, `xmlrole.c` and `xmltok.c` (with the files it includes); the program reads a document as `xmlwf` does |
 | json-c | 0.19 | commit `aa716cd` of `json-c-0.19-20260627` | the tokener, the objects it builds, and the hash table, array and buffer code they use; the program reads strictly (RFC 8259, UTF-8 checked), and only white space may follow the value |
 | libcbor | 0.14.0 | commit `6730c20` of `v0.14.0` | the decoder (`cbor_load`, the streaming decoder, the loaders and builder callbacks) and the item code it uses, not the encoders; the program refuses data after the item |
 | FreeType | 2.15.0 | commit `37515cf` of `VER-2-15-0` | for the fonts: its TrueType driver, its CFF driver (with psaux and pshinter), its sfnt module with the WOFF and WOFF2 readers, and its PCF driver, built with the system's zlib and Brotli; one build, counted as five libraries (`freetype-ttf`, `-otf`, `-woff`, `-woff2`, `-pcf`), each the drivers its format is read with. The program opens every face, and loads, hints and renders every glyph; the rasterizers are not counted |
 | OTS | 9.3.0 | commit `884861e` of `v9.3.0` | the OpenType Sanitizer, for TrueType, OpenType, WOFF and WOFF2: all of its own code (`src/`), with the system's woff2, Brotli, zlib and lz4, which are not counted; its program (`ots-sanitize`) is the one that counts, as it is |
+| zlib | 1.3.2 | commit `da607da` of `v1.3.2` | inflate (`inflate.c`, `inftrees.c`, `inffast.c`) and the Adler-32, CRC-32 and utility code it uses, not deflate; counted as two libraries, `zlib-gz` (the program reads the members of a gzip file one after the other, as gzip does) and `zlib` (one zlib stream, and nothing after it) |
+| bzip2 | 1.0.8 | commit `6a8690f` of `bzip2-1.0.8` | the decompressor (`decompress.c`, `huffman.c`, `bzlib.c`, the tables), not the compressor; the program reads every stream |
+| XZ Utils | 5.8.4 | commit `d3e650e` of `v5.8.4` | liblzma's .xz decoder: the stream, block and index decoders, the LZMA2, LZMA, Delta and BCJ decoders, and the checks; not the encoders, nor the .lzma, lzip and raw decoders. The program reads concatenated streams, as xz does |
+| lzlib | 1.16 | SHA-256 of the tarball | the decoder (`decoder.c`, `cbuffer.c`, `lzlib.c`), not the encoder |
+| LZ4 | 1.10.0 | commit `ebb370c` of `v1.10.0` | `lz4.c`, `lz4frame.c` and `xxhash.c` (which hold the compressors too); the program reads frames with LZ4F, and legacy frames block by block, as the lz4 tool does |
+| Zstandard | 1.5.7 | commit `f8745da` of `v1.5.7` | the decompressor (`lib/decompress`, and the common code it uses), in C (not its assembly), without the decoders of the legacy formats |
+| Snappy | 1.3.1 | commit `9c28114` of `1.3.1` | the library (`snappy.cc` and its C interface), without BMI2 and SSSE3; the program reads the framing format and checks every CRC-32C, and only the library's decoding is counted |
+| ncompress | 5.0 | commit `e77a84c` of `v5.0` | `compress.c`, the program itself, which decompresses with `-d` and counts as it is |
 
-Everything is compiled with `gcc --coverage -O0` (`g++` for libheif, libjxl, 7-Zip and OTS). Each library has a small program (`harness/`) that reads a file the
+Everything is compiled with `gcc --coverage -O0` (`g++` for libheif, libjxl, 7-Zip, OTS and Snappy). Each library has a small program (`harness/`) that reads a file the
 way an application does and exits 0 if the library took it, 1 if it said no, and a name in `libs.json` that says which
 files count (`include` and `exclude`, patterns on the path from the library's source folder; `objects`, if the build also
 makes objects that are not for reading, says which of them gcov is asked about). `cov-reset LIB` clears
@@ -43,7 +51,10 @@ ones count too; JSON is made by Python's `json` from a few kinds of data, and CB
 the examples of RFC 8949's appendix A. The fonts are parts of DejaVu (TrueType) and GNU FreeFont (CFF), cut by fontTools'
 subsetter, and Cantarell, a variable font with CFF2 outlines; WOFF and WOFF2 are made from them by the reference encoders
 (`sfnt2woff`, Google's `woff2_compress`) and by fontTools, and PCF fonts are X11's misc fonts, and one of them written again
-by `bdftopcf` with other paddings, scan units and byte and bit orders.
+by `bdftopcf` with other paddings, scan units and byte and bit orders. The compressed files are the same data (this
+image's harnesses, as text, zeros, and bytes from a seeded random) compressed by each format's own tools (gzip, bzip2, xz,
+lzip, lz4, zstd, ncompress, Python's zlib and python-snappy), at their fastest and their best, and with the options that
+change what is in a file (names, checks, filters, blocks, more than one member).
 
 What this does not tell: it is *line* and *branch* coverage of the reading path, with the library compiled without
 optimisation and without SIMD; codecs a library calls into (zlib, the JPEG codec libtiff uses) are the system's and not

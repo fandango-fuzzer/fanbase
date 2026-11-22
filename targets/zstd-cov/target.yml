@@ -1,0 +1,15 @@
+title: libzstd, built to be measured
+formats: [zst]
+run: ["/opt/cov/bin/zstd-harness", "{file}"]   # every frame decoded, its checksums checked; windows up to 128 MiB, no dictionary
+needs:
+  commands: [zstd-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "zstd"]
+classify:
+  - match: "(?i)dictionary mismatch|too much memory|window"
+    as: unsupported
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "zstd"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "zstd"]
+  seeds: ["/opt/cov/seeds/zst/*"]

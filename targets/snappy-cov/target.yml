@@ -1,0 +1,13 @@
+title: Snappy, built to be measured
+formats: [sz]
+run: ["/opt/cov/bin/snappy-harness", "{file}"]   # the framing read by the program, every compressed block decoded by Snappy, every CRC-32C checked
+needs:
+  commands: [snappy-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "snappy"]
+classify:
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "snappy"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "snappy"]
+  seeds: ["/opt/cov/seeds/sz/*"]

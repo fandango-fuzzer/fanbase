@@ -305,5 +305,131 @@
     "objects": "^libots\\.a\\.p/src_",
     "include": "^src/",
     "exclude": "^$"
+  },
+  "zlib-gz": {
+    "title": "zlib (gzip)",
+    "version": "1.3.2",
+    "src": "/opt/cov/src/zlib",
+    "build": "/opt/cov/build/zlib",
+    "objects": "/zlibstatic\\.dir/(inflate|inftrees|inffast|adler32|crc32|zutil)\\.c\\.gcno$",
+    "include": "^(inflate|inftrees|inffast|adler32|crc32|zutil)\\.c$",
+    "exclude": "^$"
+  },
+  "zlib": {
+    "title": "zlib",
+    "version": "1.3.2",
+    "src": "/opt/cov/src/zlib",
+    "build": "/opt/cov/build/zlib",
+    "objects": "/zlibstatic\\.dir/(inflate|inftrees|inffast|adler32|crc32|zutil)\\.c\\.gcno$",
+    "include": "^(inflate|inftrees|inffast|adler32|crc32|zutil)\\.c$",
+    "exclude": "^$"
+  },
+  "bzip2": {
+    "title": "libbzip2",
+    "version": "1.0.8",
+    "src": "/opt/cov/src/bzip2",
+    "build": "/opt/cov/src/bzip2",
+    "objects": "^(bzlib|decompress|huffman|crctable|randtable)\\.gcno$",
+    "include": "^(bzlib|decompress|huffman|crctable|randtable)\\.c$",
+    "exclude": "^$"
+  },
+  "liblzma": {
+    "title": "liblzma (XZ Utils)",
+    "version": "5.8.4",
+    "src": "/opt/cov/src/xz",
+    "build": "/opt/cov/build/xz",
+    "objects": "^CMakeFiles/liblzma\\.dir/",
+    "include": "^src/liblzma/(common/(stream_decoder|block_decoder|block_header_decoder|index_decoder|index_hash|stream_flags_decoder|stream_flags_common|filter_decoder|filter_common|filter_flags_decoder|common|vli_decoder|vli_size|block_util)|check/(check|crc32_fast|crc32_table|crc64_fast|crc64_table|sha256)|delta/delta_(common|decoder)|lz/lz_decoder|lzma/(lzma_decoder|lzma2_decoder)|rangecoder/range_decoder|simple/(simple_coder|simple_decoder|x86|powerpc|ia64|arm|armthumb|arm64|sparc|riscv))\\.[ch]$",
+    "exclude": "^$"
+  },
+  "lzlib": {
+    "title": "lzlib",
+    "version": "1.16",
+    "src": "/opt/cov/src/lzlib",
+    "build": "/opt/cov/src/lzlib",
+    "objects": "^lzlib\\.gcno$",
+    "include": "^(lzlib|decoder|cbuffer)\\.[ch]$|^lzip\\.h$",
+    "exclude": "^$"
+  },
+  "lz4": {
+    "title": "LZ4",
+    "version": "1.10.0",
+    "src": "/opt/cov/src/lz4",
+    "build": "/opt/cov/src/lz4/lib",
+    "objects": "^(lz4|lz4frame|xxhash)\\.gcno$",
+    "include": "^lib/(lz4|lz4frame|xxhash)\\.c$",
+    "exclude": "^$"
+  },
+  "zstd": {
+    "title": "Zstandard (libzstd)",
+    "version": "1.5.7",
+    "src": "/opt/cov/src/zstd",
+    "build": "/opt/cov/src/zstd/lib",
+    "objects": "/static/(zstd_decompress|zstd_decompress_block|zstd_ddict|huf_decompress|fse_decompress|entropy_common|zstd_common|xxhash|error_private)\\.gcno$",
+    "include": "^lib/(decompress|common)/",
+    "exclude": "^lib/common/(pool|threading|debug)\\.c$"
+  },
+  "snappy": {
+    "title": "Snappy",
+    "version": "1.3.1",
+    "src": "/opt/cov/src/snappy",
+    "build": "/opt/cov/build/snappy",
+    "objects": "/snappy\\.dir/(snappy|snappy-c|snappy-sinksource)\\.cc\\.gcno$",
+    "include": "^snappy(-c|-sinksource|-internal|-stubs-internal)?\\.(cc|h)$",
+    "exclude": "^$"
+  },
+  "ncompress": {
+    "title": "ncompress",
+    "version": "5.0",
+    "src": "/opt/cov/src/ncompress",
+    "build": "/opt/cov/src/ncompress",
+    "objects": "^compress\\.gcno$",
+    "include": "^compress\\.c$",
+    "exclude": "^$"
+  },
+  "7zip-gz": {
+    "title": "7-Zip (gzip)",
+    "version": "26.05",
+    "src": "/opt/cov/src/7zip",
+    "build": "/opt/cov/build/7zip",
+    "objects": "^(GzHandler|DeflateDecoder|BitlDecoder|LzOutWindow)\\.gcno$",
+    "include": "^CPP/7zip/(Archive/GzHandler|Compress/(DeflateDecoder|BitlDecoder|LzOutWindow))\\.cpp$",
+    "exclude": "^$"
+  },
+  "7zip-bz2": {
+    "title": "7-Zip (bzip2)",
+    "version": "26.05",
+    "src": "/opt/cov/src/7zip",
+    "build": "/opt/cov/build/7zip",
+    "objects": "^(Bz2Handler|BZip2Decoder|BZip2Crc)\\.gcno$",
+    "include": "^CPP/7zip/(Archive/Bz2Handler|Compress/(BZip2Decoder|BZip2Crc))\\.cpp$",
+    "exclude": "^$"
+  },
+  "7zip-xz": {
+    "title": "7-Zip (xz)",
+    "version": "26.05",
+    "src": "/opt/cov/src/7zip",
+    "build": "/opt/cov/build/7zip",
+    "objects": "^(XzHandler|XzDecoder|Xz|XzDec|XzIn|Lzma2Dec|LzmaDec|XzCrc64|Delta|Bra|Bra86|BraIA64|Sha256)\\.gcno$",
+    "include": "^(CPP/7zip/(Archive/XzHandler|Compress/XzDecoder)\\.cpp|C/(Xz|XzDec|XzIn|Lzma2Dec|LzmaDec|XzCrc64|Delta|Bra|Bra86|BraIA64|Sha256)\\.c)$",
+    "exclude": "^$"
+  },
+  "7zip-z": {
+    "title": "7-Zip (Unix compress)",
+    "version": "26.05",
+    "src": "/opt/cov/src/7zip",
+    "build": "/opt/cov/build/7zip",
+    "objects": "^(ZHandler|ZDecoder)\\.gcno$",
+    "include": "^CPP/7zip/(Archive/ZHandler|Compress/ZDecoder)\\.cpp$",
+    "exclude": "^$"
+  },
+  "7zip-zst": {
+    "title": "7-Zip (Zstandard)",
+    "version": "26.05",
+    "src": "/opt/cov/src/7zip",
+    "build": "/opt/cov/build/7zip",
+    "objects": "^(ZstdHandler|ZstdDecoder|ZstdDec)\\.gcno$",
+    "include": "^(CPP/7zip/(Archive/ZstdHandler|Compress/ZstdDecoder)\\.cpp|C/ZstdDec\\.c)$",
+    "exclude": "^$"
   }
 }

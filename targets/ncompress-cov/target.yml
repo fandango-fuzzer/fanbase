@@ -1,0 +1,13 @@
+title: ncompress, built to be measured
+formats: [z]
+run: ["/opt/cov/bin/ncompress-cov", "{file}"]   # compress -d -c < FILE, to nothing: the program itself counts
+needs:
+  commands: [ncompress-cov]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ncompress"]
+classify:
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ncompress"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ncompress"]
+  seeds: ["/opt/cov/seeds/z/*"]

@@ -24,11 +24,13 @@ RUN sed -i 's/^Components: main$/Components: main non-free/' /etc/apt/sources.li
         libxml2-utils expat libxerces-c-samples jq yajl-tools perl nodejs \
         meson libwoff-dev liblz4-dev libgtest-dev opentype-sanitizer woff2 woff-tools pcf2bdf xfonts-utils xfonts-base \
         fonts-dejavu-core fonts-freefont-otf fonts-cantarell \
+        gzip bzip2 xz-utils lzip plzip lz4 zstd ncompress busybox \
     && rm -rf /var/lib/apt/lists/*
 
 # `fanbase` is the one to evaluate with; pass FANBASE=/path/to/a.whl to build with a version that is not released.
 ARG FANBASE="fanbase>=0.5"
-RUN pip install --no-cache-dir fandango-fuzzer Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli ${FANBASE:+"$FANBASE"}
+RUN pip install --no-cache-dir fandango-fuzzer Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli \
+        isal lz4 zstandard python-snappy cramjam ${FANBASE:+"$FANBASE"}
 # uvlparser pins an older ANTLR runtime than Fandango's: without its dependencies, Fandango keeps its own
 RUN pip install --no-cache-dir --no-deps uvlparser
 

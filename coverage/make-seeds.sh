@@ -283,6 +283,69 @@ bdftopcf -p2 -u2 -m -L -o "$OUT/pcf/6x13-mixed-pad2.pcf" 6x13.bdf
 bdftopcf -t -o "$OUT/pcf/6x13-terminal.pcf" 6x13.bdf
 rm -f 6x13.bdf
 
+# The compression formats: the same data (this image's harnesses, as text; 300 kB of zeros; 70 kB that does not
+# compress, from Python's random with a fixed seed) compressed by the tools of each format, at their fastest and their
+# best, and with the options that change what is in a file (names, checks, filters, blocks, more than one member)
+mkdir -p "$OUT/gz" "$OUT/bz2" "$OUT/xz" "$OUT/lz" "$OUT/lz4" "$OUT/zst" "$OUT/z" "$OUT/zlib" "$OUT/sz"
+cat /opt/cov/harness/*.c > text.txt
+head -c 300000 /dev/zero > zeros.bin
+python3 -c "import random, sys; random.seed(1); sys.stdout.buffer.write(random.randbytes(70000))" > noise.bin
+for data in text zeros noise; do
+    file=$data.$( [ $data = text ] && echo txt || echo bin )
+    gzip -n -9 -c "$file" > "$OUT/gz/$data.gz"
+    bzip2 -9 -c "$file" > "$OUT/bz2/$data.bz2"
+    xz -6 -c "$file" > "$OUT/xz/$data.xz"
+    lzip -9 -c "$file" > "$OUT/lz/$data.lz"
+    lz4 -q -9 -c "$file" > "$OUT/lz4/$data.lz4"
+    zstd -q -19 -c "$file" > "$OUT/zst/$data.zst"
+    compress -c "$file" > "$OUT/z/$data.Z"
+done
+gzip -n -1 -c text.txt > "$OUT/gz/fastest.gz"
+cp text.txt named.txt && gzip -9 named.txt && mv named.txt.gz "$OUT/gz/with-name.gz"
+(gzip -n -c text.txt; gzip -n -c noise.bin) > "$OUT/gz/two-members.gz"
+bzip2 -1 -c text.txt > "$OUT/bz2/fastest.bz2"
+(bzip2 -c text.txt; bzip2 -c zeros.bin) > "$OUT/bz2/two-streams.bz2"
+xz -0 -c text.txt > "$OUT/xz/fastest.xz"
+xz -9e -c text.txt > "$OUT/xz/extreme.xz"
+xz --check=crc32 -c text.txt > "$OUT/xz/crc32.xz"
+xz --check=sha256 -c text.txt > "$OUT/xz/sha256.xz"
+xz --check=none -c text.txt > "$OUT/xz/no-check.xz"
+xz --delta=dist=4 --lzma2=preset=6 -c text.txt > "$OUT/xz/delta.xz"
+xz --x86 --lzma2=preset=6 -c text.txt > "$OUT/xz/x86.xz"
+xz --block-size=20000 -c text.txt > "$OUT/xz/blocks.xz"
+(xz -c text.txt; xz -c noise.bin) > "$OUT/xz/two-streams.xz"
+lzip -0 -c text.txt > "$OUT/lz/fastest.lz"
+lzip -b 20KiB -c text.txt > "$OUT/lz/members.lz"
+lz4 -q -1 -c text.txt > "$OUT/lz4/fastest.lz4"
+lz4 -q -l -c text.txt > "$OUT/lz4/legacy.lz4"
+lz4 -q -BD -B4 -c text.txt > "$OUT/lz4/linked-blocks.lz4"
+lz4 -q -BX --content-size -c text.txt > "$OUT/lz4/block-checksums.lz4"
+lz4 -q --no-frame-crc -c text.txt > "$OUT/lz4/no-checksum.lz4"
+zstd -q -1 -c text.txt > "$OUT/zst/fastest.zst"
+zstd -q --fast=5 -c text.txt > "$OUT/zst/negative-level.zst"
+zstd -q --no-check -c text.txt > "$OUT/zst/no-check.zst"
+zstd -q --ultra -22 -c text.txt > "$OUT/zst/ultra.zst"
+(zstd -q -c text.txt; zstd -q -c noise.bin) > "$OUT/zst/two-frames.zst"
+compress -b 10 -c text.txt > "$OUT/z/ten-bits.Z"
+compress -b 12 -c text.txt > "$OUT/z/twelve-bits.Z"
+python3 - "$OUT" <<'PYTHON'
+import io, snappy, sys, zlib
+out = sys.argv[1]
+data = {name: open(f, "rb").read() for name, f in (("text", "text.txt"), ("zeros", "zeros.bin"), ("noise", "noise.bin"))}
+for name, value in data.items():
+    open(f"{out}/zlib/{name}.zlib", "wb").write(zlib.compress(value, 9))
+    stream = io.BytesIO()
+    snappy.stream_compress(io.BytesIO(value), stream)
+    open(f"{out}/sz/{name}.sz", "wb").write(stream.getvalue())
+for level in (0, 1):
+    open(f"{out}/zlib/level-{level}.zlib", "wb").write(zlib.compress(data["text"], level))
+for wbits, strategy, name in ((9, zlib.Z_DEFAULT_STRATEGY, "window-512"), (15, zlib.Z_FIXED, "fixed-codes"),
+                              (15, zlib.Z_HUFFMAN_ONLY, "huffman-only"), (15, zlib.Z_RLE, "rle")):
+    c = zlib.compressobj(6, zlib.DEFLATED, wbits, 8, strategy)
+    open(f"{out}/zlib/{name}.zlib", "wb").write(c.compress(data["text"]) + c.flush())
+PYTHON
+rm -f text.txt zeros.bin noise.bin
+
 cp /opt/cov/seed-sources/svg/*.svg "$OUT/svg/"
 rm -f base.png base.jpg gray.jpg gray.png alpha.png sixteen.png tones.wav sparse.bin lib.c && rm -r tree
 find "$OUT" -type f | sort | sed 's#^#seed: #'

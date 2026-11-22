@@ -157,4 +157,48 @@ CFLAGS="$CFLAGS_COV" CXXFLAGS="$CFLAGS_COV" LDFLAGS=--coverage meson setup "$BUI
     --wrap-mode=nofallback -Ddefault_library=static > "$BUILD/ots.setup.log" 2>&1 || { tail -30 "$BUILD/ots.setup.log" >&2; exit 1; }
 meson compile -C "$BUILD/ots" ots-sanitize > "$BUILD/ots.build.log" 2>&1 || { tail -30 "$BUILD/ots.build.log" >&2; exit 1; }
 
+# --- the compression formats: the library of each, with its decoder counted (7-Zip, above, reads gzip, bzip2, xz,
+# Unix compress and Zstandard too)
+# --- zlib 1.3.2, for gzip and zlib (its tag is an annotated one: this is its commit)
+pin_git zlib https://github.com/madler/zlib v1.3.2 da607da739fa6047df13e66a2af6b8bec7c2a498
+cmake_build zlib -DZLIB_BUILD_TESTING=OFF -DZLIB_BUILD_SHARED=OFF -DZLIB_BUILD_MINIZIP=OFF
+
+# --- bzip2 1.0.8 (its tag is an annotated one: this is its commit); its makefile, in its source folder
+pin_git bzip2 https://gitlab.com/bzip2/bzip2.git bzip2-1.0.8 6a8690fc8d26c815e798c588f796eabe9d684cf0
+make -C "$SRC/bzip2" libbz2.a CFLAGS="$CFLAGS_COV -D_FILE_OFFSET_BITS=64" > "$BUILD/bzip2.build.log" 2>&1 \
+    || { tail -30 "$BUILD/bzip2.build.log" >&2; exit 1; }
+
+# --- XZ Utils 5.8.4, its liblzma, for .xz (its tag is an annotated one: this is its commit); no tools
+pin_git xz https://github.com/tukaani-project/xz v5.8.4 d3e650e63c110e830fd5391e7f8b45df0b91d3da
+cmake_build xz -DXZ_NLS=OFF -DXZ_TOOL_XZ=OFF -DXZ_TOOL_XZDEC=OFF -DXZ_TOOL_LZMADEC=OFF -DXZ_TOOL_LZMAINFO=OFF \
+    -DXZ_TOOL_SCRIPTS=OFF -DXZ_DOC=OFF -DBUILD_TESTING=OFF
+
+# --- lzlib 1.16, for lzip (a tarball: lzip's projects have no public git)
+curl -fsSL "https://download.savannah.gnu.org/releases/lzip/lzlib/lzlib-1.16.tar.gz" -o /tmp/lzlib.tar.gz
+echo "203228de911780309dad6813e51541d7ea89469784f01cb661edba080ff1b038  /tmp/lzlib.tar.gz" | sha256sum -c -
+mkdir -p "$SRC/lzlib" && tar -xzf /tmp/lzlib.tar.gz -C "$SRC/lzlib" --strip-components=1 && rm /tmp/lzlib.tar.gz
+(cd "$SRC/lzlib" && ./configure CFLAGS="$CFLAGS_COV" > "$BUILD/lzlib.configure.log" 2>&1 && make liblz.a > "$BUILD/lzlib.build.log" 2>&1) \
+    || { tail -30 "$BUILD/lzlib.build.log" >&2; exit 1; }
+
+# --- LZ4 1.10.0, for LZ4: its library's makefile, in its source folder
+pin_git lz4 https://github.com/lz4/lz4 v1.10.0 ebb370ca83af193212df4dcbadcc5d87bc0de2f0
+make -C "$SRC/lz4/lib" liblz4.a CFLAGS="$CFLAGS_COV" > "$BUILD/lz4.build.log" 2>&1 || { tail -30 "$BUILD/lz4.build.log" >&2; exit 1; }
+
+# --- Zstandard 1.5.7, for .zst (its tag is an annotated one: this is its commit): the decoder of today's format only
+# (no legacy formats), in C (not its assembly)
+pin_git zstd https://github.com/facebook/zstd v1.5.7 f8745da6ff1ad1e7bab384bd1f9d742439278e99
+make -C "$SRC/zstd/lib" libzstd.a CFLAGS="$CFLAGS_COV" ZSTD_LEGACY_SUPPORT=0 ZSTD_NO_ASM=1 > "$BUILD/zstd.build.log" 2>&1 \
+    || { tail -30 "$BUILD/zstd.build.log" >&2; exit 1; }
+
+# --- Snappy 1.3.1, for the Snappy framing format: the library decodes the blocks, the program reads the framing
+pin_git snappy https://github.com/google/snappy 1.3.1 9c28114a38866f6deeaa826db918293bc28ae410
+cmake_build snappy -DCMAKE_CXX_FLAGS="$CFLAGS_COV" -DSNAPPY_BUILD_TESTS=OFF -DSNAPPY_BUILD_BENCHMARKS=OFF \
+    -DSNAPPY_HAVE_BMI2=OFF -DSNAPPY_HAVE_SSSE3=OFF
+
+# --- ncompress 5.0, for Unix compress: a program, not a library, so the program counts
+pin_git ncompress https://github.com/vapier/ncompress v5.0 e77a84ca5a69f01ccfe149e48d10ac563e6c375b
+make -C "$SRC/ncompress" compress CFLAGS="$CFLAGS_COV" LDFLAGS=--coverage > "$BUILD/ncompress.build.log" 2>&1 \
+    || { tail -30 "$BUILD/ncompress.build.log" >&2; exit 1; }
+mkdir -p "$PREFIX/ncompress/bin" && cp "$SRC/ncompress/compress" "$PREFIX/ncompress/bin/compress"
+
 echo "built:"; ls "$PREFIX"

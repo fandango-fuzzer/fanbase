@@ -1,0 +1,4 @@
+#!/bin/sh
+# ncompress's compress, built to be measured, decompressing a file from its standard input to nothing:
+# usage: ncompress-cov FILE   (compress reads .Z from standard input with -d -c)
+exec /opt/cov/prefix/ncompress/bin/compress -d -c < "$1" > /dev/null

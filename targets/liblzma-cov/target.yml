@@ -1,0 +1,15 @@
+title: liblzma (XZ Utils), built to be measured
+formats: [xz]
+run: ["/opt/cov/bin/xz-harness", "{file}"]   # every stream decompressed (LZMA_CONCATENATED), every block checked
+needs:
+  commands: [xz-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "liblzma"]
+classify:
+  - match: "unsupported"
+    as: unsupported
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "liblzma"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "liblzma"]
+  seeds: ["/opt/cov/seeds/xz/*"]

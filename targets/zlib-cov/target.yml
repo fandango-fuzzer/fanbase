@@ -1,0 +1,15 @@
+title: zlib's inflate, built to be measured
+formats: [zlib]
+run: ["/opt/cov/bin/zlib-harness", "zlib", "{file}"]   # the one stream inflated, its Adler-32 checked, nothing after it
+needs:
+  commands: [zlib-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "zlib"]
+classify:
+  - match: "needs a preset dictionary"
+    as: unsupported
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "zlib"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "zlib"]
+  seeds: ["/opt/cov/seeds/zlib/*"]

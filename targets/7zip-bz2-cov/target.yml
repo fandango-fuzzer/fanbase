@@ -1,0 +1,15 @@
+title: 7-Zip's bzip2 reader, built to be measured
+formats: [bz2]
+run: ["/opt/cov/bin/7zz-cov", "t", "-tbzip2", "{file}"]   # 7zz itself: the file opened as bzip2 and nothing else, and decompressed
+needs:
+  commands: [7zz-cov]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "7zip-bz2"]
+classify:
+  - match: "(?i)unsupported"
+    as: unsupported
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "7zip-bz2"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "7zip-bz2"]
+  seeds: ["/opt/cov/seeds/bz2/*"]
