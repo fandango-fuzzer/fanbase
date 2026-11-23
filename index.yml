@@ -2458,7 +2458,7 @@ specs:
 - format: xpm
   kind: xpm-legacy
   path: specs/xpm/xpm-legacy/xpm-legacy.fan
-  sha256: 2aa9766939445cc58d0f466f4d2acdbddebba728fb5d7ff8fb3c12789235ee7e
+  sha256: 7616687de804ad125494c5f6be656cab3a5818bfd3251740c32afe45cd6c4885
   description: Same as xpm, plus the deprecated XPM1 (#define + _colors[]/ _pixels[]
     arrays) and XPM2 (plain-text "! XPM2") dialects, with boundary hex-width colour
     values and large hotspot coordinates
@@ -2469,7 +2469,7 @@ specs:
   - The Fandango Fuzzer Team
   license: Apache-2.0
   decodes: rarely
-  version: '1.0'
+  version: '1.1'
   title: X PixMap
   extensions:
   - xpm
