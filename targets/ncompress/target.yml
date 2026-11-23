@@ -1,0 +1,9 @@
+title: ncompress
+formats: [z]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # compress -d -c < FILE: decompressed, to nothing
+needs:
+  commands: [compress]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)out of memory|cannot allocate|memory usage limit|not enough memory"
+    as: resource-limit

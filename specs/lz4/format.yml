@@ -1,0 +1,9 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: LZ4 frame format
+mime: application/x-lz4
+extensions:
+- lz4
+reference: https://github.com/lz4/lz4/blob/dev/doc/lz4_Frame_format.md
+targets:
+- lz4
+- python-lz4

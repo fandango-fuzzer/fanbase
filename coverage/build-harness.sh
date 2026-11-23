@@ -57,4 +57,13 @@ harness cbor cbor.c "-I$PREFIX/libcbor/include" "$PREFIX/libcbor/lib/libcbor.a"
 # the fonts: one program for every format FreeType reads; OTS is its own program (ots-sanitize), which bin/ots-sanitize-cov runs
 harness freetype freetype.c "-I$PREFIX/freetype/include/freetype2" "$PREFIX/freetype/lib/libfreetype.a" -lz -lbrotlidec -lm
 
+# the compression formats: zlib (for gzip and zlib), libbzip2, liblzma, lzlib, liblz4, libzstd, and Snappy
+harness zlib zlib.c "-I$PREFIX/zlib/include" "$PREFIX/zlib/lib/libz.a"
+harness bzip2 bzip2.c "-I$SRC/bzip2" "$SRC/bzip2/libbz2.a"
+harness xz xz.c "-I$PREFIX/xz/include" "$PREFIX/xz/lib/liblzma.a" -lpthread
+harness lzlib lzlib.c "-I$SRC/lzlib" "$SRC/lzlib/liblz.a"
+harness lz4 lz4.c "-I$SRC/lz4/lib" "$SRC/lz4/lib/liblz4.a"
+harness zstd zstd.c "-I$SRC/zstd/lib" "$SRC/zstd/lib/libzstd.a" -lpthread
+harness snappy snappy.c "-I$PREFIX/snappy/include" "$PREFIX/snappy/lib/libsnappy.a" -lstdc++ -lm
+
 echo "built:"; ls "$BIN"

@@ -1,0 +1,10 @@
+title: python-snappy (framing format)
+formats: [sz]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # every chunk decoded, its CRC-32C checked
+needs:
+  python: [snappy]
+  pip: [python-snappy]
+version: ["{python}", "-c", "import importlib.metadata as m; print(m.version('python-snappy'))"]
+classify:
+  - match: "^MemoryError"
+    as: resource-limit

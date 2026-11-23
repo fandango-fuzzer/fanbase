@@ -1,0 +1,13 @@
+title: liblz4, built to be measured
+formats: [lz4]
+run: ["/opt/cov/bin/lz4-harness", "{file}"]   # every frame decoded (LZ4F; legacy frames block by block), its checksums checked
+needs:
+  commands: [lz4-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "lz4"]
+classify:
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "lz4"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "lz4"]
+  seeds: ["/opt/cov/seeds/lz4/*"]

@@ -1,0 +1,9 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Zstandard
+mime: application/zstd
+extensions:
+- zst
+reference: https://www.rfc-editor.org/rfc/rfc8878
+targets:
+- zstd
+- python-zstandard

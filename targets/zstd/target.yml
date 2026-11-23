@@ -1,0 +1,11 @@
+title: Zstandard (zstd)
+formats: [zst]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # zstd -t FILE: every frame decoded and checked
+needs:
+  commands: [zstd]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)dictionary mismatch|requires too much memory|--long="
+    as: unsupported
+  - match: "(?i)out of memory|cannot allocate|memory usage limit|not enough memory"
+    as: resource-limit

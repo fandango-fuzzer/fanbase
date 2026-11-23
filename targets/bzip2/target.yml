@@ -1,0 +1,9 @@
+title: bzip2
+formats: [bz2]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # bzip2 -t FILE: every stream decompressed and checked
+needs:
+  commands: [bzip2]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)out of memory|cannot allocate|memory usage limit|not enough memory"
+    as: resource-limit

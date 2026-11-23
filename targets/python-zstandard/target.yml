@@ -1,0 +1,12 @@
+title: python-zstandard
+formats: [zst]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # every frame read to its end, its checksums checked
+needs:
+  python: [zstandard]
+  pip: [zstandard]
+version: ["{python}", "-c", "import importlib.metadata as m; print(m.version('zstandard'))"]
+classify:
+  - match: "(?i)dictionary|window size|memory"
+    as: unsupported
+  - match: "^MemoryError"
+    as: resource-limit

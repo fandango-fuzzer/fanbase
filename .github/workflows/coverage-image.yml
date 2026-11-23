@@ -104,6 +104,32 @@ jobs:
               cov-snapshot $lib | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(sys.argv[1], len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")" $lib
             done'
 
+      - name: Every reader of a compression format reads a real file of its format, and counts it
+        run: |
+          docker run --rm fanbase-coverage sh -c '
+            set -e
+            cd /tmp
+            check() { # LIB SEED COMMAND...: the command reads the seed, and LIB counts it
+              lib=$1; seed=/opt/cov/seeds/$2; shift 2
+              cov-reset $lib
+              "$@" $seed > /dev/null
+              cov-snapshot $lib | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(sys.argv[1], len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")" $lib
+            }
+            check zlib-gz gz/text.gz zlib-harness gz
+            check zlib zlib/text.zlib zlib-harness zlib
+            check bzip2 bz2/text.bz2 bzip2-harness
+            check liblzma xz/text.xz xz-harness
+            check lzlib lz/text.lz lzlib-harness
+            check lz4 lz4/text.lz4 lz4-harness
+            check zstd zst/text.zst zstd-harness
+            check snappy sz/text.sz snappy-harness
+            check ncompress z/text.Z ncompress-cov
+            check 7zip-gz gz/text.gz 7zz-cov t -tgzip
+            check 7zip-bz2 bz2/text.bz2 7zz-cov t -tbzip2
+            check 7zip-xz xz/text.xz 7zz-cov t -txz
+            check 7zip-z z/text.Z 7zz-cov t -tZ
+            check 7zip-zst zst/text.zst 7zz-cov t -tzstd'
+
       - name: Publish
         if: github.ref == 'refs/heads/main'
         env:

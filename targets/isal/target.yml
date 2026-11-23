@@ -1,0 +1,12 @@
+title: ISA-L (python-isal)
+formats: [gz, zlib]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # read to its end as gzip or zlib, by its extension
+needs:
+  python: [isal]
+  pip: [isal]
+version: ["{python}", "-c", "import importlib.metadata as m; print(m.version('isal'))"]
+classify:
+  - match: "(?i)need dictionary|dictionary"
+    as: unsupported
+  - match: "^MemoryError"
+    as: resource-limit

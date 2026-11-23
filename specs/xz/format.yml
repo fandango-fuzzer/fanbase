@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: XZ
+mime: application/x-xz
+extensions:
+- xz
+reference: https://tukaani.org/xz/xz-file-format.txt
+targets:
+- xz
+- python-lzma
+- 7zip

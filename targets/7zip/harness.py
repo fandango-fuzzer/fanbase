@@ -2,9 +2,10 @@
 
 The format is the one the file's extension names, and 7-Zip is told to open the file as that (-t), and as nothing else:
 left to find out by itself, it first checks fields that its readers do not need (the device numbers of a cpio entry),
-and opens a file as whatever archive it finds in it. RAR is two formats to 7-Zip, so the file's signature says which. A
-password is given, so that an encrypted entry fails instead of asking for one. 7-Zip says what went wrong in several
-places, with the file's and the entry's names: the first error, without them, is what is printed.
+and opens a file as whatever archive it finds in it. A compressed file (gzip, bzip2, xz, Unix compress) is one entry to
+it. RAR is two formats to 7-Zip, so the file's signature says which. A password is given, so that an encrypted entry
+fails instead of asking for one. 7-Zip says what went wrong in several places, with the file's and the entry's names:
+the first error, without them, is what is printed.
 """
 
 import os
@@ -13,7 +14,8 @@ import signal
 import subprocess
 import sys
 
-TYPES = {"7z": "7z", "a": "ar", "ar": "ar", "arj": "arj", "cab": "cab", "cpio": "cpio", "rar": "rar", "tar": "tar", "zip": "zip"}
+TYPES = {"7z": "7z", "a": "ar", "ar": "ar", "arj": "arj", "bz2": "bzip2", "cab": "cab", "cpio": "cpio", "gz": "gzip", "rar": "rar",
+         "tar": "tar", "xz": "xz", "z": "Z", "zip": "zip"}
 RAR5 = b"Rar!\x1a\x07\x01\x00"
 
 if sys.argv[1:] == ["--version"]:

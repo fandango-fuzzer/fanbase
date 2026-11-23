@@ -1,0 +1,16 @@
+format: sz
+kind: sz
+description: 'Snappy framing-format streams: half from the compressor, half written
+  out (literals, copies with 1-, 2- and 4-byte offsets, uncompressed, padding and
+  skippable chunks)'
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires:
+- snappy
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+pip:
+- python-snappy
+version: '1.0'

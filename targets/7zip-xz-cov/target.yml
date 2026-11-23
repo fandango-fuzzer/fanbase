@@ -1,0 +1,15 @@
+title: 7-Zip's xz reader, built to be measured
+formats: [xz]
+run: ["/opt/cov/bin/7zz-cov", "t", "-txz", "{file}"]   # 7zz itself: the file opened as xz and nothing else, and decompressed
+needs:
+  commands: [7zz-cov]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "7zip-xz"]
+classify:
+  - match: "(?i)unsupported"
+    as: unsupported
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "7zip-xz"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "7zip-xz"]
+  seeds: ["/opt/cov/seeds/xz/*"]

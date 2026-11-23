@@ -1,0 +1,13 @@
+title: libbzip2, built to be measured
+formats: [bz2]
+run: ["/opt/cov/bin/bzip2-harness", "{file}"]   # every stream decompressed and checked
+needs:
+  commands: [bzip2-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "bzip2"]
+classify:
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "bzip2"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "bzip2"]
+  seeds: ["/opt/cov/seeds/bz2/*"]

@@ -1,0 +1,12 @@
+format: lz
+kind: lz
+description: lzip files of one or two members with dictionaries of 4 KiB to 8 MiB,
+  one of them not a power of two
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'

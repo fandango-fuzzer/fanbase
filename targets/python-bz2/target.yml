@@ -1,0 +1,7 @@
+title: Python's bz2
+formats: [bz2]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # every stream read to its end, its CRCs checked
+version: ["{python}", "-c", "import platform; print(platform.python_version())"]
+classify:
+  - match: "^MemoryError"
+    as: resource-limit

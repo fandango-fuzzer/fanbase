@@ -1,0 +1,13 @@
+format: zst
+kind: zst
+description: 'Zstandard frames: half from the compressor (levels -7 to 19, compressed
+  blocks), half written out (Raw and RLE blocks, every header field, skippable frames)'
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires:
+- zstandard
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'

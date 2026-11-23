@@ -1,0 +1,13 @@
+title: zlib's inflate, reading gzip, built to be measured
+formats: [gz]
+run: ["/opt/cov/bin/zlib-harness", "gz", "{file}"]   # every member inflated, its CRC-32 and size checked; zero bytes after the last skipped
+needs:
+  commands: [zlib-harness]      # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "zlib-gz"]
+classify:
+  - match: "(?i)out of memory|can ?not allocate memory|not enough memory"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "zlib-gz"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "zlib-gz"]
+  seeds: ["/opt/cov/seeds/gz/*"]

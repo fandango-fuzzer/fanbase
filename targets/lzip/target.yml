@@ -1,0 +1,9 @@
+title: lzip
+formats: [lz]
+run: ["{python}", "{dir}/harness.py", "{file}"]   # lzip -t FILE: every member decompressed and checked
+needs:
+  commands: [lzip]
+version: ["{python}", "{dir}/harness.py", "--version"]
+classify:
+  - match: "(?i)out of memory|cannot allocate|memory usage limit|not enough memory"
+    as: resource-limit
