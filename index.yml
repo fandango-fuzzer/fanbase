@@ -258,7 +258,7 @@ specs:
 - format: bmp
   kind: bmp-edge
   path: specs/bmp/bmp-edge/bmp-edge.fan
-  sha256: 934c7d7b5041edab8381d0140a7411b5f858059313362389dde8fa5da8e4b2f5
+  sha256: e11faae8585773269ffaa0aadd45bf5bf31852a625b289fc25f93f25e74e32fd
   description: BMP at 1 to 32 bits with top-down heights, short palettes and V4/V5
     masks
   fanbase: 0.5.0
@@ -268,7 +268,7 @@ specs:
   - The Fandango Fuzzer Team
   license: Apache-2.0
   decodes: always
-  version: '1.0'
+  version: '1.1'
   title: Windows Bitmap
   extensions:
   - bmp
