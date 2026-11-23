@@ -1,6 +1,10 @@
 # BMP/DIB with 1, 4, 8, 16, 24 and 32 bits per pixel, top-down heights, short
 # palettes, V4 and V5 color masks, an RLE8 flavour and extreme resolution
 # fields. Six flavours, each self-contained.
+#
+# A palette has at least one colour. With none, the header says the palette
+# is full (biClrUsed 0, and the OS/2 header has no such field), and FFmpeg
+# refuses an image of 1 or 4 bits that has no palette.
 
 <start> ::= <bmp>
 <bmp> ::= <bmp_core> | <bmp_info_indexed> | <bmp_info_direct> \
@@ -15,7 +19,7 @@
 <cHeight> ::= <u16_dim>
 <cPlanes> ::= b'\x01\x00'
 <cBpp> ::= b'\x01\x00' | b'\x04\x00' | b'\x08\x00' | b'\x18\x00'
-<core_pal> ::= <rgbtriple>*
+<core_pal> ::= <rgbtriple>+
 <rgbtriple> ::= <u8> <u8> <u8>
 <core_pixels> ::= <u8>*
 
@@ -27,7 +31,7 @@
     <xppm> <yppm> <biClrUsed> <biClrImportant> <idx_pal> <idx_pixels>
 <iSize> ::= <u32>
 <bpp_idx> ::= b'\x01\x00' | b'\x04\x00' | b'\x08\x00'
-<idx_pal> ::= <rgbquad>*
+<idx_pal> ::= <rgbquad>+
 <rgbquad> ::= <u8> <u8> <u8> b'\x00'
 <idx_pixels> ::= <u8>*
 
@@ -62,7 +66,7 @@
 <profSize> ::= b'\x00\x00\x00\x00'
 <v5reserved> ::= b'\x00\x00\x00\x00'
 
-# BI_RLE8 flavour: 8bpp, compression = 2, run-length encoded pixel data.
+# BI_RLE8 flavour: 8bpp, compression = 1, run-length encoded pixel data.
 # Minimal decodable stream: per scan line one encoded run "04 <idx>" then
 # End-Of-Line "00 00"; finally End-Of-Bitmap "00 01".
 <bmp_rle8> ::= b'BM' <bfSize> <bfReserved> <bfOffBits> \
