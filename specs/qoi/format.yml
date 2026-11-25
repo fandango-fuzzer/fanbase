@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: QOI (Quite OK Image Format)
+mime: image/qoi
+extensions:
+- qoi
+reference: https://qoiformat.org/qoi-specification.pdf
+targets:
+- pillow
+- imagemagick
+- ffmpeg

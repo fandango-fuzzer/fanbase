@@ -1,0 +1,15 @@
+format: qoi
+kind: qoi-boundary
+description: 'Same as qoi, at the edges: 1x1 images of each chunk, long rows and columns,
+  large images of one colour, runs of every length, DIFF and LUMA at and past their
+  limits, colours that collide in the index, alpha'
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+extends:
+- qoi
+decodes: always
+version: '1.0'

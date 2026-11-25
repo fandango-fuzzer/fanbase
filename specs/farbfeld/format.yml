@@ -1,0 +1,8 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: farbfeld
+mime: image/x-farbfeld
+extensions:
+- ff
+reference: https://tools.suckless.org/farbfeld/
+targets:
+- imagemagick

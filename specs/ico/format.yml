@@ -1,0 +1,11 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Windows icon and cursor
+mime: image/vnd.microsoft.icon
+extensions:
+- ico
+- cur
+reference: https://learn.microsoft.com/en-us/previous-versions/ms997538(v=msdn.10)
+targets:
+- pillow
+- imagemagick
+- ffmpeg

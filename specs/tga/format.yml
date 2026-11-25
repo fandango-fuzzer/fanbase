@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Truevision TGA
+mime: image/x-tga
+extensions:
+- tga
+reference: https://www.loc.gov/preservation/digital/formats/fdd/fdd000180.shtml
+targets:
+- pillow
+- imagemagick
+- ffmpeg
