@@ -1,12 +1,18 @@
 title: ImageMagick
 formats:
 - bmp
+- farbfeld
 - gif
+- hdr
 - heic
+- ico
 - jpeg
 - png
 - ppm
+- psd
+- qoi
 - svg
+- tga
 - tiff
 - webp
 - xbm

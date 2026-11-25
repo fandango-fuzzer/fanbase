@@ -1,5 +1,6 @@
 /* Reads an image with FFmpeg's libraries, as an application would: the format found by probing the file, then every
-   frame decoded. Built with the decoders for PPM, XBM and XPM only. Exit 0: it did. 1: FFmpeg said no. */
+   frame decoded. Built twice: with the decoders for PPM, XBM and XPM only, and with those for TGA, QOI, Radiance HDR, PSD
+   and the images of ICO only. Exit 0: it did. 1: FFmpeg said no. */
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <stdio.h>

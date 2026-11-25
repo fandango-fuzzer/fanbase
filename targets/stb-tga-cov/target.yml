@@ -1,0 +1,13 @@
+title: stb_image (TGA), built to be measured
+formats: [tga]
+run: ["/opt/cov/bin/tga-harness", "{file}"]
+needs:
+  commands: [tga-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "stb-tga"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "stb-tga"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "stb-tga"]
+  seeds: ["/opt/cov/seeds/tga/*"]

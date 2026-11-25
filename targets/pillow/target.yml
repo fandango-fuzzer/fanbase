@@ -3,9 +3,13 @@ formats:
 - bmp
 - gif
 - heic
+- ico
 - jpeg
 - png
 - ppm
+- psd
+- qoi
+- tga
 - tiff
 - webp
 - xbm

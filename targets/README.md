@@ -9,15 +9,16 @@ A target is code that the evaluation runs, so a change to one is reviewed like a
 
 | target | judges | needs |
 |---|---|---|
-| `pillow` | bmp, gif, heic, jpeg, png, ppm, tiff, webp, xbm, xpm | Python package Pillow (and `pillow-heif`, which gives it a HEIC reader) |
-| `imagemagick` | the same, and svg | `identify` (ImageMagick); a file that it decodes is accepted, warnings or not. It reads SVG with `rsvg-convert` (`librsvg2-bin`) |
+| `pillow` | bmp, gif, heic, ico, jpeg, png, ppm, psd, qoi, tga, tiff, webp, xbm, xpm | Python package Pillow (and `pillow-heif`, which gives it a HEIC reader) |
+| `imagemagick` | the same, and farbfeld, hdr and svg | `identify` (ImageMagick); a file that it decodes is accepted, warnings or not. It reads SVG with `rsvg-convert` (`librsvg2-bin`) |
 | `imagemagick-strict` | the same | the same, but a warning rejects the file: "is it clean?" rather than "does it decode?" (not in any format's `targets` by default) |
-| `ffmpeg` | the same as Pillow, and aac, flac, mp3, ogg, wav | `ffmpeg` (not for jxl: it exits 0 on a truncated JPEG XL file, so it accepts files that nothing decodes) |
+| `ffmpeg` | the same as Pillow, and aac, flac, hdr, mp3, ogg, wav | `ffmpeg` (not for jxl: it exits 0 on a truncated JPEG XL file, so it accepts files that nothing decodes) |
 | `djpeg` | jpeg | `djpeg` (libjpeg-turbo) |
 | `djxl` | jxl | `djxl` (`libjxl-tools`); the picture is decoded in full. A small wrapper gives it a file to write to, since the flag that says not to is newer than Ubuntu 24.04's version |
 | `tiffinfo` | tiff | `tiffinfo` (libtiff) |
 | `webpinfo` | webp | `webpinfo` (libwebp) |
 | `giftext` | gif | `giftext` (giflib) |
+| `psd-tools` | psd | Python package psd-tools; the document is opened and composited, from its layers where it has them |
 | `pngcheck` | png | `pngcheck` (a strict conformance checker: it says what in a file breaks the specification; a warning rejects it; a small wrapper leaves out its zlib-version warning, which is about the machine) |
 | `libsndfile` | flac, mp3, ogg, wav | Python package soundfile, which brings libsndfile; every frame is read, and a file that says it has frames and gives none is rejected (libsndfile opens some Ogg files it cannot decode) |
 | `flac` | flac | `flac` (libFLAC's own tool: `flac --test` decodes every frame and checks the MD5 sum of the audio) |

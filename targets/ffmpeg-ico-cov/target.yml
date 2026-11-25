@@ -1,0 +1,13 @@
+title: FFmpeg's ICO demuxer and BMP decoder, built to be measured
+formats: [ico]
+run: ["/opt/cov/bin/ffmpeg-image-harness", "{file}"]
+needs:
+  commands: [ffmpeg-image-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-ico"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-ico"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-ico"]
+  seeds: ["/opt/cov/seeds/ico/*"]

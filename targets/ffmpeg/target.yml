@@ -4,12 +4,17 @@ formats:
 - bmp
 - flac
 - gif
+- hdr
 - heic
+- ico
 - jpeg
 - mp3
 - ogg
 - png
 - ppm
+- psd
+- qoi
+- tga
 - tiff
 - wav
 - webp

@@ -1,0 +1,12 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Adobe Photoshop document
+mime: image/vnd.adobe.photoshop
+extensions:
+- psd
+- psb
+reference: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/
+targets:
+- pillow
+- imagemagick
+- ffmpeg
+- psd-tools

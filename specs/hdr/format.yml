@@ -1,0 +1,10 @@
+# What is true of every spec of this format. A spec's own metadata.yml wins.
+title: Radiance RGBE
+mime: image/vnd.radiance
+extensions:
+- hdr
+- pic
+reference: https://radsite.lbl.gov/radiance/refer/filefmts.pdf
+targets:
+- imagemagick
+- ffmpeg

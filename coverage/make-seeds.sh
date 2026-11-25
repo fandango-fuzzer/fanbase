@@ -5,13 +5,15 @@
 # by hand, in seed-sources/, since no tool makes a vector drawing from a picture. The archives are made by the tools that
 # write them, from a small tree of files; RAR, which no free tool writes, comes from the archives that libarchive's own tests
 # read (made by WinRAR). The XML files are written by hand (seed-sources/xml/), and the SVG ones count as XML too; JSON
-# is written by Python's json, and CBOR by cbor2, with the examples of RFC 8949's appendix A.
+# is written by Python's json, and CBOR by cbor2, with the examples of RFC 8949's appendix A. TGA, QOI, Radiance HDR, ICO,
+# PSD and farbfeld are made by ImageMagick, and some of them by FFmpeg's and Pillow's writers too.
 set -eu
 OUT=/opt/cov/seeds
 mkdir -p "$OUT/png" "$OUT/jpeg" "$OUT/gif" "$OUT/tiff" "$OUT/webp" "$OUT/bmp" "$OUT/heic" "$OUT/jxl" "$OUT/ppm" "$OUT/xbm" "$OUT/xpm" "$OUT/svg" \
     "$OUT/wav" "$OUT/flac" "$OUT/ogg" "$OUT/mp3" "$OUT/aac" \
     "$OUT/zip" "$OUT/tar" "$OUT/7z" "$OUT/rar" "$OUT/cab" "$OUT/cpio" "$OUT/arj" "$OUT/ar" \
-    "$OUT/xml" "$OUT/json" "$OUT/cbor" "$OUT/ttf" "$OUT/otf" "$OUT/woff" "$OUT/woff2" "$OUT/pcf"
+    "$OUT/xml" "$OUT/json" "$OUT/cbor" "$OUT/ttf" "$OUT/otf" "$OUT/woff" "$OUT/woff2" "$OUT/pcf" \
+    "$OUT/tga" "$OUT/qoi" "$OUT/hdr" "$OUT/ico" "$OUT/psd" "$OUT/farbfeld"
 cd /tmp
 convert rose: -resize 70x46 base.png
 
@@ -53,6 +55,47 @@ convert base.png -colors 256 "$OUT/bmp/palette-8.bmp"
 convert base.png -colors 16 "$OUT/bmp/palette-4.bmp"
 convert base.png -colors 2 "$OUT/bmp/mono.bmp"
 convert base.png -alpha set "$OUT/bmp/alpha.bmp"
+
+convert base.png "$OUT/tga/plain.tga"
+convert base.png -compress RLE "$OUT/tga/rle.tga"
+convert base.png -colors 16 -type Palette "$OUT/tga/palette.tga"
+convert base.png -colorspace Gray "$OUT/tga/gray.tga"
+convert base.png -alpha set -channel A -evaluate set 60% +channel "$OUT/tga/alpha.tga"
+
+convert base.png "$OUT/qoi/plain.qoi"
+convert base.png -alpha set -channel A -evaluate set 60% +channel "$OUT/qoi/alpha.qoi"
+ffmpeg -v error -i base.png -frames:v 1 -update 1 -c:v qoi "$OUT/qoi/ffmpeg.qoi"
+
+convert base.png "$OUT/hdr/plain.hdr"
+ffmpeg -v error -i base.png -frames:v 1 -update 1 -c:v hdr "$OUT/hdr/ffmpeg.hdr"
+
+convert base.png -define icon:auto-resize=48,32,16 "$OUT/ico/sizes.ico"
+convert base.png -resize 256x256! "$OUT/ico/large.ico"
+python3 - "$OUT" <<'PYTHON'
+import sys
+from PIL import Image
+out = sys.argv[1]
+image = Image.open("base.png").convert("RGBA")
+image.save(f"{out}/ico/pillow-png.ico", sizes=[(16, 16), (32, 32), (48, 48)])
+image.save(f"{out}/ico/pillow-bmp.ico", sizes=[(16, 16), (32, 32)], bitmap_format="bmp")
+image.save(f"{out}/tga/pillow-rle.tga", compression="tga_rle")
+PYTHON
+
+convert base.png "$OUT/psd/plain.psd"
+convert base.png -compress RLE "$OUT/psd/rle.psd"
+convert base.png \( +clone -rotate 90 -resize 46x46 \) "$OUT/psd/layers.psd"
+convert base.png -depth 16 "$OUT/psd/sixteen-bit.psd"
+convert base.png -colorspace CMYK "$OUT/psd/cmyk.psd"
+convert base.png -colorspace Gray "$OUT/psd/gray.psd"
+# ImageMagick writes PackBits by default, in a form FFmpeg refuses ("Invalid rle char"): raw ones too, which it reads
+convert base.png -compress None "$OUT/psd/raw.psd"
+convert base.png -colorspace Gray -compress None "$OUT/psd/raw-gray.psd"
+convert base.png -colorspace CMYK -compress None "$OUT/psd/raw-cmyk.psd"
+convert base.png -depth 16 -compress None "$OUT/psd/raw-sixteen-bit.psd"
+convert base.png \( +clone -rotate 90 -resize 46x46 \) -compress None "$OUT/psd/raw-layers.psd"
+
+convert base.png "$OUT/farbfeld/plain.ff"
+convert base.png -alpha set -channel A -evaluate set 60% +channel "$OUT/farbfeld/alpha.ff"
 
 convert base.png "$OUT/ppm/plain.ppm"
 convert base.png -compress none "$OUT/ppm/ascii.ppm"

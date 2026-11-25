@@ -1,0 +1,12 @@
+format: psd
+kind: psd
+description: Photoshop documents in every colour mode, of 8 or 16 bits, with image
+  resources, 1 to 3 layers (transparency, blend modes, names), raw or PackBits
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'

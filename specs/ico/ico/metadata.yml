@@ -1,0 +1,12 @@
+format: ico
+kind: ico
+description: 'Icons and cursors of 1 to 4 images: bitmaps of 1 to 32 bits with AND
+  masks, and PNG images of every colour type and row filter'
+fanbase: 0.5.0
+fandango: '>=1.3'
+requires: []
+authors:
+- The Fandango Fuzzer Team
+license: Apache-2.0
+decodes: always
+version: '1.0'
