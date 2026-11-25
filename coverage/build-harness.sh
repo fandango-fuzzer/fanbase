@@ -24,6 +24,13 @@ harness webp webp.c "-I$PREFIX/libwebp/include" "$PREFIX/libwebp/lib/libwebpdemu
 mkdir -p "$BUILD/stb-bmp"
 gcc --coverage -O0 -g -I"$SRC/stb" -c "$HARNESS/bmp.c" -o "$BUILD/stb-bmp/bmp.o"
 gcc "$BUILD/stb-bmp/bmp.o" -o "$BIN/bmp-harness" -lm --coverage
+for format in tga psd hdr; do
+    gcc --coverage -O0 -g -I"$SRC/stb" -c "$HARNESS/$format.c" -o "$BUILD/stb-$format/$format.o"
+    gcc "$BUILD/stb-$format/$format.o" -o "$BIN/$format-harness" -lm --coverage
+done
+# qoi.h too
+gcc --coverage -O0 -g -I"$SRC/qoi" -c "$HARNESS/qoi.c" -o "$BUILD/qoi/qoi.o"
+gcc "$BUILD/qoi/qoi.o" -o "$BIN/qoi-harness" --coverage
 
 harness heic heic.c "-I$PREFIX/libheif/include" "$PREFIX/libheif/lib/libheif.a" -lde265 -lkvazaar -ljpeg -lbrotlidec -lbrotlienc \
     -lbrotlicommon -lz -lstdc++ -lm -lpthread
@@ -33,6 +40,9 @@ harness jxl jxl.c "-I$PREFIX/libjxl/include" "$PREFIX/libjxl/lib/libjxl.a" "$PRE
 harness ffmpeg ffmpeg.c "-I$PREFIX/ffmpeg/include" "$PREFIX/ffmpeg/lib/libavformat.a" "$PREFIX/ffmpeg/lib/libavcodec.a" \
     "$PREFIX/ffmpeg/lib/libavutil.a" -lm -lpthread
 # and one for the five sound formats of the other FFmpeg build
+# the same program again, for the image formats of the third FFmpeg build
+harness ffmpeg-image ffmpeg.c "-I$PREFIX/ffmpeg-image/include" "$PREFIX/ffmpeg-image/lib/libavformat.a" \
+    "$PREFIX/ffmpeg-image/lib/libavcodec.a" "$PREFIX/ffmpeg-image/lib/libavutil.a" -lz -lm -lpthread
 harness ffmpeg-audio ffmpeg-audio.c "-I$PREFIX/ffmpeg-audio/include" "$PREFIX/ffmpeg-audio/lib/libavformat.a" \
     "$PREFIX/ffmpeg-audio/lib/libavcodec.a" "$PREFIX/ffmpeg-audio/lib/libswresample.a" "$PREFIX/ffmpeg-audio/lib/libavutil.a" -lm -lpthread
 

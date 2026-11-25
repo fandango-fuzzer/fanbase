@@ -1,0 +1,13 @@
+title: stb_image (Radiance HDR), built to be measured
+formats: [hdr]
+run: ["/opt/cov/bin/hdr-harness", "{file}"]
+needs:
+  commands: [hdr-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "stb-hdr"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "stb-hdr"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "stb-hdr"]
+  seeds: ["/opt/cov/seeds/hdr/*"]

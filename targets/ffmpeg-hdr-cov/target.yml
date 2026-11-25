@@ -1,0 +1,13 @@
+title: FFmpeg's Radiance HDR decoder, built to be measured
+formats: [hdr]
+run: ["/opt/cov/bin/ffmpeg-image-harness", "{file}"]
+needs:
+  commands: [ffmpeg-image-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-hdr"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-hdr"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-hdr"]
+  seeds: ["/opt/cov/seeds/hdr/*"]

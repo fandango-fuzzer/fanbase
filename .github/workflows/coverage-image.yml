@@ -60,6 +60,21 @@ jobs:
               cov-snapshot $lib | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(sys.argv[1], len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")" $lib
             done'
 
+      - name: Every reader of TGA, QOI, Radiance HDR, ICO and PSD reads a real file of its format, and counts it
+        run: |
+          docker run --rm fanbase-coverage sh -c '
+            set -e
+            cd /tmp
+            for item in tga-harness:stb-tga:tga/rle.tga psd-harness:stb-psd:psd/rle.psd hdr-harness:stb-hdr:hdr/plain.hdr \
+                        qoi-harness:qoi:qoi/plain.qoi ffmpeg-image-harness:ffmpeg-tga:tga/palette.tga \
+                        ffmpeg-image-harness:ffmpeg-qoi:qoi/plain.qoi ffmpeg-image-harness:ffmpeg-hdr:hdr/ffmpeg.hdr \
+                        ffmpeg-image-harness:ffmpeg-psd:psd/raw.psd ffmpeg-image-harness:ffmpeg-ico:ico/pillow-bmp.ico; do
+              harness=${item%%:*}; rest=${item#*:}; lib=${rest%%:*}; seed=${rest#*:}
+              cov-reset $lib
+              $harness /opt/cov/seeds/$seed
+              cov-snapshot $lib | python3 -c "import json,sys; d=json.load(sys.stdin); assert d[\"lines\"][\"covered\"], \"nothing was counted\"; print(sys.argv[1], len(d[\"lines\"][\"covered\"]), \"of\", d[\"lines\"][\"total\"], \"lines\")" $lib
+            done'
+
       - name: Every archive reader reads a real file of its format, and counts it
         run: |
           docker run --rm fanbase-coverage sh -c '

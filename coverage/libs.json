@@ -431,5 +431,82 @@
     "objects": "^(ZstdHandler|ZstdDecoder|ZstdDec)\\.gcno$",
     "include": "^(CPP/7zip/(Archive/ZstdHandler|Compress/ZstdDecoder)\\.cpp|C/ZstdDec\\.c)$",
     "exclude": "^$"
+  },
+  "stb-tga": {
+    "title": "stb_image (TGA)",
+    "version": "2c980bb",
+    "src": "/opt/cov/src/stb",
+    "build": "/opt/cov/build/stb-tga",
+    "include": "^stb_image\\.h$",
+    "exclude": "^$"
+  },
+  "stb-psd": {
+    "title": "stb_image (PSD)",
+    "version": "2c980bb",
+    "src": "/opt/cov/src/stb",
+    "build": "/opt/cov/build/stb-psd",
+    "include": "^stb_image\\.h$",
+    "exclude": "^$"
+  },
+  "stb-hdr": {
+    "title": "stb_image (Radiance HDR)",
+    "version": "2c980bb",
+    "src": "/opt/cov/src/stb",
+    "build": "/opt/cov/build/stb-hdr",
+    "include": "^stb_image\\.h$",
+    "exclude": "^$"
+  },
+  "qoi": {
+    "title": "qoi.h",
+    "version": "ffb2d2c",
+    "src": "/opt/cov/src/qoi",
+    "build": "/opt/cov/build/qoi",
+    "include": "^qoi\\.h$",
+    "exclude": "^$"
+  },
+  "ffmpeg-tga": {
+    "title": "FFmpeg (TGA)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-image",
+    "objects": "^libavcodec/targa\\.",
+    "include": "^libavcodec/targa\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-qoi": {
+    "title": "FFmpeg (QOI)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-image",
+    "objects": "^libavcodec/qoidec\\.",
+    "include": "^libavcodec/qoidec\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-hdr": {
+    "title": "FFmpeg (Radiance HDR)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-image",
+    "objects": "^libavcodec/hdrdec\\.",
+    "include": "^libavcodec/hdrdec\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-psd": {
+    "title": "FFmpeg (PSD)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-image",
+    "objects": "^libavcodec/psd\\.",
+    "include": "^libavcodec/psd\\.c$",
+    "exclude": "^$"
+  },
+  "ffmpeg-ico": {
+    "title": "FFmpeg (ICO)",
+    "version": "9.0.2",
+    "src": "/opt/cov/src/ffmpeg",
+    "build": "/opt/cov/build/ffmpeg-image",
+    "objects": "^libavformat/icodec\\.|^libavcodec/bmp\\.",
+    "include": "^libavformat/icodec\\.c$|^libavcodec/bmp\\.c$",
+    "exclude": "^$"
   }
 }

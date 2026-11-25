@@ -1,0 +1,13 @@
+title: FFmpeg's PSD decoder, built to be measured
+formats: [psd]
+run: ["/opt/cov/bin/ffmpeg-image-harness", "{file}"]
+needs:
+  commands: [ffmpeg-image-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-psd"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-psd"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-psd"]
+  seeds: ["/opt/cov/seeds/psd/*"]

@@ -52,6 +52,13 @@ cmake_build libwebp -DWEBP_ENABLE_SIMD=OFF -DWEBP_BUILD_ANIM_UTILS=OFF -DWEBP_BU
 mkdir -p "$SRC/stb" "$BUILD/stb-bmp"
 curl -fsSL "https://raw.githubusercontent.com/nothings/stb/2c980bb59875b0d32144a71867fbdebb2f77cd20/stb_image.h" -o "$SRC/stb/stb_image.h"
 echo "594c2fe35d49488b4382dbfaec8f98366defca819d916ac95becf3e75f4200b3  $SRC/stb/stb_image.h" | sha256sum -c -
+# and compiled again for TGA, PSD and Radiance HDR, one format each
+mkdir -p "$BUILD/stb-tga" "$BUILD/stb-psd" "$BUILD/stb-hdr"
+
+# --- qoi.h, the reference QOI decoder (one header, at a pinned commit; the program is the library, as with stb_image)
+mkdir -p "$SRC/qoi" "$BUILD/qoi"
+curl -fsSL "https://raw.githubusercontent.com/phoboslab/qoi/ffb2d2cb74a1de60819b21b939f7209aa53e91c1/qoi.h" -o "$SRC/qoi/qoi.h"
+echo "7de6fca1a285b1c20d38f2723dec8b774eb9f144edb9710800a95feeea09375a  $SRC/qoi/qoi.h" | sha256sum -c -
 
 # --- libheif 1.23.6 (HEVC is decoded by the system's libde265, and the real files are made with kvazaar: codecs the
 # library calls into are not counted; the tools are built to make those files)
@@ -98,6 +105,20 @@ mkdir -p "$BUILD/ffmpeg-audio"
     > "$BUILD/ffmpeg-audio.configure.log" 2>&1) || { tail -30 "$BUILD/ffmpeg-audio.configure.log" >&2; exit 1; }
 make -C "$BUILD/ffmpeg-audio" -j"$(nproc)" > "$BUILD/ffmpeg-audio.build.log" 2>&1 || { tail -30 "$BUILD/ffmpeg-audio.build.log" >&2; exit 1; }
 make -C "$BUILD/ffmpeg-audio" install > /dev/null
+
+# --- the same FFmpeg a third time, with the decoders of TGA, QOI, Radiance HDR and PSD, and the ICO demuxer with the BMP
+# and PNG decoders that the images of an icon take, in a build of its own, so that the two above stay as they are
+mkdir -p "$BUILD/ffmpeg-image"
+(cd "$BUILD/ffmpeg-image" && "$SRC/ffmpeg/configure" --prefix="$PREFIX/ffmpeg-image" --cc=gcc \
+    --disable-everything --disable-autodetect --disable-programs --disable-doc --disable-network \
+    --disable-avdevice --disable-avfilter --disable-swscale --disable-swresample \
+    --disable-asm --disable-stripping --disable-debug --optflags=-O0 --extra-cflags="$CFLAGS_COV" --extra-ldflags=--coverage \
+    --disable-shared --enable-static --enable-pic --enable-protocol=file --enable-zlib \
+    --enable-demuxer=image2,image_qoi_pipe,image_psd_pipe,image_hdr_pipe,ico \
+    --enable-decoder=targa,qoi,hdr,psd,bmp,png > "$BUILD/ffmpeg-image.configure.log" 2>&1) \
+    || { tail -30 "$BUILD/ffmpeg-image.configure.log" >&2; exit 1; }
+make -C "$BUILD/ffmpeg-image" -j"$(nproc)" > "$BUILD/ffmpeg-image.build.log" 2>&1 || { tail -30 "$BUILD/ffmpeg-image.build.log" >&2; exit 1; }
+make -C "$BUILD/ffmpeg-image" install > /dev/null
 
 # --- NanoSVG (one header, at a pinned commit; the program is the library, as with stb_image)
 mkdir -p "$SRC/nanosvg" "$BUILD/nanosvg"

@@ -1,0 +1,13 @@
+title: stb_image (PSD), built to be measured
+formats: [psd]
+run: ["/opt/cov/bin/psd-harness", "{file}"]
+needs:
+  commands: [psd-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "stb-psd"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "stb-psd"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "stb-psd"]
+  seeds: ["/opt/cov/seeds/psd/*"]

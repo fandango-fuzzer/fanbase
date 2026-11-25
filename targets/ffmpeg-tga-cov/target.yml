@@ -1,0 +1,13 @@
+title: FFmpeg's TGA decoder, built to be measured
+formats: [tga]
+run: ["/opt/cov/bin/ffmpeg-image-harness", "{file}"]
+needs:
+  commands: [ffmpeg-image-harness]            # from the image of coverage/: this target runs there, and nowhere else
+version: ["/opt/cov/bin/versions", "ffmpeg-tga"]
+classify:
+  - match: "(?i)too large for this reader|too big|exceeds|memory limit"
+    as: resource-limit
+coverage:
+  reset: ["/opt/cov/bin/cov-reset", "ffmpeg-tga"]
+  snapshot: ["/opt/cov/bin/cov-snapshot", "ffmpeg-tga"]
+  seeds: ["/opt/cov/seeds/tga/*"]
