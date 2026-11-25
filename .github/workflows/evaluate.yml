@@ -47,7 +47,7 @@ jobs:
             opentype-sanitizer woff2 woff-tools pcf2bdf \
             lzip plzip lz4 zstd ncompress busybox
 
-      - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli isal lz4 zstandard python-snappy cramjam
+      - run: pip install fandango-fuzzer "fanbase>=0.5" Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli isal lz4 zstandard python-snappy cramjam psd-tools
       # uvlparser pins an older ANTLR runtime than Fandango's: without its dependencies, Fandango keeps its own
       - run: pip install --no-deps uvlparser
 

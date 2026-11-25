@@ -29,7 +29,7 @@ RUN sed -i 's/^Components: main$/Components: main non-free/' /etc/apt/sources.li
 
 # `fanbase` is the one to evaluate with; pass FANBASE=/path/to/a.whl to build with a version that is not released.
 ARG FANBASE="fanbase>=0.5"
-RUN pip install --no-cache-dir fandango-fuzzer Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli \
+RUN pip install --no-cache-dir fandango-fuzzer Pillow pillow-heif soundfile cbor2 cbor-diag fonttools brotli psd-tools \
         isal lz4 zstandard python-snappy cramjam ${FANBASE:+"$FANBASE"}
 # uvlparser pins an older ANTLR runtime than Fandango's: without its dependencies, Fandango keeps its own
 RUN pip install --no-cache-dir --no-deps uvlparser

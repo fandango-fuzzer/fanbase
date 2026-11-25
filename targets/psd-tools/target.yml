@@ -1,0 +1,19 @@
+title: psd-tools
+formats:
+- psd
+run:
+- '{python}'
+- '{dir}/harness.py'
+- '{file}'
+needs:
+  python:
+  - psd_tools
+  pip:
+  - psd-tools
+version:
+- '{python}'
+- -c
+- import psd_tools; print(psd_tools.__version__)
+classify:
+- match: (?i)not supported|unsupported|not implemented
+  as: unsupported
